@@ -11,10 +11,10 @@ import { fullName, PLAN_LABEL } from "@/lib/format";
 export const metadata: Metadata = { title: "Connexion" };
 export const dynamic = "force-dynamic";
 
-type Props = { searchParams: Promise<{ suite?: string; erreur?: string }> };
+type Props = { searchParams: Promise<{ suite?: string; erreur?: string; adhesion?: string }> };
 
 export default async function LoginPage({ searchParams }: Props) {
-  const { suite, erreur } = await searchParams;
+  const { suite, erreur, adhesion } = await searchParams;
   const next = suite && suite.startsWith("/") && !suite.startsWith("//") ? suite : "/espace";
   const viewer = await getViewer();
   return (
@@ -26,6 +26,12 @@ export default async function LoginPage({ searchParams }: Props) {
             <h1 className="sh-title" style={{ fontSize: 38 }}>
               Connexion
             </h1>
+            {adhesion === "merci" && (
+              <div className="flash">
+                <Icon name="check" />
+                Merci ! Ton paiement est bien reçu. Ton adhésion s’active dans un instant : connecte-toi avec ton e-mail pour ouvrir ton espace.
+              </div>
+            )}
             {viewer.mode === "demo" ? (
               <>
                 <p className="sh-sub">

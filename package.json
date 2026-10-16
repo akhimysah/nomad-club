@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:sql": "node --no-warnings scripts/seed-sql.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
