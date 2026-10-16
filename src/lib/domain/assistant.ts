@@ -52,7 +52,7 @@ export function answerQuestion(question: string, ctx: AiContext): AiAnswer {
   }
 
   if (/visa|sejour|titre|prefecture|residence/.test(s)) {
-    const lawyer = ctx.directory.find((p) => /avocate/i.test(p.job ?? ""));
+    const lawyer = ctx.directory.find((p) => /avocate d.affaires/i.test(p.job ?? "")) ?? ctx.directory.find((p) => /avocate/i.test(p.job ?? ""));
     let text =
       "Au-delà de 90 jours, il faut demander une carte de séjour auprès du service des étrangers dont dépend ton domicile. Prépare passeport, justificatif de domicile, photos d’identité et justificatif de ressources.";
     if (lawyer) text += ` ${fullName(lawyer)}, ${lc(lawyer.job ?? "")}, aide souvent les membres à s’y retrouver.`;
