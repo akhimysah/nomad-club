@@ -123,7 +123,8 @@ export function computeDashboard(s: Snapshot, nowMs: number): Dashboard {
   const recentlySent = (r: Reminder | undefined) => !!r && daysBetween(ymdOf(r.sentAt!), today) < QUIET_DAYS;
 
   /* ----- virements à valider ----- */
-  const declared = s.payments.filter((p) => p.status === "declared");
+  // Virements déclarés uniquement : un paiement carte « declared » est un passage Stripe pas encore confirmé.
+  const declared = s.payments.filter((p) => p.status === "declared" && p.method === "transfer");
   const pendingMembershipBy = new Map<string, Payment>();
   declared.forEach((p) => {
     if (p.kind === "membership" && p.profileId) pendingMembershipBy.set(p.profileId, p);

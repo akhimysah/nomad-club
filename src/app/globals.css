@@ -1044,3 +1044,10 @@ img{filter:grayscale(1) contrast(1.06)}
 @media (max-width:760px){
   .billet-page{padding-bottom:calc(96px + var(--safe-b))}
 }
+.v-links a{color:var(--tx2);font:500 15.5px var(--sans);padding:10px 16px;border-radius:999px;transition:color .3s,background .3s}
+.v-links a:hover{color:var(--tx);background:var(--fill)}
+a.btn{text-decoration:none}
+a.ev-row,a.feature,a.big-ev,a.soon,a.nc-ph,a.person,a.offer,a.side-btn,a.me-btn,a.tab{text-decoration:none;color:inherit}
+a.feature,a.big-ev{color:#f3f3f3}
+a.nc-ph{color:#f3f3f3}
+.tab[aria-busy="true"],.btn[aria-busy="true"]{opacity:.7}

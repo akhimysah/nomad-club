@@ -52,3 +52,29 @@ export function addYears(ymd: string, n: number): string {
 export function ymdOf(iso: string): string {
   return ymdInTz(Date.parse(iso));
 }
+
+function tzOffsetMinutes(ms: number): number {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: TZ,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).formatToParts(ms);
+  const g = (t: string) => Number(parts.find((p) => p.type === t)?.value ?? 0);
+  const asUtc = Date.UTC(g("year"), g("month") - 1, g("day"), g("hour"), g("minute"));
+  return Math.round((asUtc - ms) / 60000);
+}
+
+/** Instant ISO d'une date (AAAA-MM-JJ) et d'une heure (HH:MM) locales à Marrakech. */
+export function zonedIso(ymd: string, hm: string): string {
+  const guess = Date.parse(`${ymd}T${hm}:00Z`);
+  return new Date(guess - tzOffsetMinutes(guess) * 60000).toISOString();
+}
+
+/** Heure locale (HH:MM) d'un instant ISO à Marrakech. */
+export function hmOf(iso: string): string {
+  return new Intl.DateTimeFormat("en-GB", { timeZone: TZ, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(Date.parse(iso));
+}

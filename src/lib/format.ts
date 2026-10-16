@@ -168,3 +168,9 @@ export function normalize(s: string): string {
 }
 
 export const PLAN_LABEL = { free: "Compte gratuit", member: "Membre", premium: "Premium" } as const;
+
+/** « 19 octobre » */
+export function dayMonthLong(iso: string): string {
+  const p = partsOf(iso);
+  return `${dayNum(p.day)} ${p.month}`;
+}

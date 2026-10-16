@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Albert_Sans, Playfair_Display } from "next/font/google";
 import { IconSprite } from "@/components/IconSprite";
 import { Switcher } from "@/components/shell/Switcher";
+import { FlyCatcher } from "@/components/ui/fly";
 import { ToastProvider } from "@/components/ui/Toasts";
 import { nowMs } from "@/lib/clock";
 import { isRealMode } from "@/lib/env";
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <IconSprite />
         <ToastProvider>
+          <FlyCatcher />
           {!real && <Switcher dateLabel={todayLong(nowMs())} />}
           <main id="spaces">{children}</main>
         </ToastProvider>

@@ -33,7 +33,8 @@ export const getViewer = cache(async (): Promise<Viewer> => {
 /** Espace membre : adhérente ou fondatrice. */
 export async function requireMember(next = "/espace") {
   const v = await getViewer();
-  if (!v.profile || (v.role !== "member" && v.role !== "founder")) redirect(`/connexion?suite=${encodeURIComponent(next)}`);
+  if (!v.profile) redirect(`/connexion?suite=${encodeURIComponent(next)}`);
+  if (v.role !== "member" && v.role !== "founder") redirect("/formules");
   return { ...v, profile: v.profile };
 }
 
