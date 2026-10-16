@@ -18,7 +18,19 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // archives de maquettes déposées à la racine
+      "brief/**",
+      "styles/**",
+      "nomad-*/**",
+      "nomad-*.html",
+      "design/**",
     ],
+  },
+  {
+    rules: {
+      // Les photos sont des fichiers locaux recadrés en CSS (object-fit, niveaux de gris) comme la maquette.
+      "@next/next/no-img-element": "off",
+    },
   },
 ];
 
