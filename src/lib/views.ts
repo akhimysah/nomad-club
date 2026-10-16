@@ -2,13 +2,14 @@
 import type { CheckoutEvent, PayEnv } from "@/components/events/CheckoutSheet";
 import type { Mine } from "@/components/events/EventBits";
 import type { TicketData } from "@/components/ui/Ticket";
-import { today } from "./clock";
+import { daysBetween, today, ymdOf } from "./clock";
+import { PRICES } from "./content";
 import { getRepo } from "./data";
 import { paymentMode, transferDetails } from "./env";
-import { dayShort, fullName, hour, money, timeRange } from "./format";
+import { dayShort, fullName, hour, money, timeRange, ymdDots, ymdLong } from "./format";
 import { qrData } from "./qr";
 import { siteUrl } from "./site";
-import type { BookingView, EventView, Viewer } from "./types";
+import type { BookingView, EventView, PaidPlan, Payment, Profile, Viewer } from "./types";
 
 /** Réservations de la personne qui regarde (compte ou billets sans compte). */
 export async function viewerBookings(v: Viewer): Promise<BookingView[]> {
@@ -84,4 +85,34 @@ export async function activeMemberCount(): Promise<{ total: number; premium: num
   const dir = await getRepo().listDirectory();
   const active = dir.filter((p) => p.role === "member" && p.plan !== "free" && p.planEndsAt && p.planEndsAt >= t);
   return { total: active.length, premium: active.filter((p) => p.plan === "premium").length };
+}
+
+/** État de l'adhésion d'une personne (accueil et « Moi »). */
+export async function membershipState(p: Profile) {
+  const t = today();
+  const payments = await getRepo().listPaymentsForProfile(p.id);
+  const recent = (x: Payment) => !!x.validatedAt && daysBetween(ymdOf(x.validatedAt), t) <= 30;
+  const pending = payments.some((x) => x.kind === "membership" && x.status === "declared" && x.method === "transfer");
+  const renewed = payments.some((x) => x.kind === "membership" && x.status === "validated" && x.membershipAction === "renew" && recent(x));
+  const days = p.planEndsAt ? Math.max(0, daysBetween(t, p.planEndsAt)) : 0;
+  const premium = p.plan === "premium";
+  return {
+    premium,
+    plan: (premium ? "premium" : "member") as PaidPlan,
+    price: premium ? PRICES.premium : PRICES.member,
+    days,
+    expired: !p.planEndsAt || p.planEndsAt < t,
+    endsLong: p.planEndsAt ? ymdLong(p.planEndsAt) : "",
+    endsDots: p.planEndsAt ? ymdDots(p.planEndsAt) : "",
+    renewed,
+    pending,
+    canRenew: !renewed && !pending && days <= 90,
+  };
+}
+export type MembershipState = Awaited<ReturnType<typeof membershipState>>;
+
+/** Prochaine réservation confirmée ou en attente de paiement. */
+export function nextBookingOf(bookings: BookingView[]): BookingView | null {
+  const t = today();
+  return bookings.filter((b) => ["paid", "offered", "pending"].includes(b.status) && ymdOf(b.event.startsAt) >= t).sort((a, b) => (a.event.startsAt < b.event.startsAt ? -1 : 1))[0] ?? null;
 }
