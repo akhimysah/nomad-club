@@ -40,10 +40,12 @@ export function Sheet({
       lastFocus.current = document.activeElement;
       setDay(document.body.classList.contains("is-day"));
       setMounted(true);
+      // Double rAF pour lancer la transition ; minuterie de secours si l'onglet est en arrière-plan.
       let r2 = 0;
       const r1 = requestAnimationFrame(() => {
         r2 = requestAnimationFrame(() => setShow(true));
       });
+      const fallback = setTimeout(() => setShow(true), 60);
       const t = setTimeout(() => {
         const f = bodyRef.current?.querySelector<HTMLElement>("input, select, textarea, button");
         f?.focus({ preventScroll: true });
@@ -51,6 +53,7 @@ export function Sheet({
       return () => {
         cancelAnimationFrame(r1);
         cancelAnimationFrame(r2);
+        clearTimeout(fallback);
         clearTimeout(t);
       };
     }

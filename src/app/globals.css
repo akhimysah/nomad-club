@@ -1051,3 +1051,7 @@ a.ev-row,a.feature,a.big-ev,a.soon,a.nc-ph,a.person,a.offer,a.side-btn,a.me-btn,
 a.feature,a.big-ev{color:#f3f3f3}
 a.nc-ph{color:#f3f3f3}
 .tab[aria-busy="true"],.btn[aria-busy="true"]{opacity:.7}
+a.kpi{display:block;text-decoration:none}
+a.sum-chip{text-decoration:none}
+.fev-card .ev-edit{margin-top:auto}
+.fev-card .ph.draft .chip{position:absolute;top:12px;left:12px}

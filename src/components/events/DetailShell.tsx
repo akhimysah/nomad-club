@@ -55,7 +55,9 @@ export function DetailShell({
     const img = imgRef.current;
     if (!reduced && src && img) {
       img.style.visibility = "hidden";
-      requestAnimationFrame(() => flyTo(src, img, () => (img.style.visibility = "visible")));
+      const show = () => (img.style.visibility = "visible");
+      requestAnimationFrame(() => flyTo(src, img, show));
+      setTimeout(show, 900);
     } else if (!reduced) {
       ref.current?.animate([{ opacity: 0, transform: "translateY(20px)" }, { opacity: 1, transform: "none" }], { duration: 420, easing: "cubic-bezier(.16,1,.3,1)" });
     }

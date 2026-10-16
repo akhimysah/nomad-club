@@ -22,7 +22,12 @@ export function TweenNumber({ value, format = "num" }: { value: number; format?:
       if (k < 1) raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
+    // Valeur finale garantie même si l'onglet est en arrière-plan (rAF suspendu).
+    const done = setTimeout(() => setShown(value), 800);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(done);
+    };
   }, [value]);
   return <>{format === "money" ? money(shown) : num(shown)}</>;
 }
