@@ -55,3 +55,4 @@ next-env.d.ts
 # site statique du carnet (npm run carnet:site)
 /carnet-site/
 /carnet-site.zip
+/carnet-server/*.db*

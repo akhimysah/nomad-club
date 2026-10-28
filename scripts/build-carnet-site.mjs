@@ -54,6 +54,10 @@ header{position:sticky;top:0;z-index:5;background:rgba(11,11,11,.88);backdrop-fi
 .bar{max-width:1240px;margin:0 auto;padding:14px var(--gut);display:flex;align-items:center;gap:14px}
 .bar img{height:34px;width:auto}
 .bar span{font:600 12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.nav{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nav form{margin:0}
+.nav a,.nav button{appearance:none;border:0;cursor:pointer;height:36px;padding:0 14px;border-radius:999px;background:var(--fill);color:var(--tx);box-shadow:inset 0 0 0 1px var(--line2);font:600 13.5px var(--sans);text-decoration:none;display:inline-flex;align-items:center}
+@media (max-width:640px){.bar span{display:none}}
 main{max-width:1240px;margin:0 auto;padding:36px var(--gut) 64px}
 .eyebrow{font:600 12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 h1{margin:8px 0 6px;font:500 clamp(34px,5vw,52px)/1.08 var(--serif)}
@@ -107,7 +111,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13.5px;text
 <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3.5 8.5V6a1 1 0 0 1 1-1h15a1 1 0 0 1 1 1v2.5a2.5 2.5 0 0 0 0 5V18a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1v-4.5a2.5 2.5 0 0 0 0-5z"/></symbol>
 <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
 </svg>
-<header><div class="bar"><img src="img/logotype-clair.png" alt="Nomad Club"><span>Carnet d’adresses</span></div></header>
+<header><div class="bar"><img src="img/logotype-clair.png" alt="Nomad Club"><span>Carnet d’adresses</span><!--NAV--></div></header>
 <main>
   <div class="eyebrow">Marrakech</div>
   <h1>Le carnet du club</h1>

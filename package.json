@@ -9,7 +9,7 @@
     "lint": "eslint",
     "seed:sql": "node --no-warnings scripts/seed-sql.mjs",
     "carnet:site": "node --no-warnings scripts/build-carnet-site.mjs",
-    "carnet:deploy": "npm run carnet:site && rsync -az --delete carnet-site/ root@srv2104549.hstgr.cloud:/var/www/carnet/"
+    "carnet:deploy": "npm run carnet:site && rsync -az --delete carnet-site/ root@srv2104549.hstgr.cloud:/opt/carnet/site/ && rsync -az carnet-server/server.mjs root@srv2104549.hstgr.cloud:/opt/carnet/server/ && ssh root@srv2104549.hstgr.cloud systemctl restart carnet"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
