@@ -51,3 +51,7 @@ next-env.d.ts
 /.claude/settings.local.json
 
 /archives/
+
+# site statique du carnet (npm run carnet:site)
+/carnet-site/
+/carnet-site.zip
