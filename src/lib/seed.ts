@@ -1,7 +1,7 @@
 /**
  * Données d'exemple du Nomad Club (mode démo).
  * Date de référence : mercredi 14 octobre 2026.
- * Ce fichier est autonome (aucun import d'exécution) : il sert aussi à générer supabase/seed.sql
+ * Ce fichier n'importe que des données (carnet-annuaire.ts) : il sert aussi à générer supabase/seed.sql
  * avec `npm run seed:sql`.
  */
 import type {
@@ -18,6 +18,7 @@ import type {
   Reminder,
   Role,
 } from "./types";
+import { ANNUAIRE } from "./carnet-annuaire.ts";
 
 export type SeedData = {
   profiles: Profile[];
@@ -172,7 +173,7 @@ export function createSeed(): SeedData {
   const memberGen = generated.filter((p) => p.plan === "member");
 
   /* ---------------- carnet ---------------- */
-  const places: Place[] = [
+  const clubPlaces: Omit<Place, "phone" | "address" | "hours" | "tags" | "badge">[] = [
     { id: "pl-fer7", slug: "fer7", name: "Fer7", kind: "Restaurant", area: "Golf, route d’Amizmiz", note: "Izakaya face aux greens. Notre lunch du lundi.", categories: ["manger"], recommendedBy: "Julia", clubEventLabel: "Lunch Raffiné & Networking", clubEventDate: "2026-01-26", url: null, image: "lunch-fer7.jpg", imagePosition: "40% 45%" },
     { id: "pl-amaj", slug: "maison-amaj", name: "Maison Amaj", kind: "Pâtisserie, petit-déjeuner", area: "Guéliz", note: "L’adresse de Mounir El Fahsi, vainqueur du Meilleur Pâtissier.", categories: ["manger", "famille"], recommendedBy: "Nora", clubEventLabel: "Petit-déjeuner, édition mixte", clubEventDate: "2026-08-04", url: null, image: null, imagePosition: null },
     { id: "pl-padel", slug: "urban-padel", name: "Urban Padel", kind: "Sport", area: "Targa", note: "Nos tournois féminins. Réserve le terrain 3 jours avant.", categories: ["bien-etre-sport"], recommendedBy: "Julia", clubEventLabel: "Tournoi de padel féminin", clubEventDate: "2026-08-08", url: null, image: "padel.jpg", imagePosition: "50% 90%" },
@@ -184,6 +185,7 @@ export function createSeed(): SeedData {
     { id: "pl-ranch", slug: "the-ranch-morocco", name: "The Ranch Morocco", kind: "Famille", area: "Route de l’Ourika", note: "Ferme pédagogique et poneys, les enfants adorent.", categories: ["famille"], recommendedBy: "Nora", clubEventLabel: null, clubEventDate: null, url: null, image: null, imagePosition: null },
     { id: "pl-avabay", slug: "avabay", name: "AVABAY", kind: "Brunch, lieu d’événement", area: "Palmeraie", note: "Un lieu qui invite à ralentir. Notre brunch neurosciences.", categories: ["manger", "sortir"], recommendedBy: "Julia", clubEventLabel: "Brunch Networking & Neurosciences", clubEventDate: "2026-10-11", url: null, image: null, imagePosition: null },
   ];
+  const places: Place[] = [...clubPlaces.map((p) => ({ ...p, phone: null, address: null, hours: null, tags: [], badge: null })), ...ANNUAIRE];
 
   /* ---------------- rendez-vous ---------------- */
   const LUNCH = [

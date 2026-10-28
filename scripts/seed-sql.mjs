@@ -60,7 +60,8 @@ insert(
 insert(
   "places",
   ["id", "slug", "name", "kind", "area", "note", "categories", "recommended_by", "club_event_label", "club_event_date", "url", "image", "image_position", "sort_order"],
-  s.places.map((p, i) => [q(uuid(p.id)), q(p.slug), q(p.name), q(p.kind), q(p.area), q(p.note), arr(p.categories), q(p.recommendedBy), q(p.clubEventLabel), q(p.clubEventDate), q(p.url), q(p.image), q(p.imagePosition), i]),
+  // Les lieux du club seulement : l'annuaire est inséré par supabase/migrations/0002_carnet_annuaire.sql.
+  s.places.filter((p) => !p.id.startsWith("an-")).map((p, i) => [q(uuid(p.id)), q(p.slug), q(p.name), q(p.kind), q(p.area), q(p.note), arr(p.categories), q(p.recommendedBy), q(p.clubEventLabel), q(p.clubEventDate), q(p.url), q(p.image), q(p.imagePosition), i]),
 );
 
 insert(

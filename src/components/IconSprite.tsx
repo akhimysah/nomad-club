@@ -1,5 +1,5 @@
 /** Pictogrammes de la maquette (symboles SVG réutilisés via <use>). */
-export const ICONS = ["home", "cal", "users", "book", "spark", "user", "heart", "star", "chev-r", "chev-l", "chev-d", "x", "check", "pin", "clock", "ticket", "send", "search", "plus", "inbox", "grid", "wallet", "chat", "bell", "arrow-r", "crown", "gift", "lock", "edit", "swap", "card", "refresh"] as const;
+export const ICONS = ["home", "cal", "users", "book", "spark", "user", "heart", "star", "chev-r", "chev-l", "chev-d", "x", "check", "pin", "clock", "ticket", "send", "search", "plus", "inbox", "grid", "wallet", "chat", "bell", "arrow-r", "crown", "gift", "lock", "edit", "swap", "card", "refresh", "phone", "globe"] as const;
 export type IconName = (typeof ICONS)[number];
 
 export function IconSprite() {
@@ -21,6 +21,8 @@ export function IconSprite() {
         <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
         <symbol id="i-check" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5L19.5 7"/></symbol>
         <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+        <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3.5l1.8 4.5-2.3 1.4a11 11 0 0 0 6.1 6.1l1.4-2.3L20 15.5V19a1.5 1.5 0 0 1-1.6 1.5A16.5 16.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4z"/></symbol>
+        <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.5 5.2 3.5 8.5s-1.1 6.1-3.5 8.5c-2.4-2.4-3.5-5.2-3.5-8.5s1.1-6.1 3.5-8.5z"/></symbol>
         <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
         <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 7h18v3.5a1.5 1.5 0 0 0 0 3V17H3v-3.5a1.5 1.5 0 0 0 0-3z"/><path d="M15 7.5v1.5M15 11.2v1.6M15 15v1.5"/></symbol>
         <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-6 16-2.5-6.5z"/><path d="M11.5 13.5 20 4"/></symbol>

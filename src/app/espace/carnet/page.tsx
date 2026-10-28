@@ -22,7 +22,7 @@ export default async function CarnetPage({ searchParams }: Props) {
           <div>
             <div className="eyebrow desk-only">Carnet d’adresses</div>
             <h1 className="scr-title">Le carnet du club</h1>
-            <p className="scr-sub">Des lieux où le club est allé. Testés, pas sponsorisés.</p>
+            <p className="scr-sub">Les lieux où le club est allé, et l’annuaire pratique de Marrakech : santé, beauté, urgences, services.</p>
           </div>
         </div>
         <Carnet places={places} initial={initial} />

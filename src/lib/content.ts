@@ -37,9 +37,16 @@ export const AI_SUGGESTIONS = [
 
 export const PLACE_FILTERS = [
   { key: "tout", label: "Tout" },
+  { key: "club", label: "Le club y était" },
   { key: "manger", label: "Manger" },
   { key: "sortir", label: "Sortir" },
+  { key: "hotels-piscines", label: "Hôtels et piscines" },
   { key: "bien-etre-sport", label: "Bien-être et sport" },
+  { key: "beaute", label: "Beauté" },
+  { key: "sante", label: "Santé" },
+  { key: "urgences", label: "Urgences" },
+  { key: "shopping", label: "Shopping" },
+  { key: "pratique", label: "Pratique" },
   { key: "famille", label: "En famille" },
 ] as const;
 

@@ -66,6 +66,11 @@ function toPlace(r: Row): Place {
     url: strN(r.url),
     image: strN(r.image),
     imagePosition: strN(r.image_position),
+    phone: strN(r.phone),
+    address: strN(r.address),
+    hours: strN(r.hours),
+    tags: (r.tags as string[] | null) ?? [],
+    badge: (strN(r.badge) as Place["badge"]) ?? null,
   };
 }
 

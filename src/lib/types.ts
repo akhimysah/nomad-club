@@ -29,7 +29,17 @@ export type Profile = {
   createdAt: string;
 };
 
-export type PlaceCategory = "manger" | "sortir" | "bien-etre-sport" | "famille";
+export type PlaceCategory =
+  | "manger"
+  | "sortir"
+  | "bien-etre-sport"
+  | "famille"
+  | "hotels-piscines"
+  | "beaute"
+  | "sante"
+  | "urgences"
+  | "shopping"
+  | "pratique";
 
 export type Place = {
   id: string;
@@ -45,6 +55,13 @@ export type Place = {
   url: string | null;
   image: string | null;
   imagePosition: string | null;
+  /** Infos pratiques (annuaire) : téléphone, adresse, horaires. */
+  phone: string | null;
+  address: string | null;
+  hours: string | null;
+  tags: string[];
+  /** Mise en avant : coup de cœur, nouveau, exclusif. */
+  badge: "top" | "new" | "exclusive" | null;
 };
 
 export type EventStatus = "draft" | "published" | "cancelled";
