@@ -186,6 +186,19 @@ export default async function MoiPage() {
                 </Link>
               ))}
             </section>
+            {/* --- Mot de passe --- */}
+            <section className="card">
+              <Link href="/compte/mot-de-passe?suite=%2Fespace%2Fmoi" className="offer">
+                <span className="ph" style={{ width: 60, height: 60, borderRadius: 16, flex: "none", display: "grid", placeItems: "center" }}>
+                  <Icon name="lock" />
+                </span>
+                <span>
+                  <b>Mon mot de passe</b>
+                  <span>Le choisir ou le changer, pour te connecter sans attendre d’e-mail</span>
+                </span>
+                <Icon name="chev-r" />
+              </Link>
+            </section>
             {/* --- Lot 6 --- */}
             <section className="card">
               <Link href="/espace/moi/donnees" className="offer">

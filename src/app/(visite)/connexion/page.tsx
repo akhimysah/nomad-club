@@ -75,6 +75,9 @@ export default async function LoginPage({ searchParams }: Props) {
                       Ma fiche et mes réglages
                     </Link>
                   )}
+                  <Link className="btn btn-ghost" href={`/compte/mot-de-passe?suite=${encodeURIComponent(next)}`}>
+                    <Icon name="lock" /> Mon mot de passe
+                  </Link>
                   <form action={signOut}>
                     <button className="btn btn-ghost" type="submit">
                       Me déconnecter
@@ -84,7 +87,7 @@ export default async function LoginPage({ searchParams }: Props) {
               </>
             ) : (
               <>
-                <p className="sh-sub">Entre ton e-mail : tu reçois un lien pour te connecter, sans mot de passe.</p>
+                <p className="sh-sub">Avec ton mot de passe, ou un lien reçu par e-mail.</p>
                 {erreur && (
                   <div className="flash">
                     <Icon name="bell" />

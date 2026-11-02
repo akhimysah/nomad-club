@@ -22,6 +22,11 @@ export const RATE_LIMITS = {
   magicLinkIp: { limit: 6, windowSec: 15 * 60, message: "Trop de demandes de lien de connexion. Réessaie dans un quart d’heure." },
   /** …et par adresse e-mail (évite d'inonder une boîte). */
   magicLinkEmail: { limit: 3, windowSec: 15 * 60, message: "Un lien vient déjà de partir vers cette adresse. Regarde ta boîte (et les indésirables), ou réessaie dans un quart d’heure." },
+  /** Connexion par mot de passe : par adresse IP et par compte (essais en rafale). */
+  passwordIp: { limit: 20, windowSec: 15 * 60, message: "Trop d’essais de connexion. Réessaie dans un quart d’heure." },
+  passwordEmail: { limit: 8, windowSec: 15 * 60, message: "Trop d’essais pour cette adresse. Réessaie dans un quart d’heure, ou reçois un lien de connexion." },
+  /** Mot de passe oublié : par adresse e-mail. */
+  passwordReset: { limit: 3, windowSec: 60 * 60, message: "Un lien vient déjà de partir vers cette adresse. Regarde ta boîte (et les indésirables), ou réessaie dans une heure." },
   /** Messages au salon et privés : par personne. */
   message: { limit: 20, windowSec: 60, message: "Tu envoies beaucoup de messages d’affilée. Patiente une minute." },
   /** Signalements (Lot 1) : par personne. */

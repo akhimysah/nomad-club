@@ -115,3 +115,20 @@ html{-webkit-tap-highlight-color:transparent}
 @keyframes launchWord{from{opacity:0;letter-spacing:.9em}to{opacity:1;letter-spacing:.42em}}
 @keyframes launchOut{to{opacity:0;transform:scale(1.06);visibility:hidden}}
 @media (prefers-reduced-motion:reduce){.launching .launch{display:none}}
+
+/* --- Connexion : mot de passe ou lien --- */
+.login-form .field-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px}
+.login-form .field-top label{margin:0}
+.link-btn{appearance:none;border:0;background:none;padding:0;color:var(--muted);font:500 13.5px var(--sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.link-btn:hover{color:var(--tx)}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:56px}
+.pw-eye{appearance:none;border:0;background:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--muted);cursor:pointer}
+.pw-eye:hover{color:var(--tx);background:var(--fill)}
+.login-or{display:flex;align-items:center;gap:14px;margin:18px 0;color:var(--muted);font:500 13px var(--sans);text-transform:uppercase;letter-spacing:.14em}
+.login-or::before,.login-or::after{content:"";flex:1;height:1px;background:var(--line)}
+.login-more{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.login-more summary{cursor:pointer;color:var(--muted);font:500 14px var(--sans);list-style:none;text-align:center}
+.login-more summary::-webkit-details-marker{display:none}
+.login-more[open] summary{margin-bottom:14px}
+.pw-page{max-width:520px;margin:0 auto}

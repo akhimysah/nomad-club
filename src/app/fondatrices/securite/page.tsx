@@ -73,6 +73,9 @@ export default async function SecurityPage() {
                   <Link className="link" href="/connexion/double-authentification?suite=/fondatrices/securite">
                     Écran de double authentification <Icon name="arrow-r" />
                   </Link>
+                  <Link className="link" href="/compte/mot-de-passe?suite=/fondatrices/securite">
+                    Choisir ou changer mon mot de passe <Icon name="arrow-r" />
+                  </Link>
                 </>
               )}
               <MfaEnforceToggle enforced={settings.adminMfaEnforced} disabled={demo ? "En démo, le réglage est enregistré mais sans effet." : null} />
