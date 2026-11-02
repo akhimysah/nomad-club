@@ -112,7 +112,12 @@ export function checkEnv(env, opts = {}) {
   // --- E-mails ---
   const resend = v("RESEND_API_KEY");
   const from = v("EMAIL_FROM");
-  if (!resend) warnings.push("RESEND_API_KEY absente : aucun e-mail de l'appli ne partira (invitations, réponses aux candidatures…). Les liens de connexion passent par le SMTP de Supabase.");
+  const smtp = v("EMAIL_PROVIDER") === "smtp";
+  if (smtp) {
+    if (!v("SMTP_HOST") || !v("SMTP_USER") || !v("SMTP_PASSWORD")) errors.push("EMAIL_PROVIDER=smtp : SMTP_HOST, SMTP_USER et SMTP_PASSWORD sont nécessaires.");
+    else ok.push(`SMTP : ${v("SMTP_USER")} via ${v("SMTP_HOST")}`);
+    if (!from) errors.push("EMAIL_FROM manquant (ex. « Nomad Club <adresse@gmail.com> »).");
+  } else if (!resend) warnings.push("RESEND_API_KEY absente : aucun e-mail de l'appli ne partira (invitations, réponses aux candidatures…). Les liens de connexion passent par le SMTP de Supabase.");
   else if (!/^re_[A-Za-z0-9_]{10,}$/.test(resend)) errors.push("RESEND_API_KEY : format attendu re_….");
   else ok.push("Resend : clé présente");
   if (resend && !from) errors.push("EMAIL_FROM manquant (ex. « Nomad Club <bonjour@votre-domaine.ma> »).");
