@@ -23,6 +23,8 @@ import type {
   Reminder,
 } from "./types";
 import { ANNUAIRE } from "./carnet-annuaire.ts";
+import { createEngagementSeed } from "./modules/engagement/seed.ts"; // --- Lot 4 ---
+import type { EngagementSeed } from "./modules/engagement/types";
 
 export type SeedData = {
   profiles: Profile[];
@@ -40,6 +42,8 @@ export type SeedData = {
   auditLog: AuditEntry[];
   notifications: AppNotification[];
   notificationPrefs: NotificationPref[];
+  // --- Lot 4 ---
+  engagement: EngagementSeed;
 };
 
 /** Identifiants fixes utilisés par le mode démo. */
@@ -547,5 +551,6 @@ export function createSeed(): SeedData {
   return {
     profiles, places, events, bookings, payments, memberships, memories, messages, reminders, partnerOffers,
     organizations, organizationMembers, auditLog, notifications, notificationPrefs,
+    engagement: createEngagementSeed(), // --- Lot 4 ---
   };
 }

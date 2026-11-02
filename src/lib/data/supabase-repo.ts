@@ -8,6 +8,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Snapshot } from "../domain/founders";
 import { fullName } from "../format";
 import { inCircle, isAdmin, isGrantableRole } from "../permissions";
+import { supabaseEngagementRepo } from "../modules/engagement/supabase"; // --- Lot 4 ---
 import { supabaseAdmin, supabaseServer } from "../supabase/server";
 import type {
   AppNotification,
@@ -299,6 +300,9 @@ function ticketToView(j: Row | null): BookingView | null {
 }
 
 export const supabaseRepo: Repo = {
+  // --- Lot 4 --- (engagement : dashboard, boutique, parrainage, business)
+  ...supabaseEngagementRepo,
+
   async getProfile(id) {
     const c = await db();
     const r = check(await c.from("profiles").select(PROFILE).eq("id", id).maybeSingle()) as Row | null;

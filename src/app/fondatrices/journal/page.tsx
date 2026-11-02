@@ -5,6 +5,7 @@ import { Screen } from "@/components/ui/Screen";
 import { requireCapability } from "@/lib/auth";
 import { getRepo } from "@/lib/data";
 import { dayMonthShort, fullName, hour } from "@/lib/format";
+import { ENGAGEMENT_AUDIT_LABEL } from "@/lib/modules/engagement/labels"; // --- Lot 4 ---
 import type { AuditAction } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Journal des opérations" };
@@ -18,6 +19,8 @@ const ACTION_LABEL: Record<AuditAction, string> = {
   "role.grant": "Rôle ajouté",
   "role.revoke": "Rôle retiré",
   "reminder.send": "Relance",
+  // --- Lot 4 ---
+  ...ENGAGEMENT_AUDIT_LABEL,
 };
 
 /** Journal des opérations importantes (lecture seule). */

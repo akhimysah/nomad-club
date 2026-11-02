@@ -38,11 +38,22 @@ export const CAPABILITIES = [
   // pilotage
   "crm.access",
   "audit.view",
+  // --- Lot 4 --- (engagement)
+  "dashboard.customize",
+  "shop.buy",
+  "shop.manage",
+  "referral.use",
+  "referral.manage",
+  "business.use",
+  "business.manage",
 ] as const;
 
 export type Capability = (typeof CAPABILITIES)[number];
 
-const MEMBER: Capability[] = ["space.member", "events.book", "members.view_directory", "messages.post", "carnet.view", "offers.view"];
+// --- Lot 4 --- : dashboard à widgets, boutique, parrainage et Espace Business pour le cercle (l'admin a tout)
+const LOT4_MEMBER: Capability[] = ["dashboard.customize", "shop.buy", "referral.use", "business.use"];
+
+const MEMBER: Capability[] = ["space.member", "events.book", "members.view_directory", "messages.post", "carnet.view", "offers.view", ...LOT4_MEMBER];
 
 /** Matrice rôle → capacités. Les capacités se cumulent quand une personne a plusieurs rôles. */
 export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {

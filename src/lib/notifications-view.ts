@@ -2,6 +2,7 @@ import { nowMs } from "./clock";
 import { getRepo } from "./data";
 import { messageTime } from "./format";
 import { NOTIFICATION_LABEL, NOTIFICATION_TYPES } from "./notify";
+import { ENGAGEMENT_NOTIFICATION_ICON } from "./modules/engagement/labels"; // --- Lot 4 ---
 import type { NotificationType } from "./types";
 import type { IconName } from "@/components/IconSprite";
 
@@ -11,6 +12,8 @@ export const NOTIFICATION_ICON: Record<NotificationType, IconName> = {
   event_published: "cal",
   payment_validated: "wallet",
   role_changed: "lock",
+  // --- Lot 4 ---
+  ...ENGAGEMENT_NOTIFICATION_ICON,
 };
 
 export type NotificationItem = {

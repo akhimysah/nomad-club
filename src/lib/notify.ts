@@ -8,6 +8,7 @@ import { getRepo } from "./data";
 import type { NotificationInput } from "./data/repo";
 import { dayMonthShort, money } from "./format";
 import { inCircle, ROLE_LABEL } from "./permissions";
+import { ENGAGEMENT_NOTIFICATION_LABEL } from "./modules/engagement/labels"; // --- Lot 4 ---
 import type { ClubEvent, GrantableRole, NotificationType, Payment, Profile } from "./types";
 
 export const NOTIFICATION_LABEL: Record<NotificationType, { label: string; hint: string }> = {
@@ -16,6 +17,8 @@ export const NOTIFICATION_LABEL: Record<NotificationType, { label: string; hint:
   event_published: { label: "Nouveaux rendez-vous", hint: "Un rendez-vous vient d’être publié." },
   payment_validated: { label: "Paiements", hint: "Ton virement est validé par les fondatrices." },
   role_changed: { label: "Accès", hint: "Un nouvel espace s’ouvre sur ton compte." },
+  // --- Lot 4 ---
+  ...ENGAGEMENT_NOTIFICATION_LABEL,
 };
 
 export const NOTIFICATION_TYPES = Object.keys(NOTIFICATION_LABEL) as NotificationType[];
