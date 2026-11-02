@@ -137,7 +137,7 @@ insert into public.profiles (id, first_name, last_name, whatsapp, email, job, co
   ('56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'Romane', 'Bouzidi', '+212 6 71 86 57 90', null, 'Experte-comptable', 'Française', null, 'premium', '2027-06-20', '2024', 'NC 0530', '2024-06-20T09:00:00.000Z'),
   ('9b5e52ed-4528-4964-a8ae-72770abb2376', 'Sanaa', 'Morel', '+212 6 68 33 13 79', null, 'Professeure de français', 'Franco-marocaine', null, 'member', '2027-07-25', '2023', 'NC 0531', '2024-07-25T09:00:00.000Z'),
   ('594ed44a-9998-4b0a-a2f3-3ac4862554bd', 'Mathilde', 'Cherkaoui', '+212 6 17 53 85 43', null, 'Responsable marketing', 'Italienne', null, 'premium', '2027-08-04', '2022', 'NC 0532', '2024-08-04T09:00:00.000Z'),
-  ('fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna', 'Chevalier', '+212 6 13 21 36 45', 'loubna@exemple.com', 'Ostéopathe', 'Libanaise', null, 'member', '2027-09-09', '2024', 'NC 0533', '2024-09-09T09:00:00.000Z'),
+  ('fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna', 'Cherkaoui', '+212 6 13 21 36 45', 'loubna@exemple.com', 'Ostéopathe', 'Libanaise', null, 'member', '2027-09-09', '2024', 'NC 0533', '2024-09-09T09:00:00.000Z'),
   ('f4053e15-1e34-4e72-ab73-13f0b2e3362f', 'Eva', 'Filali', '+212 6 10 60 86 49', null, 'Photographe culinaire', 'Belge', null, 'member', '2027-04-14', '2023', 'NC 0534', '2024-04-14T09:00:00.000Z'),
   ('182fbd7d-4182-40ce-a19e-3ebf4b7af858', 'Ikram', 'Robin', '+212 6 86 94 91 83', null, 'Fondatrice d’une marque de céramique', 'Canadienne', null, 'premium', '2027-05-19', '2022', 'NC 0535', '2024-05-19T09:00:00.000Z'),
   ('2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', 'Héloïse', 'Kadiri', '+212 6 64 97 96 34', null, 'Ingénieure', 'Britannique', null, 'member', '2027-06-24', '2024', 'NC 0536', '2024-06-24T09:00:00.000Z'),
@@ -348,7 +348,7 @@ insert into public.payments (id, profile_id, payer_name, kind, booking_id, plan,
   ('74049315-f7ad-497c-a73f-47f233345b70', '56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'Romane Bouzidi', 'booking', null, null, null, 30, 'card', 'validated', '2025-11-01T11:00:00.000Z', '2025-11-01T11:00:00.000Z', null),
   ('ea76e721-dbf7-41b1-a466-ce8e5fe22beb', '9b5e52ed-4528-4964-a8ae-72770abb2376', 'Sanaa Morel', 'booking', null, null, null, 25, 'card', 'validated', '2025-11-04T11:00:00.000Z', '2025-11-04T11:00:00.000Z', null),
   ('d41ad36e-4e76-47b0-a426-2d9622584e1f', '594ed44a-9998-4b0a-a2f3-3ac4862554bd', 'Mathilde Cherkaoui', 'booking', null, null, null, 60, 'card', 'validated', '2025-11-07T11:00:00.000Z', '2025-11-07T11:00:00.000Z', null),
-  ('91031a5c-9195-41c2-a3c0-45bbdd935782', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Chevalier', 'booking', null, null, null, 90, 'card', 'validated', '2025-11-10T11:00:00.000Z', '2025-11-10T11:00:00.000Z', null),
+  ('91031a5c-9195-41c2-a3c0-45bbdd935782', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Cherkaoui', 'booking', null, null, null, 90, 'card', 'validated', '2025-11-10T11:00:00.000Z', '2025-11-10T11:00:00.000Z', null),
   ('90316c0b-c31e-41a2-a1d5-3fe8e09cb55d', 'f4053e15-1e34-4e72-ab73-13f0b2e3362f', 'Eva Filali', 'booking', null, null, null, 90, 'card', 'validated', '2025-11-13T11:00:00.000Z', '2025-11-13T11:00:00.000Z', null),
   ('c44e29ec-94ba-4a2c-a9b9-0e503d3387f8', '182fbd7d-4182-40ce-a19e-3ebf4b7af858', 'Ikram Robin', 'booking', null, null, null, 60, 'card', 'validated', '2025-11-16T11:00:00.000Z', '2025-11-16T11:00:00.000Z', null),
   ('28330f6f-eb75-4829-a122-656c83c4dbd0', '2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', 'Héloïse Kadiri', 'membership', null, 'member', 'join', 670, 'transfer', 'validated', '2025-12-03T08:30:00.000Z', '2025-12-03T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
@@ -397,7 +397,7 @@ insert into public.payments (id, profile_id, payer_name, kind, booking_id, plan,
   ('670ac7ee-7b12-4a39-a4c5-ffc588d29668', '56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'Romane Bouzidi', 'membership', null, 'member', 'join', 670, 'transfer', 'validated', '2026-01-21T08:30:00.000Z', '2026-01-21T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
   ('1b8e965f-a689-4991-a8bf-51bd2b201c47', '9b5e52ed-4528-4964-a8ae-72770abb2376', 'Sanaa Morel', 'membership', null, 'member', 'renew', 670, 'transfer', 'validated', '2026-01-04T08:30:00.000Z', '2026-01-04T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
   ('4dfafd98-9419-4581-a405-2b4f940ded82', '594ed44a-9998-4b0a-a2f3-3ac4862554bd', 'Mathilde Cherkaoui', 'membership', null, 'member', 'renew', 670, 'transfer', 'validated', '2026-01-11T08:30:00.000Z', '2026-01-11T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
-  ('40ce811e-1f61-441a-aadd-4a9d8db47a19', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Chevalier', 'booking', null, null, null, 60, 'card', 'validated', '2026-01-01T11:00:00.000Z', '2026-01-01T11:00:00.000Z', null),
+  ('40ce811e-1f61-441a-aadd-4a9d8db47a19', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Cherkaoui', 'booking', null, null, null, 60, 'card', 'validated', '2026-01-01T11:00:00.000Z', '2026-01-01T11:00:00.000Z', null),
   ('153e7dd5-6b5e-44ed-a83b-dc2f8bd7967a', 'f4053e15-1e34-4e72-ab73-13f0b2e3362f', 'Eva Filali', 'booking', null, null, null, 50, 'card', 'validated', '2026-01-04T11:00:00.000Z', '2026-01-04T11:00:00.000Z', null),
   ('87c21269-f4bd-4d6f-aed2-37f6fe72f9e1', '182fbd7d-4182-40ce-a19e-3ebf4b7af858', 'Ikram Robin', 'booking', null, null, null, 60, 'card', 'validated', '2026-01-07T11:00:00.000Z', '2026-01-07T11:00:00.000Z', null),
   ('1fc42963-d6b1-4f58-a01b-954df4fce412', '2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', 'Héloïse Kadiri', 'booking', null, null, null, 50, 'card', 'validated', '2026-01-10T11:00:00.000Z', '2026-01-10T11:00:00.000Z', null),
@@ -446,7 +446,7 @@ insert into public.payments (id, profile_id, payer_name, kind, booking_id, plan,
   ('a54a4a3f-31db-400a-a871-2ad90403a6d4', '56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'Romane Bouzidi', 'booking', null, null, null, 90, 'card', 'validated', '2026-01-04T11:00:00.000Z', '2026-01-04T11:00:00.000Z', null),
   ('c43dcd56-d05a-40f4-a411-e6342c61fc09', '9b5e52ed-4528-4964-a8ae-72770abb2376', 'Sanaa Morel', 'booking', null, null, null, 75, 'card', 'validated', '2026-01-07T11:00:00.000Z', '2026-01-07T11:00:00.000Z', null),
   ('3fea3966-c031-4c36-af27-e6c1bb69e0b8', '594ed44a-9998-4b0a-a2f3-3ac4862554bd', 'Mathilde Cherkaoui', 'booking', null, null, null, 30, 'card', 'validated', '2026-01-10T11:00:00.000Z', '2026-01-10T11:00:00.000Z', null),
-  ('7f54a9f4-5d30-47f5-a348-780d85dbb1b5', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Chevalier', 'membership', null, 'member', 'join', 670, 'transfer', 'validated', '2026-02-03T08:30:00.000Z', '2026-02-03T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
+  ('7f54a9f4-5d30-47f5-a348-780d85dbb1b5', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Cherkaoui', 'membership', null, 'member', 'join', 670, 'transfer', 'validated', '2026-02-03T08:30:00.000Z', '2026-02-03T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
   ('ea27ff5e-a67b-4557-ad9e-fdcc0858a161', 'f4053e15-1e34-4e72-ab73-13f0b2e3362f', 'Eva Filali', 'membership', null, 'member', 'renew', 670, 'transfer', 'validated', '2026-02-10T08:30:00.000Z', '2026-02-10T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
   ('341398b7-abf9-447a-a29c-f648bc49bacf', '182fbd7d-4182-40ce-a19e-3ebf4b7af858', 'Ikram Robin', 'membership', null, 'member', 'renew', 670, 'transfer', 'validated', '2026-02-17T08:30:00.000Z', '2026-02-17T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
   ('6f41c966-ffa3-4fae-a04c-8aceb9e62996', '2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', 'Héloïse Kadiri', 'booking', null, null, null, 60, 'card', 'validated', '2026-02-01T11:00:00.000Z', '2026-02-01T11:00:00.000Z', null),
@@ -495,7 +495,7 @@ insert into public.payments (id, profile_id, payer_name, kind, booking_id, plan,
   ('22affc88-ac43-4f76-a18a-d4621a83e539', '56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'Romane Bouzidi', 'booking', null, null, null, 60, 'card', 'validated', '2026-03-01T11:00:00.000Z', '2026-03-01T11:00:00.000Z', null),
   ('e4f27180-f0ac-4c71-adb0-a8c890766a72', '9b5e52ed-4528-4964-a8ae-72770abb2376', 'Sanaa Morel', 'booking', null, null, null, 50, 'card', 'validated', '2026-03-04T11:00:00.000Z', '2026-03-04T11:00:00.000Z', null),
   ('91b9e5a1-fea0-46d7-af16-c30a0cec1c81', '594ed44a-9998-4b0a-a2f3-3ac4862554bd', 'Mathilde Cherkaoui', 'booking', null, null, null, 60, 'card', 'validated', '2026-03-07T11:00:00.000Z', '2026-03-07T11:00:00.000Z', null),
-  ('8a1b920f-19ae-4f01-ad2e-f039750e3dd7', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Chevalier', 'booking', null, null, null, 50, 'card', 'validated', '2026-03-10T11:00:00.000Z', '2026-03-10T11:00:00.000Z', null),
+  ('8a1b920f-19ae-4f01-ad2e-f039750e3dd7', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Cherkaoui', 'booking', null, null, null, 50, 'card', 'validated', '2026-03-10T11:00:00.000Z', '2026-03-10T11:00:00.000Z', null),
   ('c6c4784f-712f-4a6f-a7ae-073847066cbf', 'f4053e15-1e34-4e72-ab73-13f0b2e3362f', 'Eva Filali', 'booking', null, null, null, 75, 'card', 'validated', '2026-03-13T11:00:00.000Z', '2026-03-13T11:00:00.000Z', null),
   ('9b7984c9-aba3-4339-a86e-8fe3ef9c7808', '182fbd7d-4182-40ce-a19e-3ebf4b7af858', 'Ikram Robin', 'booking', null, null, null, 90, 'card', 'validated', '2026-03-16T11:00:00.000Z', '2026-03-16T11:00:00.000Z', null),
   ('9664df28-49b8-4555-a058-59436de51fb8', '2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', 'Héloïse Kadiri', 'booking', null, null, null, 50, 'card', 'validated', '2026-03-19T11:00:00.000Z', '2026-03-19T11:00:00.000Z', null),
@@ -544,7 +544,7 @@ insert into public.payments (id, profile_id, payer_name, kind, booking_id, plan,
   ('8c874ddb-d646-4b08-a00d-682feaf69018', '56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'Romane Bouzidi', 'membership', null, 'member', 'join', 670, 'transfer', 'validated', '2026-04-24T08:30:00.000Z', '2026-04-24T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
   ('bc06a340-e039-427e-a025-96cfbe961766', '9b5e52ed-4528-4964-a8ae-72770abb2376', 'Sanaa Morel', 'booking', null, null, null, 60, 'card', 'validated', '2026-04-01T11:00:00.000Z', '2026-04-01T11:00:00.000Z', null),
   ('3822429b-feaa-44f4-a280-01f8b12dd046', '594ed44a-9998-4b0a-a2f3-3ac4862554bd', 'Mathilde Cherkaoui', 'booking', null, null, null, 50, 'card', 'validated', '2026-04-04T11:00:00.000Z', '2026-04-04T11:00:00.000Z', null),
-  ('788e07e8-cc8f-4d3a-a77b-a39ebdb39a89', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Chevalier', 'booking', null, null, null, 60, 'card', 'validated', '2026-04-07T11:00:00.000Z', '2026-04-07T11:00:00.000Z', null),
+  ('788e07e8-cc8f-4d3a-a77b-a39ebdb39a89', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Cherkaoui', 'booking', null, null, null, 60, 'card', 'validated', '2026-04-07T11:00:00.000Z', '2026-04-07T11:00:00.000Z', null),
   ('1be309ce-3095-4bce-aa99-261c65b33756', 'f4053e15-1e34-4e72-ab73-13f0b2e3362f', 'Eva Filali', 'booking', null, null, null, 50, 'card', 'validated', '2026-04-10T11:00:00.000Z', '2026-04-10T11:00:00.000Z', null),
   ('2950cff2-5fe0-41ec-a5f9-aef72d3eb4c0', '182fbd7d-4182-40ce-a19e-3ebf4b7af858', 'Ikram Robin', 'booking', null, null, null, 75, 'card', 'validated', '2026-04-13T11:00:00.000Z', '2026-04-13T11:00:00.000Z', null),
   ('9bd751c8-c60c-44ca-a86f-23fe6cc8d85a', '2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', 'Héloïse Kadiri', 'booking', null, null, null, 90, 'card', 'validated', '2026-04-16T11:00:00.000Z', '2026-04-16T11:00:00.000Z', null),
@@ -593,7 +593,7 @@ insert into public.payments (id, profile_id, payer_name, kind, booking_id, plan,
   ('aca61e43-b067-457e-a2dc-19a6caf13b6d', '56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'Romane Bouzidi', 'booking', null, null, null, 50, 'card', 'validated', '2026-05-07T11:00:00.000Z', '2026-05-07T11:00:00.000Z', null),
   ('176d45e1-c67f-42ed-ab5f-f6a653901cd0', '9b5e52ed-4528-4964-a8ae-72770abb2376', 'Sanaa Morel', 'booking', null, null, null, 60, 'card', 'validated', '2026-05-10T11:00:00.000Z', '2026-05-10T11:00:00.000Z', null),
   ('651e9ebd-89e1-48db-a230-c9a6ebc5142e', '594ed44a-9998-4b0a-a2f3-3ac4862554bd', 'Mathilde Cherkaoui', 'booking', null, null, null, 50, 'card', 'validated', '2026-05-13T11:00:00.000Z', '2026-05-13T11:00:00.000Z', null),
-  ('2bf5497f-a547-4d36-a217-411e861b3385', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Chevalier', 'booking', null, null, null, 75, 'card', 'validated', '2026-05-16T11:00:00.000Z', '2026-05-16T11:00:00.000Z', null),
+  ('2bf5497f-a547-4d36-a217-411e861b3385', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Cherkaoui', 'booking', null, null, null, 75, 'card', 'validated', '2026-05-16T11:00:00.000Z', '2026-05-16T11:00:00.000Z', null),
   ('72d1a8b0-6aee-4350-aa59-00ca83f700ac', 'f4053e15-1e34-4e72-ab73-13f0b2e3362f', 'Eva Filali', 'booking', null, null, null, 90, 'card', 'validated', '2026-05-19T11:00:00.000Z', '2026-05-19T11:00:00.000Z', null),
   ('35d4aa55-a468-415e-ae77-eb9e07e4e767', '182fbd7d-4182-40ce-a19e-3ebf4b7af858', 'Ikram Robin', 'booking', null, null, null, 50, 'card', 'validated', '2026-05-22T11:00:00.000Z', '2026-05-22T11:00:00.000Z', null),
   ('47bca657-41da-45d3-a065-682a5fc22654', '2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', 'Héloïse Kadiri', 'booking', null, null, null, 30, 'card', 'validated', '2026-05-25T11:00:00.000Z', '2026-05-25T11:00:00.000Z', null),
@@ -642,7 +642,7 @@ insert into public.payments (id, profile_id, payer_name, kind, booking_id, plan,
   ('48ac8cde-c025-4fc9-a315-66c1f5346482', '56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'Romane Bouzidi', 'booking', null, null, null, 25, 'card', 'validated', '2026-06-01T11:00:00.000Z', '2026-06-01T11:00:00.000Z', null),
   ('e3307245-67cc-4c6d-a3f4-ec9fc28e1928', '9b5e52ed-4528-4964-a8ae-72770abb2376', 'Sanaa Morel', 'booking', null, null, null, 60, 'card', 'validated', '2026-06-04T11:00:00.000Z', '2026-06-04T11:00:00.000Z', null),
   ('d9006040-1f7b-4109-af49-064976d12cbd', '594ed44a-9998-4b0a-a2f3-3ac4862554bd', 'Mathilde Cherkaoui', 'booking', null, null, null, 60, 'card', 'validated', '2026-06-07T11:00:00.000Z', '2026-06-07T11:00:00.000Z', null),
-  ('d40d74e1-3cb7-4315-a221-21b5fdb83a37', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Chevalier', 'booking', null, null, null, 50, 'card', 'validated', '2026-06-10T11:00:00.000Z', '2026-06-10T11:00:00.000Z', null),
+  ('d40d74e1-3cb7-4315-a221-21b5fdb83a37', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Cherkaoui', 'booking', null, null, null, 50, 'card', 'validated', '2026-06-10T11:00:00.000Z', '2026-06-10T11:00:00.000Z', null),
   ('7e5db6f7-fe9f-49b1-aaed-a3b3f2d12bed', 'f4053e15-1e34-4e72-ab73-13f0b2e3362f', 'Eva Filali', 'booking', null, null, null, 60, 'card', 'validated', '2026-06-13T11:00:00.000Z', '2026-06-13T11:00:00.000Z', null),
   ('ba875e45-ca7b-473e-a80a-74aa39d2fd88', '182fbd7d-4182-40ce-a19e-3ebf4b7af858', 'Ikram Robin', 'booking', null, null, null, 50, 'card', 'validated', '2026-06-16T11:00:00.000Z', '2026-06-16T11:00:00.000Z', null),
   ('41c3c82f-bf7e-4beb-a728-25b5d2546692', '2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', 'Héloïse Kadiri', 'booking', null, null, null, 75, 'card', 'validated', '2026-06-19T11:00:00.000Z', '2026-06-19T11:00:00.000Z', null),
@@ -691,7 +691,7 @@ insert into public.payments (id, profile_id, payer_name, kind, booking_id, plan,
   ('416e9f69-26e2-4768-a63d-758f9de56b49', '56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'Romane Bouzidi', 'booking', null, null, null, 50, 'card', 'validated', '2026-07-10T11:00:00.000Z', '2026-07-10T11:00:00.000Z', null),
   ('4b57c05c-c530-44fd-a033-bc8d40407ce3', '9b5e52ed-4528-4964-a8ae-72770abb2376', 'Sanaa Morel', 'booking', null, null, null, 60, 'card', 'validated', '2026-07-13T11:00:00.000Z', '2026-07-13T11:00:00.000Z', null),
   ('3bfb538c-65cb-4e16-a57b-db342f5ce2ff', '594ed44a-9998-4b0a-a2f3-3ac4862554bd', 'Mathilde Cherkaoui', 'booking', null, null, null, 50, 'card', 'validated', '2026-07-16T11:00:00.000Z', '2026-07-16T11:00:00.000Z', null),
-  ('f8e48968-0461-4a8d-aced-573e01a7f68c', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Chevalier', 'booking', null, null, null, 75, 'card', 'validated', '2026-07-19T11:00:00.000Z', '2026-07-19T11:00:00.000Z', null),
+  ('f8e48968-0461-4a8d-aced-573e01a7f68c', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Cherkaoui', 'booking', null, null, null, 75, 'card', 'validated', '2026-07-19T11:00:00.000Z', '2026-07-19T11:00:00.000Z', null),
   ('12f5da18-04bc-4354-a7f1-6f450a8cc11e', 'f4053e15-1e34-4e72-ab73-13f0b2e3362f', 'Eva Filali', 'booking', null, null, null, 90, 'card', 'validated', '2026-07-22T11:00:00.000Z', '2026-07-22T11:00:00.000Z', null),
   ('4f48c60e-ac98-4910-a670-4924692d46d0', '182fbd7d-4182-40ce-a19e-3ebf4b7af858', 'Ikram Robin', 'booking', null, null, null, 50, 'card', 'validated', '2026-07-25T11:00:00.000Z', '2026-07-25T11:00:00.000Z', null),
   ('91586650-2f73-43c9-a66a-b21125756907', '2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', 'Héloïse Kadiri', 'booking', null, null, null, 30, 'card', 'validated', '2026-07-01T11:00:00.000Z', '2026-07-01T11:00:00.000Z', null),
@@ -740,7 +740,7 @@ insert into public.payments (id, profile_id, payer_name, kind, booking_id, plan,
   ('d27449cc-94ca-4d4c-a40f-0c53dbf9410b', '56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'Romane Bouzidi', 'booking', null, null, null, 25, 'card', 'validated', '2026-08-25T11:00:00.000Z', '2026-08-25T11:00:00.000Z', null),
   ('3f57361a-29c4-4b1f-a7a3-689c8fc8056b', '9b5e52ed-4528-4964-a8ae-72770abb2376', 'Sanaa Morel', 'membership', null, 'premium', 'join', 1250, 'transfer', 'validated', '2026-09-03T08:30:00.000Z', '2026-09-03T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
   ('99d4b183-1bfd-44b3-a4b2-9b2c31e6cd2e', '594ed44a-9998-4b0a-a2f3-3ac4862554bd', 'Mathilde Cherkaoui', 'membership', null, 'premium', 'renew', 1250, 'transfer', 'validated', '2026-09-10T08:30:00.000Z', '2026-09-10T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
-  ('f348a3c4-6ce6-4b2f-a9c3-c13497c6da35', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Chevalier', 'membership', null, 'premium', 'renew', 1250, 'transfer', 'validated', '2026-09-17T08:30:00.000Z', '2026-09-17T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
+  ('f348a3c4-6ce6-4b2f-a9c3-c13497c6da35', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Cherkaoui', 'membership', null, 'premium', 'renew', 1250, 'transfer', 'validated', '2026-09-17T08:30:00.000Z', '2026-09-17T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
   ('f1c374ba-e0ba-4700-ad09-3ae4147ce55a', 'f4053e15-1e34-4e72-ab73-13f0b2e3362f', 'Eva Filali', 'membership', null, 'member', 'join', 670, 'transfer', 'validated', '2026-09-24T08:30:00.000Z', '2026-09-24T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
   ('b26deab9-0b5a-4e3e-a40a-de2a7a3f843a', '182fbd7d-4182-40ce-a19e-3ebf4b7af858', 'Ikram Robin', 'membership', null, 'member', 'renew', 670, 'transfer', 'validated', '2026-09-07T08:30:00.000Z', '2026-09-07T17:00:00.000Z', '284f8698-647d-42af-a8c8-4ae9fde10db0'),
   ('20e05163-6c4f-4815-af0e-b626b34edd5b', '2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', 'Héloïse Kadiri', 'booking', null, null, null, 60, 'card', 'validated', '2026-09-01T11:00:00.000Z', '2026-09-01T11:00:00.000Z', null),
@@ -789,7 +789,7 @@ insert into public.payments (id, profile_id, payer_name, kind, booking_id, plan,
   ('997c03a9-9675-4041-a25f-335be4044353', '56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'Romane Bouzidi', 'booking', null, null, null, 50, 'card', 'validated', '2026-09-22T11:00:00.000Z', '2026-09-22T11:00:00.000Z', null),
   ('f981233e-da1d-4c7b-a38a-ee3bf9e2d895', '9b5e52ed-4528-4964-a8ae-72770abb2376', 'Sanaa Morel', 'booking', null, null, null, 75, 'card', 'validated', '2026-09-25T11:00:00.000Z', '2026-09-25T11:00:00.000Z', null),
   ('478608de-6699-4a73-aa62-50c1568026db', '594ed44a-9998-4b0a-a2f3-3ac4862554bd', 'Mathilde Cherkaoui', 'booking', null, null, null, 90, 'card', 'validated', '2026-09-01T11:00:00.000Z', '2026-09-01T11:00:00.000Z', null),
-  ('9bda4f5f-b011-47db-a076-4cf220ccf055', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Chevalier', 'booking', null, null, null, 50, 'card', 'validated', '2026-09-04T11:00:00.000Z', '2026-09-04T11:00:00.000Z', null),
+  ('9bda4f5f-b011-47db-a076-4cf220ccf055', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Cherkaoui', 'booking', null, null, null, 50, 'card', 'validated', '2026-09-04T11:00:00.000Z', '2026-09-04T11:00:00.000Z', null),
   ('b9f3979d-a03e-4581-a761-a9ef473ad98a', 'f4053e15-1e34-4e72-ab73-13f0b2e3362f', 'Eva Filali', 'booking', null, null, null, 30, 'card', 'validated', '2026-09-07T11:00:00.000Z', '2026-09-07T11:00:00.000Z', null),
   ('c1173de5-59d8-4dbc-a209-b92e206447ce', '182fbd7d-4182-40ce-a19e-3ebf4b7af858', 'Ikram Robin', 'booking', null, null, null, 25, 'card', 'validated', '2026-09-10T11:00:00.000Z', '2026-09-10T11:00:00.000Z', null),
   ('6e0ad660-4799-486d-ab34-faa258793fc6', '2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', 'Héloïse Kadiri', 'booking', null, null, null, 60, 'card', 'validated', '2026-09-13T11:00:00.000Z', '2026-09-13T11:00:00.000Z', null),
@@ -927,6 +927,137 @@ insert into public.notifications (id, recipient_id, type, title, body, link, rea
 
 insert into public.notification_prefs (profile_id, type, in_app, email, push) values
   ('9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'event_published', true, false, false);
+
+-- Engagement : boutique, parrainage, Espace Business, préférences (0006_engagement.sql).
+update public.engagement_settings set deal_points_base = 10, deal_points_per_thousand = 2, deal_points_bonus_cap = 40, simulated_payments = true where id = 1;
+
+insert into public.products (id, slug, title, subtitle, description, category, cover_image, price, price_member, preview_text, pages, status, created_at, published_at) values
+  ('02e835bc-cc8c-4297-ac85-fab3054d01dc', 's-installer-a-marrakech', 'S’installer à Marrakech', 'Le guide pratique des premiers mois', 'Carte de séjour, banque, logement, téléphone, assurance santé, écoles : tout ce que les membres auraient aimé savoir en arrivant. Écrit avec les retours de quarante adhérentes, mis à jour chaque saison.', 'guide', '/img/saison-la-terraza.jpg', 39, 29, 'Chapitre 1 · La carte de séjour. Le dossier se dépose au commissariat de ton quartier. Prévois deux photos, ton bail enregistré et une attestation de ressources. Compte six à huit semaines…', 64, 'published', '2026-05-10T09:00:00.000Z', '2026-05-12T09:00:00.000Z'),
+  ('178241e7-3d18-4755-a974-71b1295d068f', 'creer-sa-societe-au-maroc', 'Créer sa société au Maroc', 'SARL, auto-entrepreneuse, statut d’expatriée', 'Les étapes au Centre régional d’investissement, le choix du statut, la domiciliation, la comptabilité et les pièges à éviter. Relu par Yasmine Tazi, avocate d’affaires et membre du club.', 'guide', null, 59, 45, 'Avant de choisir un statut, pose-toi trois questions : qui sont tes clientes, où factures-tu, et combien comptes-tu te verser la première année…', 48, 'published', '2026-06-20T09:00:00.000Z', '2026-06-22T09:00:00.000Z'),
+  ('fc53e2be-681c-4855-af4c-2ffee426b837', 'carnet-des-50-adresses', 'Le carnet des 50 adresses', 'Les adresses de Julia et Nora, à emporter', 'Restaurants, rooftops, ateliers, médecins, pressings : la version imprimable du carnet du club, offerte aux membres.', 'carnet', '/img/chonchon-chocolat.jpg', 19, 0, 'Fer7 · Golf, route d’Amizmiz. Izakaya face aux greens, notre lunch du lundi. Réserve la table du fond…', 32, 'published', '2026-04-02T09:00:00.000Z', '2026-04-02T09:00:00.000Z'),
+  ('698f7de5-cb0d-4ee1-a742-34d63687848d', 'modeles-devis-factures', 'Modèles de devis et factures', 'Conformes au Maroc, prêts à remplir', 'Six modèles (devis, facture, avoir, relance, bon de commande, contrat de prestation simple) avec les mentions obligatoires marocaines.', 'modele', null, 25, 19, null, 12, 'published', '2026-07-15T09:00:00.000Z', '2026-07-16T09:00:00.000Z'),
+  ('8a6d7f3a-6aaa-4a5b-ab7f-560df287c3f6', 'prendre-la-parole-en-public', 'Prendre la parole en public', 'Le support de l’atelier du brunch', 'Le support complet de l’atelier animé au brunch de septembre : structurer un pitch de deux minutes, gérer le trac, répondre aux questions.', 'formation', '/img/brunch-prise-de-parole.jpg', 49, 35, 'Exercice 1 · Ton histoire en trois phrases : d’où tu viens, ce que tu fais, pour qui. Pas plus de quarante mots…', 28, 'published', '2026-09-20T09:00:00.000Z', '2026-09-21T09:00:00.000Z'),
+  ('4bf54e19-4c29-44ac-ad70-419cc1700365', 'guide-des-ecoles', 'Le guide des écoles et crèches', 'Programmes, tarifs, listes d’attente', 'En préparation avec Lou Garnier : écoles françaises, internationales et bilingues, crèches, activités du mercredi.', 'guide', null, 29, 22, null, null, 'draft', '2026-10-05T09:00:00.000Z', null)
+on conflict (id) do nothing;
+
+insert into public.product_files (id, product_id, label, file_name, storage_path, size_bytes, is_preview, sort_order, created_at) values
+  ('682478b9-1ba7-421c-aeb3-80bb50f5204d', '02e835bc-cc8c-4297-ac85-fab3054d01dc', 'Le guide (PDF)', 's-installer-a-marrakech.pdf', null, 2400000, false, 0, '2026-06-01T09:00:00.000Z'),
+  ('b612b7c9-c976-4ede-a2ac-5c18d49cf57a', '02e835bc-cc8c-4297-ac85-fab3054d01dc', 'Check-list des démarches', 'check-list-demarches.pdf', null, 180000, false, 1, '2026-06-01T09:00:00.000Z'),
+  ('e921b318-6461-4b61-a767-9d58b75f74fa', '02e835bc-cc8c-4297-ac85-fab3054d01dc', 'Extrait gratuit', 'extrait-s-installer.pdf', null, 320000, true, 2, '2026-06-01T09:00:00.000Z'),
+  ('b87611df-d7a2-402b-a59d-4ccf823b34af', '178241e7-3d18-4755-a974-71b1295d068f', 'Le guide (PDF)', 'creer-sa-societe.pdf', null, 1900000, false, 0, '2026-06-01T09:00:00.000Z'),
+  ('3a791409-6628-488b-a52e-ae4c38c567a9', '178241e7-3d18-4755-a974-71b1295d068f', 'Extrait gratuit', 'extrait-creer-sa-societe.pdf', null, 240000, true, 1, '2026-06-01T09:00:00.000Z'),
+  ('13fff69a-b4c2-419d-a753-6daa1012008a', 'fc53e2be-681c-4855-af4c-2ffee426b837', 'Le carnet imprimable', 'carnet-50-adresses.pdf', null, 3100000, false, 0, '2026-06-01T09:00:00.000Z'),
+  ('6c860a4c-05fd-45c3-a092-fe5f746a8cac', '698f7de5-cb0d-4ee1-a742-34d63687848d', 'Les six modèles', 'modeles-devis-factures.pdf', null, 640000, false, 0, '2026-06-01T09:00:00.000Z'),
+  ('6a9e6e64-421d-48c5-a92c-96d8b8dffb42', '8a6d7f3a-6aaa-4a5b-ab7f-560df287c3f6', 'Le support de l’atelier', 'prendre-la-parole.pdf', null, 1200000, false, 0, '2026-06-01T09:00:00.000Z'),
+  ('2a886c29-5157-4275-aa2b-5a876c72cfdd', '8a6d7f3a-6aaa-4a5b-ab7f-560df287c3f6', 'Fiche mémo à imprimer', 'fiche-memo-pitch.pdf', null, 90000, false, 1, '2026-06-01T09:00:00.000Z'),
+  ('f24871cf-0ac5-4ec8-a715-235554ad9fa6', '4bf54e19-4c29-44ac-ad70-419cc1700365', 'Le guide (brouillon)', 'guide-des-ecoles.pdf', null, null, false, 0, '2026-06-01T09:00:00.000Z')
+on conflict (id) do nothing;
+
+insert into public.purchases (id, product_id, profile_id, amount, method, status, payment_ref, created_at) values
+  ('71f312eb-9652-41c1-acbe-57201bc7ca83', 'fc53e2be-681c-4855-af4c-2ffee426b837', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 0, 'free', 'paid', null, '2026-04-20T17:30:00.000Z'),
+  ('d4130731-6e8c-4e3d-a76f-2f569bee2daf', '02e835bc-cc8c-4297-ac85-fab3054d01dc', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 29, 'simulated', 'paid', 'SIM-4137', '2026-05-18T17:30:00.000Z'),
+  ('36228d47-21a8-4e0c-a2cc-91f2fbcbf917', '178241e7-3d18-4755-a974-71b1295d068f', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 45, 'simulated', 'paid', 'SIM-4174', '2026-06-25T17:30:00.000Z'),
+  ('b78d4cca-c3eb-4e8c-adb1-c94fbd58bc6c', '178241e7-3d18-4755-a974-71b1295d068f', '465d8833-64f5-4a5c-a280-4b752172485b', 45, 'simulated', 'paid', 'SIM-4211', '2026-07-02T17:30:00.000Z'),
+  ('aae29c9b-ee81-43d4-a882-09c89ca043ac', '02e835bc-cc8c-4297-ac85-fab3054d01dc', 'a4f79bdb-b39d-4d2d-a865-a3900e6a52f6', 29, 'simulated', 'paid', 'SIM-4248', '2026-07-08T17:30:00.000Z'),
+  ('a33bdab4-9a50-42fc-a9d2-3a78261a0e70', '02e835bc-cc8c-4297-ac85-fab3054d01dc', 'ff0212c2-dfea-4bfb-a05a-e12aa98cea33', 29, 'simulated', 'paid', 'SIM-4285', '2026-07-21T17:30:00.000Z'),
+  ('d8a5ef57-34f0-4675-a64b-a6c39af7e7b6', '698f7de5-cb0d-4ee1-a742-34d63687848d', 'ff0212c2-dfea-4bfb-a05a-e12aa98cea33', 19, 'simulated', 'paid', 'SIM-4322', '2026-07-22T17:30:00.000Z'),
+  ('f725f377-47be-4eb0-aefd-de41cc2973af', '698f7de5-cb0d-4ee1-a742-34d63687848d', '71b4e532-bca4-43d1-abbe-f5fd762ae677', 19, 'simulated', 'paid', 'SIM-4359', '2026-08-03T17:30:00.000Z'),
+  ('e313cab4-a290-466c-a0c9-e3b31b79d29f', '02e835bc-cc8c-4297-ac85-fab3054d01dc', 'a7a1248c-bddc-42aa-ae48-8d4317f0f4ce', 29, 'simulated', 'paid', 'SIM-4396', '2026-08-11T17:30:00.000Z'),
+  ('926a9d04-0e60-4bc5-a62c-cd4d7ea5a44d', '178241e7-3d18-4755-a974-71b1295d068f', '3ead2e5f-d53e-43e1-ad2f-3bdbee485d71', 45, 'simulated', 'paid', 'SIM-4433', '2026-08-19T17:30:00.000Z'),
+  ('d61649e8-eef0-4f99-a709-b41f9a45ade1', '698f7de5-cb0d-4ee1-a742-34d63687848d', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 19, 'simulated', 'paid', 'SIM-4470', '2026-08-30T17:30:00.000Z'),
+  ('c4ba64d7-8f9b-4906-a9e1-0dc9c4989a31', 'fc53e2be-681c-4855-af4c-2ffee426b837', '6ddf0396-8eb9-4b1f-ae8e-eab5383cc11e', 0, 'free', 'paid', null, '2026-09-02T17:30:00.000Z'),
+  ('591e034c-2921-4380-a6c9-fe9d37278517', '02e835bc-cc8c-4297-ac85-fab3054d01dc', '57dd531c-832f-4152-a924-f951e3853b37', 29, 'simulated', 'paid', 'SIM-4544', '2026-09-10T17:30:00.000Z'),
+  ('b9247964-7ff2-4ea0-a8eb-e317bbe8bfc6', '8a6d7f3a-6aaa-4a5b-ab7f-560df287c3f6', '77945d38-183f-4e88-acee-1f78d34be5b4', 35, 'simulated', 'paid', 'SIM-4581', '2026-09-22T17:30:00.000Z'),
+  ('7f397842-44e0-4d1b-ae71-7084e87f8889', '8a6d7f3a-6aaa-4a5b-ab7f-560df287c3f6', '097c42d6-61d3-4936-a308-31aae3f0fdf0', 35, 'simulated', 'paid', 'SIM-4618', '2026-09-24T17:30:00.000Z'),
+  ('36e18e32-8f16-4325-a321-d92610054d06', '8a6d7f3a-6aaa-4a5b-ab7f-560df287c3f6', '8f14bd8a-55c4-4844-a979-b0c21cc35d3d', 35, 'simulated', 'paid', 'SIM-4655', '2026-09-29T17:30:00.000Z'),
+  ('9d00105d-766a-4eeb-acd6-829bfd96ea39', 'fc53e2be-681c-4855-af4c-2ffee426b837', '2b33d7e1-5ea9-44fc-a5e8-d3959dd73272', 0, 'free', 'paid', null, '2026-10-03T17:30:00.000Z'),
+  ('9c08f5a8-41b8-4723-a6d1-f82103daa592', '02e835bc-cc8c-4297-ac85-fab3054d01dc', '61f757ce-4c43-49d9-abb9-8512bf634f48', 29, 'simulated', 'paid', 'SIM-4729', '2026-10-06T17:30:00.000Z'),
+  ('bb4b706f-b1e8-42d7-a372-9cf5408199a8', '178241e7-3d18-4755-a974-71b1295d068f', '174f1774-5513-49c3-a246-2fde52c89e5c', 45, 'simulated', 'paid', 'SIM-4766', '2026-10-09T17:30:00.000Z'),
+  ('cb9d6cb4-098c-4a9c-a44c-6ed1f5329a89', '8a6d7f3a-6aaa-4a5b-ab7f-560df287c3f6', 'd2ff97f6-e943-44ab-a8cd-bae0eb064bc1', 35, 'simulated', 'paid', 'SIM-4803', '2026-10-12T17:30:00.000Z')
+on conflict (id) do nothing;
+
+insert into public.referral_codes (profile_id, code, created_at) values
+  ('9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'INES-7K2Q', '2026-05-02T09:00:00.000Z'),
+  ('fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'SALMA-4FJD', '2025-12-01T09:00:00.000Z'),
+  ('77945d38-183f-4e88-acee-1f78d34be5b4', 'YASMINE-9PXA', '2026-08-15T09:00:00.000Z'),
+  ('f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 'KARIMA-3WTE', '2025-11-10T09:00:00.000Z'),
+  ('8eb1b14a-c639-4010-a09c-702b56b35d26', 'JULIA-NC01', '2026-01-05T09:00:00.000Z')
+on conflict do nothing;
+
+insert into public.referrals (id, referrer_id, referred_id, referred_name, code, status, created_at, converted_at) values
+  ('ab72e443-9714-4623-a1ad-dc91f92436c0', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'a7a1248c-bddc-42aa-ae48-8d4317f0f4ce', 'Ambre F.', 'INES-7K2Q', 'member', '2026-09-18T18:10:00.000Z', '2026-10-02T10:00:00.000Z'),
+  ('af81254f-5fb0-4bd3-ab8f-34427c986688', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'fe2825d6-5559-4477-a4ab-2317f40094a8', 'Hana I.', 'INES-7K2Q', 'signed_up', '2026-06-12T20:04:00.000Z', null),
+  ('fd37389e-5226-4d93-ac42-48dbb0095609', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', '20bd98d0-c0c3-439e-a661-3b746eba2518', 'Clara M.', 'INES-7K2Q', 'signed_up', '2026-09-08T07:47:00.000Z', null),
+  ('4eeac458-8b39-43a3-a53c-7dff4e954b4d', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'ff0212c2-dfea-4bfb-a05a-e12aa98cea33', 'Capucine D.', 'SALMA-4FJD', 'member', '2026-01-02T16:30:00.000Z', '2026-01-14T09:00:00.000Z'),
+  ('656eb345-1b8f-4371-a2f4-e54c63dd62eb', '77945d38-183f-4e88-acee-1f78d34be5b4', '64e0010e-e2c8-4a4e-a7e2-8a432800d7d5', 'Sarah C.', 'YASMINE-9PXA', 'signed_up', '2026-09-24T11:15:00.000Z', null),
+  ('ed98513f-81ad-40dc-a62e-2769edb1da6f', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', '61f757ce-4c43-49d9-abb9-8512bf634f48', 'Rania C.', 'KARIMA-3WTE', 'member', '2025-12-08T08:00:00.000Z', '2025-12-22T09:00:00.000Z')
+on conflict do nothing;
+
+insert into public.referral_rewards (id, kind, label, description, points, active, sort_order) values
+  ('f5cf80a2-084b-4f65-a70f-61eda7f0f60f', 'free_month', 'Un mois d’adhésion offert', 'Ajouté à la fin de ton adhésion par les fondatrices.', 0, true, 0),
+  ('a3da10dc-0add-4c93-a9af-d259540d3747', 'points', '50 points', 'Crédités tout de suite sur ton compte de points.', 50, true, 1),
+  ('e023c77a-de7e-4add-a726-dcca472f04e4', 'invitation', 'Une invitation pour une amie', 'Une place offerte à une amie sur le rendez-vous de ton choix.', 0, false, 2)
+on conflict (id) do nothing;
+
+insert into public.referral_reward_grants (id, referral_id, reward_id, beneficiary_id, kind, label, points, status, created_at, delivered_at) values
+  ('08f11074-8e95-4977-ab32-aaf104c7c34b', 'ab72e443-9714-4623-a1ad-dc91f92436c0', 'f5cf80a2-084b-4f65-a70f-61eda7f0f60f', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'free_month', 'Un mois d’adhésion offert', 0, 'granted', '2026-10-02T10:00:00.000Z', null),
+  ('2c582f8d-e1e1-4c1d-a741-943bd6e17452', 'ab72e443-9714-4623-a1ad-dc91f92436c0', 'a3da10dc-0add-4c93-a9af-d259540d3747', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'points', '50 points', 50, 'delivered', '2026-10-02T10:00:00.000Z', '2026-10-02T10:00:00.000Z'),
+  ('343487b3-3c23-495d-a3be-c954d8acdabc', '4eeac458-8b39-43a3-a53c-7dff4e954b4d', 'f5cf80a2-084b-4f65-a70f-61eda7f0f60f', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'free_month', 'Un mois d’adhésion offert', 0, 'delivered', '2026-01-14T09:00:00.000Z', '2026-01-14T09:00:00.000Z'),
+  ('2e559ae2-8bb6-4358-a59c-c66c16a9adca', '4eeac458-8b39-43a3-a53c-7dff4e954b4d', 'a3da10dc-0add-4c93-a9af-d259540d3747', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'points', '50 points', 50, 'delivered', '2026-01-14T09:00:00.000Z', '2026-01-14T09:00:00.000Z'),
+  ('33347991-1f90-4d39-a6db-2c55dd16128d', 'ed98513f-81ad-40dc-a62e-2769edb1da6f', 'f5cf80a2-084b-4f65-a70f-61eda7f0f60f', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 'free_month', 'Un mois d’adhésion offert', 0, 'delivered', '2025-12-22T09:00:00.000Z', '2025-12-22T09:00:00.000Z'),
+  ('dc1ce21b-297b-43af-ab77-63f415def699', 'ed98513f-81ad-40dc-a62e-2769edb1da6f', 'a3da10dc-0add-4c93-a9af-d259540d3747', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 'points', '50 points', 50, 'delivered', '2025-12-22T09:00:00.000Z', '2025-12-22T09:00:00.000Z')
+on conflict do nothing;
+
+insert into public.business_deals (id, declared_by, partner_id, nature, category, amount, deal_date, note, status, points_each, created_at, responded_at) values
+  ('6b181eee-cb34-4930-a72a-74a119c40a54', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'ff0212c2-dfea-4bfb-a05a-e12aa98cea33', 'Décoration de trois appartements en location courte durée', 'partenariat', 4200, '2026-07-04', null, 'confirmed', 18, '2026-07-04T19:00:00.000Z', '2026-07-05T21:00:00.000Z'),
+  ('3ee4f48a-3654-41df-ad5a-e55fd69c3e51', 'ee4610ef-5444-4c42-ab10-b64c7a12e9c4', '9338cf84-e1be-4199-a025-43c3366fc7e4', 'Cours de yoga hebdomadaires à Bloom House', 'prestation', 1200, '2026-06-18', null, 'confirmed', 12, '2026-06-18T19:00:00.000Z', '2026-06-19T21:00:00.000Z'),
+  ('59e0765c-50ad-471e-a323-b4ded55389d9', '57dd531c-832f-4152-a924-f951e3853b37', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'Traduction d’une plaquette en allemand', 'prestation', 800, '2026-08-21', null, 'confirmed', 10, '2026-08-21T19:00:00.000Z', '2026-08-22T21:00:00.000Z'),
+  ('516d1089-d049-4926-ae75-fc02eac564fb', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'Stratégie de communication pour l’agence d’architecture', 'prestation', 2400, '2026-09-15', 'Rencontre au lunch du Fer7.', 'confirmed', 14, '2026-09-15T19:00:00.000Z', '2026-09-16T21:00:00.000Z'),
+  ('ec716a8b-13c9-483e-ac1c-237f9c35de94', 'a4f79bdb-b39d-4d2d-a865-a3900e6a52f6', 'd2ff97f6-e943-44ab-a8cd-bae0eb064bc1', 'Shooting photo des chambres de l’hôtel', 'prestation', 3500, '2026-08-02', null, 'confirmed', 16, '2026-08-02T19:00:00.000Z', '2026-08-03T21:00:00.000Z'),
+  ('2e9b2d28-4592-4848-a4e1-0f0c2903f4fb', '465d8833-64f5-4a5c-a280-4b752172485b', '8f14bd8a-55c4-4844-a979-b0c21cc35d3d', 'Identité visuelle et packaging de la gamme de soins', 'prestation', 1800, '2026-07-28', null, 'confirmed', 12, '2026-07-28T19:00:00.000Z', '2026-07-29T21:00:00.000Z'),
+  ('7331b982-9f3f-494c-a1d6-9c65f5165d14', 'ff0212c2-dfea-4bfb-a05a-e12aa98cea33', 'd2ff97f6-e943-44ab-a8cd-bae0eb064bc1', 'Décoration du lobby et du rooftop', 'vente', 6000, '2026-09-05', null, 'confirmed', 22, '2026-09-05T19:00:00.000Z', '2026-09-06T21:00:00.000Z'),
+  ('e1c64f3b-07ee-425a-ac12-28bd971196a5', '3ead2e5f-d53e-43e1-ad2f-3bdbee485d71', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 'Site web du concept-store', 'prestation', 1500, '2026-09-26', null, 'confirmed', 12, '2026-09-26T19:00:00.000Z', '2026-09-27T21:00:00.000Z'),
+  ('4fc17f4c-e66b-4586-a078-722e7f6150e3', '097c42d6-61d3-4936-a308-31aae3f0fdf0', '77945d38-183f-4e88-acee-1f78d34be5b4', 'Recommandation d’une cliente pour un recrutement', 'recommandation', null, '2026-10-01', null, 'confirmed', 10, '2026-10-01T19:00:00.000Z', '2026-10-02T21:00:00.000Z'),
+  ('8c82f085-8909-45e7-a6f3-ddc88414a823', '2b33d7e1-5ea9-44fc-a5e8-d3959dd73272', '6ddf0396-8eb9-4b1f-ae8e-eab5383cc11e', 'Ateliers parents-bébé au cabinet', 'partenariat', 600, '2026-09-12', null, 'refused', 0, '2026-09-12T19:00:00.000Z', '2026-09-13T21:00:00.000Z'),
+  ('21b16b00-d617-4d12-a0a5-23bedc50649b', '71b4e532-bca4-43d1-abbe-f5fd762ae677', '57dd531c-832f-4152-a924-f951e3853b37', 'Traduction de l’application d’une start-up', 'prestation', 1100, '2026-10-08', null, 'pending', 0, '2026-10-08T19:00:00.000Z', null),
+  ('57e3de8e-8f77-44aa-a27b-8754be346832', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 'Lancement Instagram du concept-store', 'prestation', 900, '2026-10-10', null, 'pending', 0, '2026-10-10T19:00:00.000Z', null),
+  ('060f2e82-f4d2-44c4-af8d-bb1422ea3662', '77945d38-183f-4e88-acee-1f78d34be5b4', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'Contrats de prestation types pour les clientes d’Inès', 'prestation', 1300, '2026-10-12', 'Merci pour la recommandation !', 'pending', 0, '2026-10-12T19:00:00.000Z', null),
+  ('3faa713b-86f1-4116-aef2-acb2ce690c1a', '61f757ce-4c43-49d9-abb9-8512bf634f48', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 'Voyage de presse pour l’ouverture du concept-store', 'vente', 2600, '2026-05-20', null, 'confirmed', 14, '2026-05-20T19:00:00.000Z', '2026-05-21T21:00:00.000Z'),
+  ('a50bfb2a-54a0-49d5-a1fe-032b17f05878', '8f14bd8a-55c4-4844-a979-b0c21cc35d3d', '9338cf84-e1be-4199-a025-43c3366fc7e4', 'Soins signature proposés à Bloom House', 'vente', 900, '2026-04-14', null, 'confirmed', 10, '2026-04-14T19:00:00.000Z', '2026-04-15T21:00:00.000Z')
+on conflict (id) do nothing;
+
+insert into public.points_ledger (id, profile_id, points, source, ref_id, label, created_at) values
+  ('089a067e-a0ef-42c2-a698-6fed60a97399', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 50, 'referral', 'ab72e443-9714-4623-a1ad-dc91f92436c0', 'Parrainage · Ambre F.', '2026-10-02T10:00:00.000Z'),
+  ('8c5fb080-3088-431a-adb1-fb291f864755', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 50, 'referral', '4eeac458-8b39-43a3-a53c-7dff4e954b4d', 'Parrainage · Capucine D.', '2026-01-14T09:00:00.000Z'),
+  ('f5637d43-4566-4043-a91c-5848f7569ebf', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 50, 'referral', 'ed98513f-81ad-40dc-a62e-2769edb1da6f', 'Parrainage · Rania C.', '2025-12-22T09:00:00.000Z'),
+  ('50d0a3da-bb68-48e9-a481-a09243584ff2', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 18, 'deal', '6b181eee-cb34-4930-a72a-74a119c40a54', 'Deal confirmé · Décoration de trois appartements en location courte durée', '2026-07-05T21:00:00.000Z'),
+  ('7c517f5d-4103-4427-a74e-62e479a66b37', 'ff0212c2-dfea-4bfb-a05a-e12aa98cea33', 18, 'deal', '6b181eee-cb34-4930-a72a-74a119c40a54', 'Deal confirmé · Décoration de trois appartements en location courte durée', '2026-07-05T21:00:00.000Z'),
+  ('2ea0806d-ce62-4536-a300-fed1167ce610', 'ee4610ef-5444-4c42-ab10-b64c7a12e9c4', 12, 'deal', '3ee4f48a-3654-41df-ad5a-e55fd69c3e51', 'Deal confirmé · Cours de yoga hebdomadaires à Bloom House', '2026-06-19T21:00:00.000Z'),
+  ('d405c3e9-19a3-409e-aa00-36f804c5c1f4', '9338cf84-e1be-4199-a025-43c3366fc7e4', 12, 'deal', '3ee4f48a-3654-41df-ad5a-e55fd69c3e51', 'Deal confirmé · Cours de yoga hebdomadaires à Bloom House', '2026-06-19T21:00:00.000Z'),
+  ('747e9361-03d7-4547-a4a1-976c80333cb3', '57dd531c-832f-4152-a924-f951e3853b37', 10, 'deal', '59e0765c-50ad-471e-a323-b4ded55389d9', 'Deal confirmé · Traduction d’une plaquette en allemand', '2026-08-22T21:00:00.000Z'),
+  ('ff527103-cd54-42be-a0af-16f4d8ef15ce', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 10, 'deal', '59e0765c-50ad-471e-a323-b4ded55389d9', 'Deal confirmé · Traduction d’une plaquette en allemand', '2026-08-22T21:00:00.000Z'),
+  ('cab55161-0b0a-4d91-ae8e-6ccb9a6890df', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 14, 'deal', '516d1089-d049-4926-ae75-fc02eac564fb', 'Deal confirmé · Stratégie de communication pour l’agence d’architecture', '2026-09-16T21:00:00.000Z'),
+  ('163fd3f4-bb82-4899-a0c2-8f90bd67cb8b', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 14, 'deal', '516d1089-d049-4926-ae75-fc02eac564fb', 'Deal confirmé · Stratégie de communication pour l’agence d’architecture', '2026-09-16T21:00:00.000Z'),
+  ('715fec11-00b8-4abc-ae81-7af34ea8d85b', 'a4f79bdb-b39d-4d2d-a865-a3900e6a52f6', 16, 'deal', 'ec716a8b-13c9-483e-ac1c-237f9c35de94', 'Deal confirmé · Shooting photo des chambres de l’hôtel', '2026-08-03T21:00:00.000Z'),
+  ('e713d9b4-8410-4886-a97b-4d847144469b', 'd2ff97f6-e943-44ab-a8cd-bae0eb064bc1', 16, 'deal', 'ec716a8b-13c9-483e-ac1c-237f9c35de94', 'Deal confirmé · Shooting photo des chambres de l’hôtel', '2026-08-03T21:00:00.000Z'),
+  ('1b4a81fc-52b0-42ff-a9f0-2dc6ae8fb94d', '465d8833-64f5-4a5c-a280-4b752172485b', 12, 'deal', '2e9b2d28-4592-4848-a4e1-0f0c2903f4fb', 'Deal confirmé · Identité visuelle et packaging de la gamme de soins', '2026-07-29T21:00:00.000Z'),
+  ('0cc6ea7a-7734-4375-a9ff-809cdcf5a66b', '8f14bd8a-55c4-4844-a979-b0c21cc35d3d', 12, 'deal', '2e9b2d28-4592-4848-a4e1-0f0c2903f4fb', 'Deal confirmé · Identité visuelle et packaging de la gamme de soins', '2026-07-29T21:00:00.000Z'),
+  ('dee65d94-d2e9-4116-a71e-92d141805e20', 'ff0212c2-dfea-4bfb-a05a-e12aa98cea33', 22, 'deal', '7331b982-9f3f-494c-a1d6-9c65f5165d14', 'Deal confirmé · Décoration du lobby et du rooftop', '2026-09-06T21:00:00.000Z'),
+  ('f981d893-0f76-452b-abfe-245fcbe4c3fd', 'd2ff97f6-e943-44ab-a8cd-bae0eb064bc1', 22, 'deal', '7331b982-9f3f-494c-a1d6-9c65f5165d14', 'Deal confirmé · Décoration du lobby et du rooftop', '2026-09-06T21:00:00.000Z'),
+  ('1d71d7f8-8a79-4082-aa51-15f03bb3832f', '3ead2e5f-d53e-43e1-ad2f-3bdbee485d71', 12, 'deal', 'e1c64f3b-07ee-425a-ac12-28bd971196a5', 'Deal confirmé · Site web du concept-store', '2026-09-27T21:00:00.000Z'),
+  ('21f6fed8-7e4b-4840-a366-4ff41ada8072', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 12, 'deal', 'e1c64f3b-07ee-425a-ac12-28bd971196a5', 'Deal confirmé · Site web du concept-store', '2026-09-27T21:00:00.000Z'),
+  ('d73f3eaf-9bbf-4410-a37f-3762f9e363d7', '097c42d6-61d3-4936-a308-31aae3f0fdf0', 10, 'deal', '4fc17f4c-e66b-4586-a078-722e7f6150e3', 'Deal confirmé · Recommandation d’une cliente pour un recrutement', '2026-10-02T21:00:00.000Z'),
+  ('3886e706-6d7a-4413-a595-11fb746b8f5c', '77945d38-183f-4e88-acee-1f78d34be5b4', 10, 'deal', '4fc17f4c-e66b-4586-a078-722e7f6150e3', 'Deal confirmé · Recommandation d’une cliente pour un recrutement', '2026-10-02T21:00:00.000Z'),
+  ('885b17d7-8b4b-43bc-a132-350a08bdb7ed', '61f757ce-4c43-49d9-abb9-8512bf634f48', 14, 'deal', '3faa713b-86f1-4116-aef2-acb2ce690c1a', 'Deal confirmé · Voyage de presse pour l’ouverture du concept-store', '2026-05-21T21:00:00.000Z'),
+  ('3a977fb9-842c-42da-a82a-4de1945f57c1', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 14, 'deal', '3faa713b-86f1-4116-aef2-acb2ce690c1a', 'Deal confirmé · Voyage de presse pour l’ouverture du concept-store', '2026-05-21T21:00:00.000Z'),
+  ('b6544392-e30e-4cd8-ab47-130226ceda03', '8f14bd8a-55c4-4844-a979-b0c21cc35d3d', 10, 'deal', 'a50bfb2a-54a0-49d5-a1fe-032b17f05878', 'Deal confirmé · Soins signature proposés à Bloom House', '2026-04-15T21:00:00.000Z'),
+  ('1e87f598-5f10-4ccc-a1c4-9721a31a475b', '9338cf84-e1be-4199-a025-43c3366fc7e4', 10, 'deal', 'a50bfb2a-54a0-49d5-a1fe-032b17f05878', 'Deal confirmé · Soins signature proposés à Bloom House', '2026-04-15T21:00:00.000Z')
+on conflict (id) do nothing;
+
+insert into public.engagement_prefs (profile_id, widgets, leaderboard_opt_out, updated_at) values
+  ('9a6df925-8c06-478a-a7ac-6b27ee0e4abc', '[{"id":"next","enabled":true},{"id":"weather","enabled":true},{"id":"news","enabled":true},{"id":"adhesion","enabled":true},{"id":"events","enabled":true},{"id":"prayer","enabled":true},{"id":"points","enabled":true},{"id":"salon","enabled":true},{"id":"agenda","enabled":false},{"id":"offers","enabled":false},{"id":"referral","enabled":true},{"id":"quote","enabled":true},{"id":"ask","enabled":true},{"id":"address","enabled":true}]'::jsonb, false, '2026-10-10T09:00:00.000Z'),
+  ('77945d38-183f-4e88-acee-1f78d34be5b4', '[]'::jsonb, true, '2026-09-01T09:00:00.000Z')
+on conflict (profile_id) do nothing;
 
 select setval('public.card_number_seq', 700, false);
 commit;
