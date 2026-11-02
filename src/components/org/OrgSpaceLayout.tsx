@@ -10,24 +10,27 @@ const CONF: Record<OrganizationKind, { title: string; space: "partner" | "pro"; 
   partner: {
     title: "Espace partenaire",
     space: "partner",
+    // --- Lot 3 --- offres, validation des codes, statistiques
     nav: [
       { href: "/partenaire", icon: "grid", label: "Accueil" },
+      { href: "/partenaire/offres", icon: "gift", label: "Offres" },
+      { href: "/partenaire/valider", icon: "ticket", label: "Valider" },
+      { href: "/partenaire/statistiques", icon: "spark", label: "Statistiques" },
       { href: "/partenaire/etablissement", icon: "pin", label: "Établissement" },
-      { href: "/partenaire/notifications", icon: "bell", label: "Notifications" },
-      { href: "/partenaire#offres", icon: "gift", label: "Offres", soon: true },
-      { href: "/partenaire#statistiques", icon: "spark", label: "Statistiques", soon: true },
+      { href: "/partenaire/notifications", icon: "bell", label: "Notifications", tab: false },
       { href: "/partenaire#contrats", icon: "edit", label: "Contrats", soon: true },
     ],
   },
   pro: {
     title: "Espace pro",
     space: "pro",
+    // --- Lot 3 --- fiche carnet, abonnement (paiement simulé), statistiques de visibilité
     nav: [
       { href: "/pro", icon: "grid", label: "Accueil" },
       { href: "/pro/fiche", icon: "pin", label: "Ma fiche" },
-      { href: "/pro/notifications", icon: "bell", label: "Notifications" },
-      { href: "/pro#abonnement", icon: "card", label: "Abonnement", soon: true },
-      { href: "/pro#statistiques", icon: "spark", label: "Statistiques", soon: true },
+      { href: "/pro/abonnement", icon: "card", label: "Abonnement" },
+      { href: "/pro/statistiques", icon: "spark", label: "Statistiques" },
+      { href: "/pro/notifications", icon: "bell", label: "Notifications", tab: false },
       { href: "/pro#contrat", icon: "edit", label: "Contrat", soon: true },
     ],
   },
