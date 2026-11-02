@@ -121,6 +121,8 @@
 .cm-cal .dots{display:none}
 .cm-day-list{margin-top:18px}
 .cm-view{display:flex;gap:8px}
+.cm-view .fchip{display:inline-flex;align-items:center;gap:6px}
+.cm-view .fchip .ic{width:16px;height:16px}
 
 @media (max-width:760px){
   .cm-post .cm-body{padding:18px 18px 16px}
