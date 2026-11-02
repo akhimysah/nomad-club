@@ -192,6 +192,8 @@ insert(
 (await import("./seed-sql/engagement.mjs")).engagementSeedLines(s, uuid).forEach(out);
 // --- Lot 1 ---
 (await import("./seed-sql/communaute.mjs")).communauteSeedSql(s, { uuid, q, arr, out, insert });
+// --- Vague 2 · Contrats ---
+await (await import("./seed-sql/contrats.mjs")).default({ s, insert, out, q, uuid, json });
 
 out("select setval('public.card_number_seq', 700, false);");
 out("commit;");

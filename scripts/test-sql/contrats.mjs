@@ -127,7 +127,7 @@ export default async function contrats({ db, as, rejects, one, count, ok, uuid }
   ok((await count(db, "select count(*) from public.audit_log where action = 'contract.accept' and target_id = $1", [ines.id])) === 1, "acceptation journalisée (contract.accept)");
   ok(await rejects(INES, accept, [ines.id, doc.sha256, "1.2.3.4", "UA", stmt]), "un contrat ne s'accepte qu'une fois");
   ok((await as(INES, (tx) => count(tx, "select count(*) from public.contract_acceptances where contract_id = $1", [ines.id]))) === 1, "Inès lit sa preuve d'acceptation");
-  ok((await as(RIM, (tx) => count(tx, "select count(*) from public.contract_acceptances"))) === 0, "Rim ne lit aucune preuve des autres");
+  ok((await as(RIM, (tx) => count(tx, "select count(*) from public.contract_acceptances a join public.contracts c on c.id = a.contract_id where c.profile_id is distinct from $1", [RIM]))) === 0, "Rim ne lit aucune preuve des autres");
 
   /* ---------- preuve immuable, contrat figé ---------- */
   ok(await rejects(JULIA, "update public.contract_acceptances set ip = '9.9.9.9' where contract_id = $1", [ines.id]), "l'administratrice ne modifie pas une preuve");
