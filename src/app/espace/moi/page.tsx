@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { signOut } from "@/app/actions/auth";
 import { MembershipButton, OfferButton, TicketButton } from "@/components/member/Buttons";
 import { EventImage } from "@/components/ui/EventImage";
@@ -135,6 +136,28 @@ export default async function MoiPage() {
                   </TicketButton>
                 ),
               )}
+            </section>
+            {/* --- Lot 4 --- : accès aux espaces engagement (surtout utile sur téléphone) */}
+            <section className="card">
+              <h2 className="h-sm" style={{ marginBottom: 4 }}>
+                Le club en plus
+              </h2>
+              {[
+                { href: "/espace/boutique", icon: "gift" as const, b: "Boutique", t: "Guides et ressources à prix membre" },
+                { href: "/espace/business", icon: "star" as const, b: "Espace Business", t: "Déclarer un deal, mes points, le classement" },
+                { href: "/espace/parrainage", icon: "heart" as const, b: "Parrainage", t: "Mon code, mes filleules, mes récompenses" },
+              ].map((x) => (
+                <Link key={x.href} className="offer" href={x.href}>
+                  <span className="o-badge">
+                    <Icon name={x.icon} />
+                  </span>
+                  <span>
+                    <b>{x.b}</b>
+                    <span>{x.t}</span>
+                  </span>
+                  <Icon name="chev-r" />
+                </Link>
+              ))}
             </section>
             {!demo && (
               <form action={signOut}>

@@ -14,7 +14,7 @@ import "@/styles/engagement.css";
 export const metadata: Metadata = { title: "Espace Business" };
 export const dynamic = "force-dynamic";
 
-export const DEAL_CATEGORY: Record<DealCategory, string> = { prestation: "Prestation", vente: "Vente", partenariat: "Partenariat", recommandation: "Recommandation", autre: "Autre" };
+const DEAL_CATEGORY: Record<DealCategory, string> = { prestation: "Prestation", vente: "Vente", partenariat: "Partenariat", recommandation: "Recommandation", autre: "Autre" };
 
 /** Espace Business : déclarer un deal entre membres, le faire confirmer, gagner des points, classement. */
 export default async function BusinessPage() {

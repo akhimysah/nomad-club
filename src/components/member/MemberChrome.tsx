@@ -18,7 +18,16 @@ const NAV: Array<{ href: string; icon: IconName; label: string; title: string }>
   { href: "/espace/assistant", icon: "spark", label: "Assistant", title: "Assistant" },
 ];
 
+// --- Lot 4 --- : boutique, parrainage et Espace Business (barre latérale ; sur téléphone, depuis « Moi »)
+const EXTRA: Array<{ href: string; icon: IconName; label: string; title: string }> = [
+  { href: "/espace/boutique", icon: "gift", label: "Boutique", title: "Boutique" },
+  { href: "/espace/business", icon: "star", label: "Business", title: "Business" },
+  { href: "/espace/parrainage", icon: "heart", label: "Parrainage", title: "Parrainage" },
+];
+
 function activeHref(pathname: string): string {
+  const extra = EXTRA.find((n) => pathname.startsWith(n.href));
+  if (extra) return extra.href;
   if (pathname === "/espace") return "/espace";
   if (pathname.startsWith("/espace/moi")) return "/espace/moi";
   if (pathname.startsWith("/espace/notifications")) return "/espace/notifications";
@@ -29,7 +38,7 @@ function activeHref(pathname: string): string {
 export function MemberChrome({ name, formule, unread, notifs, spaces }: { name: string; formule: string; unread: number; notifs: number; spaces: Space[] }) {
   const pathname = usePathname();
   const active = activeHref(pathname);
-  const title = active === "/espace/moi" ? "Moi" : active === "/espace/notifications" ? "Notifications" : (NAV.find((n) => n.href === active)?.title ?? "Accueil");
+  const title = active === "/espace/moi" ? "Moi" : active === "/espace/notifications" ? "Notifications" : ([...NAV, ...EXTRA].find((n) => n.href === active)?.title ?? "Accueil");
   return (
     <>
       <aside className="m-side">
@@ -47,6 +56,12 @@ export function MemberChrome({ name, formule, unread, notifs, spaces }: { name: 
             Notifications
             <CountBadge value={notifs} className="nbadge" />
           </Link>
+          {EXTRA.map((n) => (
+            <Link key={n.href} href={n.href} className={"side-btn" + (active === n.href ? " on" : "")} aria-current={active === n.href ? "page" : undefined}>
+              <Icon name={n.icon} />
+              {n.label}
+            </Link>
+          ))}
         </nav>
         <div className="side-foot">
           <SpaceLinks spaces={spaces} current="member" />

@@ -15,6 +15,10 @@ const HINT: Record<string, string> = {
   "/fondatrices/roles": "Donner ou retirer un rôle, voir qui peut faire quoi.",
   "/fondatrices/journal": "Les opérations importantes : qui, quoi, quand.",
   "/fondatrices/notifications": "Vos notifications et vos préférences.",
+  // --- Lot 4 ---
+  "/fondatrices/boutique": "Guides et ressources digitales : produits, fichiers, ventes.",
+  "/fondatrices/parrainage": "Parrainages, récompenses à remettre, réglages.",
+  "/fondatrices/business": "Deals entre membres, retombées du réseau, barème des points.",
 };
 
 /** Téléphone : les entrées de l'espace fondatrices qui n'ont pas d'onglet dans la barre du bas. */
