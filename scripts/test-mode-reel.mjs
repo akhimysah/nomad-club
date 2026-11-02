@@ -539,6 +539,104 @@ await step("webhook Stripe : session expirée libère la place (cancelBooking sa
 });
 
 // ---------------------------------------------------------------------------
+console.log("\nInscription et lancement (0012, actions réelles)");
+const actions = await import("../src/app/actions/lancement.ts");
+await signIn(null);
+const form = (o) => {
+  const f = new FormData();
+  for (const [k, v] of Object.entries(o)) f.set(k, v);
+  return f;
+};
+const ZOE = "zoe.candidate@exemple.com";
+await step("inscription : formulaire → lien magique avec la fiche en métadonnées", async () => {
+  const r = await actions.signUpAction(null, form({ email: ZOE, firstName: "zoé", lastName: "Martin", whatsapp: "+212 6 11 22 33 44", country: "Française", heardFrom: "instagram", heardFromDetail: "", referralCode: "", path: "apply", terms: "on" }));
+  const otp = pg.log.otp.at(-1);
+  if (!r?.ok) throw new Error(r?.message);
+  return otp.email === ZOE && otp.data.signup_path === "apply" && otp.data.terms_accepted === "true" && otp.redirectTo.includes("/auth/callback?suite=%2Fbienvenue");
+});
+const zoe = (await sql1("select id from auth.users where email = $1", [ZOE]))?.id;
+await step("inscription : profil complet, onboarding à faire, CGU acceptées", async () => {
+  await signIn(zoe);
+  const p = await repo.getProfile(zoe);
+  const o = await repo.getOnboarding(zoe);
+  return p.firstName === "Zoé" && p.lastName === "Martin" && p.country === "Française" && o.signupPath === "apply" && !!o.termsAcceptedAt && !o.completedAt;
+});
+await step("inscription : CGU refusées → message", async () => {
+  const r = await actions.signUpAction(null, form({ email: "x@exemple.com", firstName: "Xa", lastName: "Y", whatsapp: "+212611223344", country: "FR", heardFrom: "site", path: "free" }));
+  return r && !r.ok && r.field === "terms";
+});
+await step("première connexion : direction l'onboarding", async () => {
+  const { supabaseServer } = await import("../src/lib/supabase/server.ts");
+  const { afterMagicLink } = await import("../src/lib/modules/lancement/server.ts");
+  const c = await supabaseServer();
+  const { data } = await c.auth.getUser();
+  return (await afterMagicLink(c, data.user, "/espace")) === "/bienvenue?suite=%2Fespace";
+});
+await step("onboarding : étape faite puis terminé", async () => {
+  await repo.onboardingProgress(zoe, "profile", null);
+  const o = await repo.onboardingProgress(zoe, "privacy", "completed");
+  return o.stepsDone.join() === "profile,privacy" && !!o.completedAt;
+});
+await step("onboarding : fiche de base enregistrée par l'action (compte gratuit)", async () => {
+  const r = await actions.saveBasicProfileAction({ firstName: "Zoé", lastName: "Martin", job: "Designer", country: "Française", whatsapp: "+212 6 11 22 33 44", avatarUrl: null });
+  return r.ok && (await repo.getProfile(zoe)).job === "Designer";
+});
+await step("adhésion sur validation : paiement bloqué sans candidature", async () => {
+  const { membershipGate } = await import("../src/lib/modules/lancement/server.ts");
+  return typeof (await membershipGate(await repo.getProfile(zoe))) === "string";
+});
+await step("candidature : déposée par l'action", async () => {
+  const r = await actions.submitApplicationAction(null, form({ job: "Designer", company: "Studio Z", marrakechSince: "2025", motivation: "Je veux rencontrer des entrepreneuses et partager mon réseau." }));
+  if (!r?.ok) throw new Error(r?.message);
+  return (await repo.listMyApplications(zoe))[0]?.status === "pending";
+});
+await signIn(JULIA);
+await step("fondatrices : file des candidatures + acceptation (journal, notification)", async () => {
+  const app = (await repo.listApplications()).find((a) => a.profileId === zoe && a.status === "pending");
+  const r = await actions.decideApplicationAction(app.id, true, "Bienvenue !");
+  if (!r.ok) throw new Error(r.error);
+  return !!(await sql1("select id from public.notifications where recipient_id = $1 and type = 'application_accepted'", [zoe])) && !!(await sql1("select id from public.audit_log where action = 'application.accept'"));
+});
+await signIn(zoe);
+await step("candidature acceptée : paiement de l'adhésion possible", async () => {
+  const { membershipGate } = await import("../src/lib/modules/lancement/server.ts");
+  return (await membershipGate(await repo.getProfile(zoe))) === null;
+});
+await signIn(JULIA);
+await step("fondatrices : passer en adhésion directe (journalisé)", async () => {
+  const r = await actions.setMembershipModeAction("direct");
+  const back = await actions.setMembershipModeAction("validation");
+  return r.ok && back.ok && (await repo.getLancementSettings()).membershipMode === "validation";
+});
+let inviteLink = null;
+await step("invitation : créée depuis Rôles et accès (lien à usage unique)", async () => {
+  const r = await actions.createInvitationAction(null, form({ email: "nouvelle.modo@exemple.com", role: "moderator", organizationId: "", note: "" }));
+  if (!r?.ok) throw new Error(r?.message);
+  inviteLink = r.link;
+  return /\/invitation\/[0-9a-f]{48}$/.test(r.link) && (await repo.listRoleInvitations()).some((i) => i.email === "nouvelle.modo@exemple.com" && i.state === "open");
+});
+await step("invitation : la personne s'inscrit avec l'adresse invitée puis accepte → rôle modératrice", async () => {
+  const token = inviteLink.split("/").pop();
+  await signIn(null);
+  const prev = await repo.previewRoleInvitation(token);
+  await actions.signUpAction(null, form({ email: "nouvelle.modo@exemple.com", firstName: "Maya", lastName: "Benali", whatsapp: "+212 6 99 88 77 66", country: "Marocaine", heardFrom: "bouche_a_oreille", path: "free", terms: "on", invitation: token }));
+  if (!pg.log.otp.at(-1).redirectTo.includes(encodeURIComponent(`/invitation/${token}`))) throw new Error("redirection d'invitation absente");
+  const id = (await sql1("select id from auth.users where email = 'nouvelle.modo@exemple.com'")).id;
+  await signIn(id);
+  const r = await repo.acceptRoleInvitation(token, id);
+  const p = await repo.getProfile(id);
+  return prev.state === "open" && r.role === "moderator" && p.roles.includes("moderator");
+});
+await step("invitation : une seconde utilisation est refusée", async () => {
+  try {
+    await repo.acceptRoleInvitation(inviteLink.split("/").pop(), zoe);
+    return false;
+  } catch (e) {
+    return /servi|used/.test(e.message);
+  }
+});
+
+// ---------------------------------------------------------------------------
 console.log("\nCouche de compatibilité");
 ok(env.unsupported.length === 0, "aucune construction PostgREST non gérée", env.unsupported.slice(0, 5).join(" | "));
 void pg;
