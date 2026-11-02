@@ -32,7 +32,7 @@ export default async function FounderMorePage() {
                 <Icon name={n.icon} />
               </span>
               <span>
-                <b>{n.title}</b>
+                <b>{n.label}</b>
                 <span>{HINT[n.href]}</span>
               </span>
               {n.href === "/fondatrices/notifications" && notifs > 0 ? <span className="nbadge">{notifs}</span> : <Icon name="chev-r" />}

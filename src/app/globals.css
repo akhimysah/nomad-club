@@ -1176,6 +1176,9 @@ a.sum-chip{text-decoration:none}
   .crow .c-plan,.crow .c-contact-col{display:none}
   .crow.head{display:none}
   .pref-row{gap:12px}
+  .log li{grid-template-columns:40px minmax(0,1fr);gap:4px 12px}
+  .log time{grid-column:2}
+  .tabbar:has(> :nth-child(6)) .tab{font-size:11px}
 }
 /* sélecteur d'espace à cinq entrées sur écran moyen */
 @media (min-width:761px) and (max-width:1100px){
@@ -1187,3 +1190,4 @@ a.sum-chip{text-decoration:none}
   .sw-seg small{display:none}
   .sw-note span.txt{display:none}
 }
+.crow .who>span:last-child,.rrow .who>span:last-child,.log li>span:nth-child(2){min-width:0}

@@ -20,19 +20,19 @@ Référence : `docs/CAHIER-DES-CHARGES.md`. Architecture de départ : `docs/ARCH
 | Espace Business | Rien | Déclaration de deals, points, retombées |
 | Administration | Espace Fondatrices (à traiter, membres, événements, encaissements) | Rôles fins, modération, contenus, partenaires, journal des opérations |
 | CRM | Chiffres et relances dans l'espace Fondatrices | Contacts / prospects, pipeline, segments, actions de suivi, statistiques de conversion et de renouvellement |
-| Sécurité | RLS Supabase, garde par rôle (guest / member / founder) | 5 rôles + permissions, journal d'audit, RGPD, sauvegardes |
+| Sécurité | RLS Supabase, 5 rôles cumulables + capacités, journal d'audit (Lot 0) | RGPD, sauvegardes, 2FA admin |
 
 ## Découpage en lots
 
 Chaque lot est livrable seul, testable en mode démo puis en mode réel.
 
 ### Lot 0 — Socle (en premier, tout le reste s'appuie dessus)
-- Rôles et permissions : `admin`, `moderator`, `member`, `partner`, `pro` (+ `guest`), cumulables (un pro peut être aussi partenaire). Table `user_roles`, fonctions `has_role()`, permissions centralisées côté code (`src/lib/permissions.ts`).
-- Organisations / établissements (`organizations`) reliés aux comptes partenaires et pros.
-- Journal des opérations importantes (`audit_log`).
-- Notifications in-app (`notifications`) + préférences, prêtes pour e-mail et push plus tard.
-- Navigation multi-espaces : Membre, Partenaire, Pro, Admin (ordinateur d'abord), CRM.
-- Mode réel Supabase testé de bout en bout (le schéma actuel n'a jamais tourné en vrai).
+- [x] Rôles et permissions : `admin`, `moderator`, `member`, `partner`, `pro` (+ `guest`), cumulables (un pro peut être aussi partenaire). Table `user_roles`, fonctions `has_role()` / `has_any_role()`, permissions centralisées côté code (`src/lib/permissions.ts`), page Rôles et accès.
+- [x] Organisations / établissements (`organizations`, `organization_members`) reliés aux comptes partenaires et pros.
+- [x] Journal des opérations importantes (`audit_log`) + page Journal.
+- [x] Notifications in-app (`notifications`) + préférences (`notification_prefs`), couche `src/lib/notify.ts` prête pour e-mail et push.
+- [x] Navigation multi-espaces : Membre, Partenaire, Pro, Admin (ordinateur et téléphone), CRM (page provisoire).
+- [~] Mode réel Supabase : migrations 0001 → 0003 + seed testées avec `npm run test:sql` (PGlite : schéma, RLS, fonctions). Reste à faire tourner l'appli sur un vrai projet Supabase (connexion par lien magique, PostgREST, clé service).
 
 ### Lot 1 — Communauté
 - Actualités (publications avec image, épinglage, commentaires optionnels).

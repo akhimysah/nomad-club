@@ -47,8 +47,9 @@ Le modèle commenté est dans **`.env.example`** : copiez-le en `.env.local` et 
 ### 3.1 Supabase (base de données et connexion)
 
 1. Créez un compte sur [supabase.com](https://supabase.com), puis un **nouveau projet** (région Europe, par exemple Paris ou Francfort). Notez le mot de passe de la base.
-2. Dans le projet, ouvrez **SQL Editor**, collez tout le contenu de `supabase/migrations/0001_init.sql` et cliquez sur **Run**.
-   Cela crée les tables, les règles de sécurité et les fonctions.
+2. Dans le projet, ouvrez **SQL Editor** et exécutez, **dans l'ordre**, chaque fichier de `supabase/migrations/`
+   (`0001_init.sql`, puis `0002_carnet_annuaire.sql`, puis `0003_socle.sql`) : collez son contenu et cliquez sur **Run**.
+   Cela crée les tables, les rôles, les règles de sécurité et les fonctions.
 3. (Facultatif, pour tester) Toujours dans SQL Editor, exécutez `supabase/seed.sql` : il ajoute les données d'exemple
    (membres fictives, rendez-vous, paiements…). **Ne le faites pas sur la base qui servira pour de vrai.**
 4. Ouvrez **Project Settings > API** et recopiez dans `.env.local` :
@@ -60,11 +61,15 @@ Le modèle commenté est dans **`.env.example`** : copiez-le en `.env.local` et 
    - « Redirect URLs » : ajoutez `http://localhost:3000/auth/callback` (et plus tard `https://votre-site/auth/callback`).
 6. Relancez `npm run dev`. Le bandeau de démo disparaît : on se connecte avec son e-mail sur `/connexion`
    (un lien de connexion arrive par e-mail, sans mot de passe).
-7. **Donner le rôle de fondatrice** à Julia et Nora : elles se connectent une première fois, puis dans SQL Editor :
+7. **Donner le rôle d'administratrice** à Julia et Nora : elles se connectent une première fois, puis dans SQL Editor :
 
    ```sql
-   update public.profiles set role = 'founder' where email in ('email-de-julia@exemple.com', 'email-de-nora@exemple.com');
+   insert into public.user_roles (profile_id, role)
+   select id, 'admin' from public.profiles where email in ('email-de-julia@exemple.com', 'email-de-nora@exemple.com')
+   on conflict do nothing;
    ```
+
+   Ensuite, les autres rôles (membre, modératrice, partenaire, pro) se donnent depuis l'appli : Fondatrices > Rôles et accès.
 
 Sans Stripe, une réservation payante ou une adhésion se règle par **virement déclaré** : elle apparaît chez les fondatrices
 dans « Virements à valider ». Indiquez le titulaire et l'IBAN dans `NEXT_PUBLIC_TRANSFER_HOLDER` et `NEXT_PUBLIC_TRANSFER_IBAN`.
@@ -102,11 +107,13 @@ Une place payée par carte est retenue 30 minutes pendant le paiement ; si le pa
 
 - `npm run dev` : développement · `npm run build` : version de production · `npm run lint` : vérification du code.
 - `npm run seed:sql` : régénère `supabase/seed.sql` à partir de `src/lib/seed.ts`.
+- `npm run test:sql` : exécute toutes les migrations et le seed dans un Postgres embarqué (PGlite) et vérifie rôles et sécurité (RLS).
 - Architecture : `docs/ARCHITECTURE.md`. Toutes les données passent par l'interface `src/lib/data/repo.ts`
   (implémentations `demo-repo.ts` et `supabase-repo.ts`, choix automatique dans `src/lib/data/index.ts`).
-- Pages : `src/app/(visite)` (compte gratuit), `src/app/espace` (membre), `src/app/fondatrices`.
+- Pages : `src/app/(visite)` (compte gratuit), `src/app/espace` (membre), `src/app/partenaire`, `src/app/pro`, `src/app/fondatrices` (admin).
   Actions serveur : `src/app/actions`. Logique métier pure : `src/lib/domain`.
-- Garde d'accès : `src/middleware.ts` + vérification dans les layouts (`requireMember`, `requireFounder`).
+- Rôles et permissions : `src/lib/permissions.ts` (rôles cumulables → capacités). Garde d'accès : `src/middleware.ts`
+  + vérification dans les layouts et les actions (`requireCapability`, `checkCapability` dans `src/lib/auth.ts`).
 
 ### Plus tard
 
