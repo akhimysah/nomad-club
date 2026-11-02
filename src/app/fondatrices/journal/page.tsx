@@ -18,6 +18,21 @@ const ACTION_LABEL: Record<AuditAction, string> = {
   "role.grant": "Rôle ajouté",
   "role.revoke": "Rôle retiré",
   "reminder.send": "Relance",
+  // --- Lot 1 ---
+  "news.create": "Publication créée",
+  "news.update": "Publication modifiée",
+  "news.publish": "Publication publiée",
+  "news.delete": "Publication supprimée",
+  "group.create": "Groupe créé",
+  "group.update": "Groupe modifié",
+  "group.decide": "Demande de groupe",
+  "moderation.hide": "Message masqué",
+  "moderation.restore": "Message rétabli",
+  "moderation.warn": "Avertissement",
+  "moderation.dismiss": "Signalement classé",
+  "keyword.add": "Mot-clé ajouté",
+  "keyword.remove": "Mot-clé retiré",
+  "event.remind": "Rappels J-1",
 };
 
 /** Journal des opérations importantes (lecture seule). */

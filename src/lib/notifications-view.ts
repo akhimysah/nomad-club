@@ -11,6 +11,13 @@ export const NOTIFICATION_ICON: Record<NotificationType, IconName> = {
   event_published: "cal",
   payment_validated: "wallet",
   role_changed: "lock",
+  // --- Lot 1 ---
+  news_published: "star",
+  event_reminder: "bell",
+  group_request: "users",
+  group_joined: "chat",
+  moderation_report: "inbox",
+  moderation_warning: "x",
 };
 
 export type NotificationItem = {

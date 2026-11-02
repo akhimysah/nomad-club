@@ -23,6 +23,8 @@ import type {
   Reminder,
 } from "./types";
 import { ANNUAIRE } from "./carnet-annuaire.ts";
+import { createCommunauteSeed } from "./modules/communaute/seed.ts"; // --- Lot 1 ---
+import type { CommunauteData } from "./modules/communaute/types.ts";
 
 export type SeedData = {
   profiles: Profile[];
@@ -40,6 +42,8 @@ export type SeedData = {
   auditLog: AuditEntry[];
   notifications: AppNotification[];
   notificationPrefs: NotificationPref[];
+  /** Lot 1 — Communauté : actualités, groupes, modération, annuaire. */
+  communaute: CommunauteData;
 };
 
 /** Identifiants fixes utilisés par le mode démo. */
@@ -544,8 +548,14 @@ export function createSeed(): SeedData {
   // Préférences : par défaut tout est actif ; Inès a coupé les e-mails des nouveaux rendez-vous.
   const notificationPrefs: NotificationPref[] = [{ profileId: "p-ines", type: "event_published", inApp: true, email: false, push: false }];
 
+  // --- Lot 1 --- : les messages (groupes, modération) et notifications du module rejoignent les tables communes.
+  const communaute = createCommunauteSeed(profiles);
+  messages.push(...communaute.messages);
+  notifications.push(...communaute.notifications);
+
   return {
     profiles, places, events, bookings, payments, memberships, memories, messages, reminders, partnerOffers,
     organizations, organizationMembers, auditLog, notifications, notificationPrefs,
+    communaute, // --- Lot 1 ---
   };
 }

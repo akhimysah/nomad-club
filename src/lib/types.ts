@@ -168,12 +168,14 @@ export type Memory = {
 
 export type Message = {
   id: string;
-  /** « general » ou « dm:<idA>:<idB> » (ids triés). */
+  /** « general », « dm:<idA>:<idB> » (ids triés) ou « group:<id> » (groupe thématique, Lot 1). */
   channel: string;
   authorId: string;
   body: string;
   createdAt: string;
   readAt: string | null;
+  /** Lot 1 : masqué par la modération (le texte d'origine n'est plus lisible que par les modératrices). */
+  hiddenAt?: string | null;
 };
 
 export type ReminderReason = "renewal" | "expired" | "unpaid" | "invite";
@@ -268,14 +270,29 @@ export type AuditAction =
   | "event.publish"
   | "role.grant"
   | "role.revoke"
-  | "reminder.send";
+  | "reminder.send"
+  // --- Lot 1 ---
+  | "news.create"
+  | "news.update"
+  | "news.publish"
+  | "news.delete"
+  | "group.create"
+  | "group.update"
+  | "group.decide"
+  | "moderation.hide"
+  | "moderation.restore"
+  | "moderation.warn"
+  | "moderation.dismiss"
+  | "keyword.add"
+  | "keyword.remove"
+  | "event.remind";
 
 /** Journal des opérations importantes (qui, quoi, sur quoi, détails). */
 export type AuditEntry = {
   id: string;
   actorId: string | null;
   action: AuditAction;
-  targetType: "payment" | "event" | "profile" | "reminder" | "organization";
+  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | /* Lot 1 */ "news" | "group" | "message" | "report" | "keyword";
   targetId: string | null;
   /** Phrase lisible (« Virement de Lou Garnier validé · 670 $ »). */
   summary: string;
@@ -283,7 +300,19 @@ export type AuditEntry = {
   createdAt: string;
 };
 
-export type NotificationType = "booking_confirmed" | "waitlist_spot" | "event_published" | "payment_validated" | "role_changed";
+export type NotificationType =
+  | "booking_confirmed"
+  | "waitlist_spot"
+  | "event_published"
+  | "payment_validated"
+  | "role_changed"
+  // --- Lot 1 ---
+  | "news_published"
+  | "event_reminder"
+  | "group_request"
+  | "group_joined"
+  | "moderation_report"
+  | "moderation_warning";
 
 export type AppNotification = {
   id: string;

@@ -16,6 +16,13 @@ export const NOTIFICATION_LABEL: Record<NotificationType, { label: string; hint:
   event_published: { label: "Nouveaux rendez-vous", hint: "Un rendez-vous vient d’être publié." },
   payment_validated: { label: "Paiements", hint: "Ton virement est validé par les fondatrices." },
   role_changed: { label: "Accès", hint: "Un nouvel espace s’ouvre sur ton compte." },
+  // --- Lot 1 ---
+  news_published: { label: "Actualités du club", hint: "Une nouvelle publication des fondatrices." },
+  event_reminder: { label: "Rappels", hint: "La veille d’un rendez-vous où tu es inscrite." },
+  group_request: { label: "Demandes de groupe", hint: "Une membre demande à rejoindre un groupe (modération)." },
+  group_joined: { label: "Groupes", hint: "Ta demande pour rejoindre un groupe est acceptée." },
+  moderation_report: { label: "Signalements", hint: "Un message est signalé ou repéré par un mot-clé (modération)." },
+  moderation_warning: { label: "Messages de la modération", hint: "Un avertissement sur l’un de tes messages." },
 };
 
 export const NOTIFICATION_TYPES = Object.keys(NOTIFICATION_LABEL) as NotificationType[];

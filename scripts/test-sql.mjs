@@ -220,6 +220,9 @@ ok(await as(INES, async (tx) => {
 ok(await as(JULIA, (tx) => count(tx, "select count(*) from public.founder_actions")) > 0, "la vue founder_actions fonctionne pour une admin");
 ok(await as(INES, (tx) => count(tx, "select count(*) from public.founder_actions where kind = 'transfer'")) === 0, "…et ne montre rien à une membre");
 
+// --- Lot 1 ---
+await (await import("./test-sql/communaute.mjs")).testCommunaute({ db, as, rejects, one, count, ok, uuid });
+
 console.log("\nReprise du rôle unique (base existante)");
 {
   const legacy = await PGlite.create({ extensions: { pgcrypto } });

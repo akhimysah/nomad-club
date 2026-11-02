@@ -116,7 +116,9 @@ export type NotificationInput = {
 export type MyOrganization = { organization: Organization; role: OrganizationMemberRole };
 export type OrganizationMemberView = OrganizationMember & { profile: Profile | null };
 
-export interface Repo {
+import type { CommunauteRepo } from "../modules/communaute/repo";
+
+export interface Repo extends CommunauteRepo /* Lot 1 */ {
   /* profils */
   getProfile(id: string): Promise<Profile | null>;
   /** Annuaire : adhérentes et fondatrices. */

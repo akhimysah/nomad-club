@@ -32,7 +32,7 @@ export async function EventDetail({ ev, ctx, viewer, backHref }: { ev: EventView
       pending: mineB.status === "pending",
       cancelId: viewer.profile && !past ? mineB.id : null,
     };
-  } else if (mine === "waitlist") cta = { act: "none", p: "Liste d’attente", s: "On te prévient dès qu’une place se libère", label: "Tu es inscrite" };
+  } else if (mine === "waitlist" && (left <= 0 || past)) cta = { act: "none", p: "Liste d’attente", s: "On te prévient dès qu’une place se libère", label: "Tu es inscrite" };
   else if (past) cta = { act: "none", p: "Terminé", s: "Ce rendez-vous est passé", label: "Passé" };
   else if (ev.premiumFree && !premium)
     cta = isMember
@@ -43,7 +43,8 @@ export async function EventDetail({ ev, ctx, viewer, backHref }: { ev: EventView
     cta = {
       act: "book",
       p: price ? `${price} $` : "Offert",
-      s: isMember && !ev.premiumFree ? `Tarif adhérente · ${placesText(left)}` : placesText(left),
+      // Lot 1 : en liste d'attente et une place s'est libérée → elle peut la prendre.
+      s: mine === "waitlist" ? "Une place s’est libérée pour toi" : isMember && !ev.premiumFree ? `Tarif adhérente · ${placesText(left)}` : placesText(left),
       label: "Réserver ma place",
       amount: price ?? 0,
     };
@@ -98,6 +99,15 @@ export async function EventDetail({ ev, ctx, viewer, backHref }: { ev: EventView
           </div>
         </div>
       </div>
+      {/* Lot 1 : ajout au calendrier (fichier .ics) */}
+      {!past && (
+        <p style={{ margin: "0 0 6px" }}>
+          <a className="link" href={`/api/calendrier/${ev.slug}`} download={`${ev.slug}.ics`}>
+            <Icon name="cal" />
+            Ajouter à mon calendrier
+          </a>
+        </p>
+      )}
       <p className="d-lead">{ev.description}</p>
       {ev.program.length > 0 && (
         <>

@@ -37,6 +37,15 @@ const CAP_LABEL: Record<Capability, string> = {
   "organizations.manage_all": "Gérer tous les établissements",
   "crm.access": "CRM",
   "audit.view": "Journal des opérations",
+  // --- Lot 1 ---
+  "news.react": "Réagir aux actualités",
+  "news.manage": "Publier les actualités",
+  "groups.join": "Rejoindre les groupes",
+  "groups.manage": "Créer et gérer les groupes",
+  "messages.report": "Signaler un message",
+  "keywords.manage": "Gérer les mots-clés",
+  "events.remind": "Envoyer les rappels J-1",
+  "directory.edit_own": "Modifier sa fiche d’annuaire",
 };
 
 type Props = { searchParams: Promise<{ q?: string; tous?: string }> };
