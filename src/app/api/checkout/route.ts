@@ -101,6 +101,11 @@ export async function POST(req: NextRequest) {
     profile = await repo.createGuestProfile({ firstName: g.data.firstName, lastName: "", whatsapp: g.data.whatsapp, email: null });
   }
   if (input.kind === "upgrade" && profile.plan === "premium") return fail("Tu es déjà Premium.");
+  // --- Lancement --- adhésion sur validation : une candidature acceptée est demandée avant la première adhésion
+  if (input.kind === "join") {
+    const gate = await (await import("@/lib/modules/lancement/server")).membershipGate(viewer.profile);
+    if (gate) return fail(gate, 403);
+  }
   const plan = input.kind === "upgrade" ? "premium" : input.kind === "renew" ? (profile.plan === "premium" ? "premium" : "member") : (input.plan ?? "member");
   const amount = membershipAmount(input.kind, plan);
   const pay = await repo.recordMembership({ profileId: profile.id, payerName: fullName(profile), action: input.kind, plan, amount, method: "card", status: "declared" });

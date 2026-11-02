@@ -23,6 +23,10 @@ export const NOTIFICATION_ICON: Record<NotificationType, IconName> = {
   group_joined: "chat",
   moderation_report: "inbox",
   moderation_warning: "x",
+  // --- Lancement ---
+  application_received: "inbox",
+  application_accepted: "check",
+  application_refused: "user",
 };
 
 export type NotificationItem = {

@@ -220,7 +220,31 @@ export function ClubSection({ memories }: { memories: Memory[] }) {
   );
 }
 
-export function FormulesSection({ env, needLogin, nextPremium }: { env: PayEnv; needLogin: boolean; nextPremium: EventView | null }) {
+export function FormulesSection({
+  env,
+  needLogin,
+  nextPremium,
+  applyHref = null,
+  signupHref = null,
+}: {
+  env: PayEnv;
+  needLogin: boolean;
+  nextPremium: EventView | null;
+  /** --- Lancement --- adhésion sur validation : lien de candidature à la place du paiement */
+  applyHref?: string | null;
+  /** --- Lancement --- mode réel : création du compte gratuit */
+  signupHref?: string | null;
+}) {
+  const join = (plan: "member" | "premium", label: string) =>
+    applyHref ? (
+      <Link className="btn btn-gold btn-block" href={applyHref}>
+        Demander l’adhésion
+      </Link>
+    ) : (
+      <JoinButton plan={plan} amount={PRICES[plan]} env={env} needLogin={needLogin}>
+        {label}
+      </JoinButton>
+    );
   return (
     <section className="vsec" id="v-formules">
       <div className="wrap">
@@ -252,7 +276,7 @@ export function FormulesSection({ env, needLogin, nextPremium }: { env: PayEnv; 
                 Ton billet sur WhatsApp.
               </li>
             </ul>
-            <FreeAccountButton toastText="Ton compte se crée à ta première réservation." />
+            <FreeAccountButton toastText="Ton compte se crée à ta première réservation." href={signupHref} />
           </article>
           <article className="plan rv">
             <h3>Membre</h3>
@@ -282,9 +306,7 @@ export function FormulesSection({ env, needLogin, nextPremium }: { env: PayEnv; 
             <p className="muted" style={{ fontSize: 14, margin: "-12px 0 20px" }}>
               Les rendez-vous Premium ne sont pas inclus.
             </p>
-            <JoinButton plan="member" amount={PRICES.member} env={env} needLogin={needLogin}>
-              Adhérer · {money(PRICES.member)}
-            </JoinButton>
+            {join("member", `Adhérer · ${money(PRICES.member)}`)}
           </article>
           <article className="plan premium rv">
             <span className="chip solid tag">
@@ -315,9 +337,7 @@ export function FormulesSection({ env, needLogin, nextPremium }: { env: PayEnv; 
                 Priorité sur les dîners à places limitées.
               </li>
             </ul>
-            <JoinButton plan="premium" amount={PRICES.premium} env={env} needLogin={needLogin}>
-              Passer Premium · {money(PRICES.premium)}
-            </JoinButton>
+            {join("premium", `Passer Premium · ${money(PRICES.premium)}`)}
           </article>
         </div>
       </div>
@@ -341,7 +361,7 @@ export function VFoot({ demo }: { demo: boolean }) {
         </p>
         {/* --- Lot 6 --- */}
         <p className="v-legal">
-          <Link href="/confidentialite">Confidentialité</Link> · <Link href="/mentions-legales">Mentions légales</Link> · <Link href="/mes-donnees">Mes données</Link>
+          <Link href="/cgu">Conditions d’utilisation</Link> · <Link href="/confidentialite">Confidentialité</Link> · <Link href="/mentions-legales">Mentions légales</Link> · <Link href="/mes-donnees">Mes données</Link>
         </p>
       </div>
     </footer>

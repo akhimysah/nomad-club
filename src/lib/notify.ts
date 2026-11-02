@@ -28,10 +28,14 @@ export const NOTIFICATION_LABEL: Record<NotificationType, { label: string; hint:
   group_joined: { label: "Groupes", hint: "Ta demande pour rejoindre un groupe est acceptée." },
   moderation_report: { label: "Signalements", hint: "Un message est signalé ou repéré par un mot-clé (modération)." },
   moderation_warning: { label: "Messages de la modération", hint: "Un avertissement sur l’un de tes messages." },
+  // --- Lancement ---
+  application_received: { label: "Candidatures", hint: "Une nouvelle demande d’adhésion à examiner (fondatrices)." },
+  application_accepted: { label: "Ma candidature", hint: "La réponse des fondatrices à ta demande d’adhésion." },
+  application_refused: { label: "Ma candidature (réponse)", hint: "La réponse des fondatrices à ta demande d’adhésion." },
 };
 
 /** Types réservés à l'équipe (masqués des préférences des membres). */
-export const STAFF_NOTIFICATION_TYPES: NotificationType[] = ["crm_task_due"];
+export const STAFF_NOTIFICATION_TYPES: NotificationType[] = ["crm_task_due", "application_received" /* --- Lancement --- */];
 
 export const NOTIFICATION_TYPES = Object.keys(NOTIFICATION_LABEL) as NotificationType[];
 

@@ -7,6 +7,7 @@ export const FOUNDER_NAV: FounderNavItem[] = [
   { href: "/fondatrices", icon: "grid", label: "Vue d’ensemble", tab: "Aperçu", title: "Vue d’ensemble", mobile: true },
   { href: "/fondatrices/a-traiter", icon: "inbox", label: "À traiter", tab: "À traiter", title: "À traiter", mobile: true },
   { href: "/fondatrices/membres", icon: "users", label: "Membres", tab: "Membres", title: "Membres", mobile: true },
+  { href: "/fondatrices/candidatures", icon: "user", label: "Candidatures", tab: "Candidatures", title: "Candidatures", mobile: false }, // --- Lancement ---
   { href: "/fondatrices/evenements", icon: "cal", label: "Événements", tab: "Agenda", title: "Événements", mobile: true },
   { href: "/fondatrices/encaissements", icon: "wallet", label: "Encaissements", tab: "Paiements", title: "Encaissements", mobile: true },
   { href: "/fondatrices/communaute", icon: "chat", label: "Communauté", tab: "Communauté", title: "Communauté", mobile: false }, // --- Lot 1 ---

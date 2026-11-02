@@ -37,6 +37,7 @@ import type {
 import { today } from "../clock";
 import { partenairesSupabase } from "../modules/partenaires/supabase";
 import { supabaseSecuriteRepo } from "../modules/securite/supabase-repo"; // --- Lot 6 ---
+import { lancementSupabaseRepo } from "../modules/lancement/supabase"; // --- Lancement ---
 import { otherInChannel, type BookResult, type CancelResult, type EventInput, type NotificationInput, type Repo } from "./repo";
 
 /* ---------- lignes de la base (snake_case) ---------- */
@@ -315,6 +316,8 @@ export const supabaseRepo: Repo = {
   ...supabaseEngagementRepo,
   // --- Lot 6 ---
   ...supabaseSecuriteRepo,
+  // --- Lancement --- inscription, onboarding, candidatures, invitations
+  ...lancementSupabaseRepo,
 
   async getProfile(id) {
     const c = await db();

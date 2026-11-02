@@ -2,6 +2,7 @@
  * Interface unique d'accès aux données. Les pages et les server actions ne passent que par elle.
  * Deux implémentations : demo-repo.ts (mémoire) et supabase-repo.ts (Postgres).
  */
+import type { LancementRepo } from "../modules/lancement/repo"; // --- Lancement ---
 import type { Snapshot } from "../domain/founders";
 // --- Lot 5 ---
 import type { CrmRepo } from "../modules/crm/repo";
@@ -124,7 +125,7 @@ export type OrganizationMemberView = OrganizationMember & { profile: Profile | n
 
 import type { CommunauteRepo } from "../modules/communaute/repo"; // --- Lot 1 ---
 
-export interface Repo extends CommunauteRepo /* Lot 1 */, PartenairesRepo /* --- Lot 3 --- */, CrmRepo /* Lot 5 */, EngagementRepo /* --- Lot 4 --- */, SecuriteRepo /* --- Lot 6 --- */ {
+export interface Repo extends CommunauteRepo /* Lot 1 */, PartenairesRepo /* --- Lot 3 --- */, CrmRepo /* Lot 5 */, EngagementRepo /* --- Lot 4 --- */, SecuriteRepo /* --- Lot 6 --- */, LancementRepo /* --- Lancement --- */ {
   /* profils */
   getProfile(id: string): Promise<Profile | null>;
   /** Annuaire : adhérentes et fondatrices. */

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { restartOnboardingAction } from "@/app/actions/lancement"; // --- Lancement ---
 import Link from "next/link";
 import { signOut } from "@/app/actions/auth";
 import { MembershipButton, OfferButton, TicketButton } from "@/components/member/Buttons";
@@ -192,6 +193,13 @@ export default async function MoiPage() {
               <div style={{ marginTop: 12 }}>
                 <InstallHelp />
               </div>
+              {/* --- Lancement --- reprendre l'onboarding (fiche, confidentialité, notifications, installation) */}
+              <form action={restartOnboardingAction} style={{ marginTop: 12 }}>
+                <button className="btn btn-ghost btn-sm" type="submit">
+                  <Icon name="refresh" />
+                  Reprendre la bienvenue
+                </button>
+              </form>
             </section>
             {!demo && (
               <form action={signOut}>

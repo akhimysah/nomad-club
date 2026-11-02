@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FHead } from "@/components/founders/parts";
 import { RoleEditor } from "@/components/founders/RoleEditor";
+import { InvitationsPanel } from "@/components/lancement/Admin"; // --- Lancement ---
 import { Avatar } from "@/components/ui/Avatar";
 import { Icon } from "@/components/ui/Icon";
 import { Screen } from "@/components/ui/Screen";
@@ -77,7 +78,7 @@ export default async function RolesPage({ searchParams }: Props) {
   const v = await requireCapability("roles.manage", { next: "/fondatrices/roles" });
   const { q, tous } = await searchParams;
   const repo = getRepo();
-  const [profiles, log] = await Promise.all([repo.listProfiles(), repo.listAudit({ limit: 200 })]);
+  const [profiles, log, invitations, organizations] = await Promise.all([repo.listProfiles(), repo.listAudit({ limit: 200 }), repo.listRoleInvitations() /* --- Lancement --- */, repo.listOrganizations()]);
   const needle = normalize(q ?? "");
   // par défaut : les personnes qui ont un rôle autre que « membre » (équipe, partenaires, pros) ; recherche = tout le monde
   const showAll = Boolean(tous) || Boolean(needle);
@@ -124,6 +125,9 @@ export default async function RolesPage({ searchParams }: Props) {
           ))}
           {!rows.length && <div className="empty">Personne ne correspond à cette recherche.</div>}
         </section>
+
+        {/* --- Lancement --- invitation par e-mail (lien à usage unique qui attribue le rôle) */}
+        <InvitationsPanel invitations={invitations} organizations={organizations.map((o) => ({ id: o.id, name: o.name, kinds: o.kinds }))} />
 
         <section className="card" style={{ marginTop: 22 }}>
           <div className="card-h">

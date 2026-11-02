@@ -134,9 +134,16 @@ export function VTabbar({ demo }: { demo: boolean }) {
 }
 
 /** Bouton « Créer mon compte » : le compte se crée à la première réservation. */
-export function FreeAccountButton({ toastText }: { toastText: string }) {
+export function FreeAccountButton({ toastText, href = null }: { toastText: string; href?: string | null }) {
   const router = useRouter();
   const toast = useToast();
+  // --- Lancement --- mode réel : vraie page d'inscription
+  if (href)
+    return (
+      <Link className="btn btn-ghost btn-block" href={href}>
+        Créer mon compte
+      </Link>
+    );
   return (
     <button
       className="btn btn-ghost btn-block"
