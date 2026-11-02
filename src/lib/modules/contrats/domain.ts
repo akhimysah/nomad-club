@@ -110,7 +110,7 @@ export function buildVariables(c: VarContext): Record<string, string> {
     "modele.version": String(c.templateVersion),
     "signataire.nom": v(c.signer.name, "[NOM DE LA SIGNATAIRE]"),
     "signataire.email": v(c.signer.email),
-    "signataire.telephone": v(c.signer.phone),
+    "signataire.telephone": v(c.signer.phone, "numéro non renseigné"),
     "signataire.carte": v(c.signer.card, "attribuée à l'activation"),
     "etablissement.nom": v(c.organization?.name, "[ÉTABLISSEMENT]"),
     "etablissement.adresse": v(c.organization?.address, "[ADRESSE]"),

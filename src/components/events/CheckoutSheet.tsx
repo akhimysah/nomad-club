@@ -385,7 +385,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
         </button>
         <p className="fine">
           <Icon name="chat" />
-          Ton reçu et ton billet partent sur WhatsApp.{demo ? " Simulé." : ""}
+          {c.event ? "Ton reçu et ton billet partent sur WhatsApp." : "Ton reçu part sur WhatsApp et ta carte de membre t’attend dans l’appli."}{demo ? " Simulé." : ""}
         </p>
       </>
     );
@@ -415,7 +415,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
               ? "Ta place est retenue. Elle sera confirmée dès que Julia et Nora auront reçu ton virement."
               : `Ton billet part sur WhatsApp${r.phone ? ` au ${r.phone}` : ""}.${demo ? " Simulé, rien ne part vraiment." : ""}`}
           </p>
-          <Ticket t={r.ticket} />
+          <Ticket t={r.ticket} pending={r.pending} />
           <p className="fine">
             <Icon name="swap" />
             Incline ton billet pour voir le reflet doré.

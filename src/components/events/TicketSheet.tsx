@@ -38,7 +38,7 @@ export function TicketSheet({
             {pending ? "Paiement en attente : ton billet sera confirmé dès réception. " : "Présente ce QR à l’accueil. "}
             {demo ? "Billet simulé." : ""}
           </p>
-          <Ticket t={ticket} />
+          <Ticket t={ticket} pending={pending} />
           <p className="fine">
             <Icon name="swap" />
             Incline ton billet pour voir le reflet doré.

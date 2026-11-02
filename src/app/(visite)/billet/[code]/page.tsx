@@ -46,7 +46,7 @@ export default async function TicketPage({ params, searchParams }: Props) {
                 : "Ta place est retenue. Elle sera confirmée dès réception du paiement."
               : `Présente ce QR à l’accueil.${demo ? " Billet simulé." : ""}`}
         </p>
-        {!waitlist && <Ticket t={t} />}
+        {!waitlist && <Ticket t={t} pending={pending} />}
         {!waitlist && (
           <p className="fine">
             <Icon name="swap" />

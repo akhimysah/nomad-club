@@ -45,8 +45,10 @@ export async function afterMagicLink(supabase: SupabaseClient, user: User, dest:
     if (dest.startsWith("/invitation/") || dest.startsWith("/bienvenue")) return dest;
     const { data, error } = await supabase.rpc("my_onboarding");
     if (error || !data) return dest;
-    const row = data as { completed_at: string | null; skipped_at: string | null };
-    if (onboardingPending({ completedAt: row.completed_at, skippedAt: row.skipped_at })) return `/bienvenue?suite=${encodeURIComponent(dest)}`;
+    const row = data as { completed_at: string | null; skipped_at: string | null; terms_accepted_at: string | null; steps_done: string[] | null };
+    // Bienvenue imposée tant qu’elle n’est pas commencée (CGU à accepter ou aucune étape faite) ; ensuite elle se reprend depuis « Moi ».
+    const started = Boolean(row.terms_accepted_at) && (row.steps_done ?? []).length > 0;
+    if (!started && onboardingPending({ completedAt: row.completed_at, skippedAt: row.skipped_at })) return `/bienvenue?suite=${encodeURIComponent(dest)}`;
     return dest;
   } catch (e) {
     console.error("[lancement] après le lien magique :", e instanceof Error ? e.message : e);

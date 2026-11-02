@@ -294,7 +294,13 @@ export function FormulesSection({
                 Ton billet sur WhatsApp.
               </li>
             </ul>
-            <FreeAccountButton toastText="Ton compte se crée à ta première réservation." href={signupHref} />
+            {env.me && !needLogin ? (
+              <span className="btn btn-ghost btn-block" aria-disabled="true">
+                <Icon name="check" /> Ton compte est actif
+              </span>
+            ) : (
+              <FreeAccountButton toastText="Ton compte se crée à ta première réservation." href={signupHref} />
+            )}
           </article>
           <article className="plan rv">
             <h3>Membre</h3>

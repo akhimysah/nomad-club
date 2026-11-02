@@ -19,7 +19,7 @@ export type TicketData = {
 };
 
 /** Billet qui pivote avec reflet (maquette). */
-export function Ticket({ t, intro = true }: { t: TicketData; intro?: boolean }) {
+export function Ticket({ t, intro = true, pending = false }: { t: TicketData; intro?: boolean; pending?: boolean }) {
   const ref = useTilt<HTMLDivElement>();
   return (
     <div ref={ref} className={"ticket" + (intro ? " intro" : "")} tabIndex={0} aria-label={`Billet pour ${t.title}`}>
@@ -27,9 +27,9 @@ export function Ticket({ t, intro = true }: { t: TicketData; intro?: boolean }) 
         <EventImage image={t.image ?? "lunch-fer7.jpg"} position={t.imagePosition} />
         <div className="veil" />
         <img className="tk-logo" src="/img/logotype-clair.png" alt="Nomad Club" />
-        <span className="chip solid">
-          <Icon name="check" />
-          Confirmé
+        <span className={"chip" + (pending ? " pending" : " solid")}>
+          <Icon name={pending ? "clock" : "check"} />
+          {pending ? "En attente du virement" : "Confirmé"}
         </span>
       </div>
       <div className="tk-body">
