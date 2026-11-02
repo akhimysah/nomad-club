@@ -9,11 +9,12 @@ import { getRepo } from "@/lib/data";
 import { priceFor } from "@/lib/domain/events";
 import { paymentMode } from "@/lib/env";
 import { bookingConfirmed, waitlistSpot } from "@/lib/notify";
+import { claimReferral } from "@/lib/modules/engagement/referral"; // --- Lot 4 ---
 import { inCircle } from "@/lib/permissions";
 import { guestSchema } from "@/lib/validation";
 import { ticketData } from "@/lib/views";
 
-export type ReserveInput = { eventId: string; firstName?: string; whatsapp?: string; wait?: boolean };
+export type ReserveInput = { eventId: string; firstName?: string; whatsapp?: string; wait?: boolean; referralCode?: string /* --- Lot 4 --- */ };
 
 export type ReserveResult =
   | { ok: true; kind: "booked"; ticket: TicketData; name: string; phone: string | null; pending: boolean; already: boolean }
@@ -61,6 +62,9 @@ export async function reserve(input: ReserveInput): Promise<ReserveResult> {
       guestWhatsapp = null;
     }
   }
+
+  // --- Lot 4 --- : inscription parrainée (code saisi ou ?parrain=CODE mémorisé)
+  if (profile && !inCircle(profile)) await claimReferral(profile.id, input.referralCode);
 
   const plan = viewer.profile ? viewer.profile.plan : "free";
   const price = priceFor(ev, plan);

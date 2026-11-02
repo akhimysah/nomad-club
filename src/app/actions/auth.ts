@@ -2,7 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { cookies } from "next/headers";
 import { isRealMode } from "@/lib/env";
+import { normalizeReferralCode, REFERRAL_COOKIE } from "@/lib/modules/engagement/referral-cookie"; // --- Lot 4 ---
 import { siteUrl } from "@/lib/site";
 
 export type LoginState = { ok: boolean; message: string } | null;
@@ -19,6 +21,9 @@ export async function sendMagicLink(_prev: LoginState, form: FormData): Promise<
   const parsed = emailSchema.safeParse(form.get("email"));
   if (!parsed.success) return { ok: false, message: parsed.error.issues[0].message };
   const next = safeNext(String(form.get("suite") ?? ""));
+  // --- Lot 4 --- : code de parrainage saisi, rattaché au compte au retour du lien magique
+  const parrain = normalizeReferralCode(form.get("parrain"));
+  if (parrain) (await cookies()).set(REFERRAL_COOKIE, parrain, { path: "/", sameSite: "lax", maxAge: 60 * 60 * 24 * 30 });
   const { supabaseServer } = await import("@/lib/supabase/server");
   const supabase = await supabaseServer();
   const base = await siteUrl();

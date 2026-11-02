@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/Icon";
 import { LoginForm } from "@/components/visit/LoginForm";
 import { getViewer, viewerCan, viewerSpaces } from "@/lib/auth";
 import { fullName, PLAN_LABEL } from "@/lib/format";
+import { pendingReferralCode } from "@/lib/modules/engagement/referral"; // --- Lot 4 ---
 import { ROLE_LABEL, SPACE_ORDER, spaceOfPath } from "@/lib/permissions";
 
 export const metadata: Metadata = { title: "Connexion" };
@@ -84,7 +85,7 @@ export default async function LoginPage({ searchParams }: Props) {
                     Ce lien a expiré ou a déjà servi. Demande-en un nouveau.
                   </div>
                 )}
-                <LoginForm next={next} />
+                <LoginForm next={next} parrain={await pendingReferralCode() /* --- Lot 4 --- */} />
               </>
             )}
           </div>
