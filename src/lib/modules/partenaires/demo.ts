@@ -195,7 +195,7 @@ export function partenairesDemo(db: () => SeedData): PartenairesRepo {
     async recordSubscriptionPayment(input) {
       const d = db();
       d.partenaires.subscriptionPayments.push({
-        id: randomUUID(), organizationId: input.organizationId, plan: input.plan, amount: input.amount, status: input.status, method: "simulated",
+        id: randomUUID(), organizationId: input.organizationId, plan: input.plan, amount: input.amount, status: input.status, method: input.method ?? "simulated" /* Vague 2 */,
         reference: input.reference, periodStart: input.periodStart, periodEnd: input.periodEnd, createdAt: nowIso(),
       });
       let s = d.partenaires.subscriptions.find((x) => x.organizationId === input.organizationId);
@@ -219,6 +219,12 @@ export function partenairesDemo(db: () => SeedData): PartenairesRepo {
       if (patch.plan) s.plan = patch.plan;
       if (patch.monthlyPrice !== undefined) s.monthlyPrice = patch.monthlyPrice;
       if (patch.cancelAtPeriodEnd !== undefined) s.cancelAtPeriodEnd = patch.cancelAtPeriodEnd;
+      // --- Vague 2 · paiements --- (synchronisation par le webhook du prestataire)
+      if (patch.status) s.status = patch.status;
+      if (patch.currentPeriodEnd) s.currentPeriodEnd = patch.currentPeriodEnd;
+      if (patch.provider) s.provider = patch.provider;
+      if (patch.subscriptionRef !== undefined) s.subscriptionRef = patch.subscriptionRef;
+      if (patch.customerRef !== undefined) s.customerRef = patch.customerRef;
       s.updatedAt = nowIso();
       return clone(s);
     },

@@ -37,6 +37,7 @@ import type {
 import { today } from "../clock";
 import { partenairesSupabase } from "../modules/partenaires/supabase";
 import { supabaseSecuriteRepo } from "../modules/securite/supabase-repo"; // --- Lot 6 ---
+import { paiementsSupabaseRepo } from "../modules/paiements/supabase-repo"; // --- Vague 2 · paiements ---
 import { otherInChannel, type BookResult, type CancelResult, type EventInput, type NotificationInput, type Repo } from "./repo";
 
 /* ---------- lignes de la base (snake_case) ---------- */
@@ -315,6 +316,8 @@ export const supabaseRepo: Repo = {
   ...supabaseEngagementRepo,
   // --- Lot 6 ---
   ...supabaseSecuriteRepo,
+  // --- Vague 2 · paiements ---
+  ...paiementsSupabaseRepo,
 
   async getProfile(id) {
     const c = await db();
@@ -521,6 +524,12 @@ export const supabaseRepo: Repo = {
   },
 
   async recordMembership(input) {
+    // --- Vague 2 · paiements --- : avec la clé service, le montant calculé côté serveur (tarifs configurables)
+    // est enregistré tel quel ; sinon repli sur declare_membership (tarifs par défaut en SQL).
+    if (input.method === "transfer" && input.status === "declared" && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      const row = { profile_id: input.profileId, payer_name: input.payerName, kind: "membership", plan: input.plan, membership_action: input.action, amount: Math.round(input.amount), method: "transfer", status: "declared" };
+      return toPayment(check(await supabaseAdmin().from("payments").insert(row).select("*").single()) as Row);
+    }
     if (input.method === "transfer" && input.status === "declared") {
       const c = await db();
       const id = check(await c.rpc("declare_membership", { p_action: input.action, p_plan: input.plan })) as string;
@@ -533,7 +542,7 @@ export const supabaseRepo: Repo = {
       kind: "membership",
       plan: input.plan,
       membership_action: input.action,
-      amount: input.amount,
+      amount: Math.round(input.amount), // colonne entière (0001) ; le détail au centime est dans installments
       method: "card",
       status: "declared",
       stripe_session_id: input.stripeSessionId ?? null,

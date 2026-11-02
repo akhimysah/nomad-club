@@ -296,7 +296,9 @@ export type AuditAction =
   | "moderation.dismiss"
   | "keyword.add"
   | "keyword.remove"
-  | "event.remind";
+  | "event.remind"
+  // --- Vague 2 · paiements ---
+  | import("./modules/paiements/types").PaiementsAuditAction;
 
 /** Journal des opérations importantes (qui, quoi, sur quoi, détails). */
 export type AuditEntry = {
@@ -327,7 +329,9 @@ export type NotificationType =
   | "group_request"
   | "group_joined"
   | "moderation_report"
-  | "moderation_warning";
+  | "moderation_warning"
+  // --- Vague 2 · paiements ---
+  | import("./modules/paiements/types").PaiementsNotificationType;
 
 export type AppNotification = {
   id: string;

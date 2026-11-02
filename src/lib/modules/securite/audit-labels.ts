@@ -6,6 +6,7 @@ import { registerAuditLabels } from "./audit-view";
 import { PARTENAIRES_AUDIT_LABEL } from "../partenaires/domain"; // --- Lot 3 ---
 import { ENGAGEMENT_AUDIT_LABEL } from "../engagement/labels"; // --- Lot 4 ---
 import { CRM_AUDIT_LABEL } from "../crm/types"; // --- Lot 5 ---
+import { PAIEMENTS_AUDIT_LABEL } from "../paiements/labels"; // --- Vague 2 · paiements ---
 
 // --- Lot 1 ---
 const COMMUNAUTE_AUDIT_LABEL: Record<string, string> = {
@@ -25,4 +26,4 @@ const COMMUNAUTE_AUDIT_LABEL: Record<string, string> = {
   "event.remind": "Rappels J-1",
 };
 
-registerAuditLabels({ ...COMMUNAUTE_AUDIT_LABEL, ...PARTENAIRES_AUDIT_LABEL, ...ENGAGEMENT_AUDIT_LABEL, ...CRM_AUDIT_LABEL });
+registerAuditLabels({ ...COMMUNAUTE_AUDIT_LABEL, ...PARTENAIRES_AUDIT_LABEL, ...ENGAGEMENT_AUDIT_LABEL, ...CRM_AUDIT_LABEL, ...PAIEMENTS_AUDIT_LABEL });

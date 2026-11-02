@@ -35,6 +35,21 @@ export type SubscriptionPaymentInput = {
   reference: string;
   periodStart: string;
   periodEnd: string;
+  // --- Vague 2 · paiements --- : moyen réel (carte via Stripe) ; « simulated » par défaut
+  method?: SubscriptionPayment["method"];
+  provider?: string;
+};
+
+/** --- Vague 2 · paiements --- : statut, échéance et références synchronisés par le webhook du prestataire. */
+export type SubscriptionPatch = {
+  plan?: ProPlan;
+  monthlyPrice?: number;
+  cancelAtPeriodEnd?: boolean;
+  status?: ProSubscription["status"];
+  currentPeriodEnd?: string;
+  provider?: string;
+  subscriptionRef?: string | null;
+  customerRef?: string | null;
 };
 
 export interface PartenairesRepo {
@@ -75,7 +90,7 @@ export interface PartenairesRepo {
   /** Enregistre un paiement ; s'il est payé, l'abonnement passe actif jusqu'à `periodEnd` avec cette formule. */
   recordSubscriptionPayment(input: SubscriptionPaymentInput & { monthlyPrice: number }): Promise<ProSubscription>;
   /** Change la formule (effet à la prochaine échéance) ou programme / annule l'arrêt en fin de période. */
-  updateSubscription(organizationId: string, patch: { plan?: ProPlan; monthlyPrice?: number; cancelAtPeriodEnd?: boolean }): Promise<ProSubscription>;
+  updateSubscription(organizationId: string, patch: SubscriptionPatch): Promise<ProSubscription>;
   /** Met à jour les statuts échus (retard puis suspension). Renvoie le nombre de changements. */
   refreshSubscriptions(todayYmd: string): Promise<number>;
 

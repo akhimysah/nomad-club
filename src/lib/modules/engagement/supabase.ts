@@ -5,7 +5,7 @@
  * Fichiers : bucket privé « ressources », URL signées valables 60 secondes.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { supabaseServer } from "../../supabase/server";
+import { supabaseAdmin, supabaseServer } from "../../supabase/server";
 import type { EngagementRepo } from "./repo";
 import type {
   Deal,
@@ -275,6 +275,25 @@ export const supabaseEngagementRepo: EngagementRepo = {
     return { kind: "url", url: res.data.signedUrl };
   },
   async recordPurchase(input) {
+    // --- Vague 2 · paiements --- : paiement réel confirmé par le webhook (pas de session) → clé service, idempotent.
+    if (input.method === "card" || input.method === "transfer") {
+      const w = supabaseAdmin();
+      const find = async () =>
+        check(await w.from("purchases").select("*").eq("product_id", input.productId).eq("profile_id", input.profileId).eq("status", "paid").maybeSingle()) as Row | null;
+      const existing = await find();
+      if (existing) return toPurchase(existing);
+      const res = await w
+        .from("purchases")
+        .insert({ product_id: input.productId, profile_id: input.profileId, amount: input.amount, method: input.method, payment_ref: input.paymentRef })
+        .select("*")
+        .single();
+      if (res.error) {
+        const again = await find(); // deux confirmations simultanées : l'index unique garde un seul achat
+        if (again) return toPurchase(again);
+        throw new Error(res.error.message);
+      }
+      return toPurchase(res.data as Row);
+    }
     // Paiement simulé : la fonction SQL recalcule le prix membre et refuse si le paiement simulé est coupé.
     const c = await db();
     const r = check(await c.rpc("purchase_product_simulated", { p_product: input.productId })) as Row;
