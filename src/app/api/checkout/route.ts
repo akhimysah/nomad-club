@@ -11,13 +11,14 @@ import { fullName } from "@/lib/format";
 import { siteUrl } from "@/lib/site";
 import { getStripe } from "@/lib/stripe";
 import { guestSchema } from "@/lib/validation";
+import { rateLimit } from "@/lib/modules/securite/rate-limit";
 
 const bodySchema = z.object({
   kind: z.enum(["ticket", "join", "renew", "upgrade"]),
-  eventId: z.string().optional(),
+  eventId: z.string().max(64).optional(),
   plan: z.enum(["member", "premium"]).optional(),
-  firstName: z.string().optional(),
-  whatsapp: z.string().optional(),
+  firstName: z.string().max(80).optional(),
+  whatsapp: z.string().max(40).optional(),
 });
 
 const fail = (error: string, status = 400) => NextResponse.json({ error }, { status });
@@ -28,6 +29,8 @@ const fail = (error: string, status = 400) => NextResponse.json({ error }, { sta
  */
 export async function POST(req: NextRequest) {
   if (paymentMode() !== "stripe") return fail("Le paiement en ligne n’est pas activé.", 404);
+  const limit = await rateLimit("checkout"); // --- Lot 6 ---
+  if (!limit.ok) return NextResponse.json({ error: limit.message }, { status: 429, headers: { "Retry-After": String(limit.retryAfter) } });
   const parsed = bodySchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return fail("Demande invalide.");
   const input = parsed.data;

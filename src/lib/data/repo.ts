@@ -37,6 +37,7 @@ import type {
 } from "../types";
 // --- Lot 3 ---
 import type { PartenairesRepo } from "../modules/partenaires/repo";
+import type { SecuriteRepo } from "../modules/securite/repo"; // --- Lot 6 ---
 
 export type EventInput = {
   title: string;
@@ -121,7 +122,7 @@ export type NotificationInput = {
 export type MyOrganization = { organization: Organization; role: OrganizationMemberRole };
 export type OrganizationMemberView = OrganizationMember & { profile: Profile | null };
 
-export interface Repo extends PartenairesRepo /* --- Lot 3 --- */, CrmRepo /* Lot 5 */, EngagementRepo /* --- Lot 4 --- */ {
+export interface Repo extends PartenairesRepo /* --- Lot 3 --- */, CrmRepo /* Lot 5 */, EngagementRepo /* --- Lot 4 --- */, SecuriteRepo /* --- Lot 6 --- */ {
   /* profils */
   getProfile(id: string): Promise<Profile | null>;
   /** Annuaire : adhérentes et fondatrices. */

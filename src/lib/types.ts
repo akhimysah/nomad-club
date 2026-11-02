@@ -278,7 +278,8 @@ export type AuditAction =
   // --- Lot 5 ---
   | CrmAuditAction
   // --- Lot 4 ---
-  | EngagementAuditAction;
+  | EngagementAuditAction
+  | import("./modules/securite/types").SecuriteAuditAction; // --- Lot 6 ---
 
 /** Journal des opérations importantes (qui, quoi, sur quoi, détails). */
 export type AuditEntry = {

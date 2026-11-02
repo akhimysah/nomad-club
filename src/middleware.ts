@@ -31,5 +31,5 @@ async function accessGuard(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|img/|icons/|favicon.ico|icon.png|apple-icon.png|manifest.webmanifest|api/stripe/webhook).*)"],
+  matcher: ["/((?!_next/static|_next/image|img/|icons/|favicon.ico|icon.png|apple-icon.png|manifest.webmanifest|sw.js|api/stripe/webhook).*)"],
 };

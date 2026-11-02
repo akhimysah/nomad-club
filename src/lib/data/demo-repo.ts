@@ -14,6 +14,7 @@ import { createSeed, type SeedData } from "../seed";
 // --- Lot 5 ---
 import { crmDemoRepo } from "../modules/crm/demo-repo";
 import type { AppNotification, Booking, BookingView, ClubEvent, DmThread, MessageView, NotificationPref, Payment, Profile } from "../types";
+import { demoSecuriteRepo } from "../modules/securite/demo-repo"; // --- Lot 6 ---
 import { dmChannel, otherInChannel, type BookResult, type CancelResult, type Repo } from "./repo";
 // --- Lot 3 ---
 import { partenairesDemo } from "../modules/partenaires/demo";
@@ -63,6 +64,8 @@ export const demoRepo: Repo = {
   ...crmDemoRepo,
   // --- Lot 4 --- (engagement : dashboard, boutique, parrainage, business)
   ...createDemoEngagementRepo(db),
+  // --- Lot 6 ---
+  ...demoSecuriteRepo,
 
   async getProfile(id) {
     const p = db().profiles.find((x) => x.id === id);

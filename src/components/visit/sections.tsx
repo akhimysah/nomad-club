@@ -339,6 +339,10 @@ export function VFoot({ demo }: { demo: boolean }) {
             </>
           )}
         </p>
+        {/* --- Lot 6 --- */}
+        <p className="v-legal">
+          <Link href="/confidentialite">Confidentialité</Link> · <Link href="/mentions-legales">Mentions légales</Link> · <Link href="/mes-donnees">Mes données</Link>
+        </p>
       </div>
     </footer>
   );

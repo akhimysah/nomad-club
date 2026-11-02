@@ -55,6 +55,10 @@ const CAP_LABEL: Record<Capability, string> = {
   "referral.manage": "Gérer le parrainage",
   "business.use": "Déclarer des deals",
   "business.manage": "Piloter l’Espace Business",
+  // --- Lot 6 ---
+  "audit.export": "Exporter le journal",
+  "privacy.process_deletions": "Traiter les suppressions de compte",
+  "security.manage": "Réglages de sécurité",
 };
 
 type Props = { searchParams: Promise<{ q?: string; tous?: string }> };

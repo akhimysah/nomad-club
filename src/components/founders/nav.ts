@@ -17,6 +17,8 @@ export const FOUNDER_NAV: FounderNavItem[] = [
   { href: "/fondatrices/boutique", icon: "book", label: "Boutique", tab: "Boutique", title: "Boutique", mobile: false },
   { href: "/fondatrices/parrainage", icon: "gift", label: "Parrainage", tab: "Parrainage", title: "Parrainage", mobile: false },
   { href: "/fondatrices/business", icon: "star", label: "Espace Business", tab: "Business", title: "Espace Business", mobile: false },
+  // --- Lot 6 ---
+  { href: "/fondatrices/securite", icon: "lock", label: "Sécurité et données", tab: "Sécurité", title: "Sécurité", mobile: false },
 ];
 
 export const FOUNDER_PLUS: FounderNavItem = { href: "/fondatrices/plus", icon: "plus", label: "Plus", tab: "Plus", title: "Plus", mobile: true };

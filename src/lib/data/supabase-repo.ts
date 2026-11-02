@@ -35,6 +35,7 @@ import type {
 // --- Lot 3 ---
 import { today } from "../clock";
 import { partenairesSupabase } from "../modules/partenaires/supabase";
+import { supabaseSecuriteRepo } from "../modules/securite/supabase-repo"; // --- Lot 6 ---
 import { otherInChannel, type BookResult, type CancelResult, type EventInput, type NotificationInput, type Repo } from "./repo";
 
 /* ---------- lignes de la base (snake_case) ---------- */
@@ -311,6 +312,8 @@ export const supabaseRepo: Repo = {
   ...crmSupabaseRepo,
   // --- Lot 4 --- (engagement : dashboard, boutique, parrainage, business)
   ...supabaseEngagementRepo,
+  // --- Lot 6 ---
+  ...supabaseSecuriteRepo,
 
   async getProfile(id) {
     const c = await db();

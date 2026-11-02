@@ -19,6 +19,8 @@ const HINT: Record<string, string> = {
   "/fondatrices/boutique": "Guides et ressources digitales : produits, fichiers, ventes.",
   "/fondatrices/parrainage": "Parrainages, récompenses à remettre, réglages.",
   "/fondatrices/business": "Deals entre membres, retombées du réseau, barème des points.",
+  // --- Lot 6 ---
+  "/fondatrices/securite": "Double authentification, demandes de suppression, protections.",
 };
 
 /** Téléphone : les entrées de l'espace fondatrices qui n'ont pas d'onglet dans la barre du bas. */
