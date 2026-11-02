@@ -5,6 +5,7 @@
 import type { Snapshot } from "../domain/founders";
 // --- Lot 5 ---
 import type { CrmRepo } from "../modules/crm/repo";
+import type { EngagementRepo } from "../modules/engagement/repo"; // --- Lot 4 ---
 import type {
   AppNotification,
   AuditAction,
@@ -120,7 +121,7 @@ export type NotificationInput = {
 export type MyOrganization = { organization: Organization; role: OrganizationMemberRole };
 export type OrganizationMemberView = OrganizationMember & { profile: Profile | null };
 
-export interface Repo extends PartenairesRepo /* --- Lot 3 --- */, CrmRepo /* Lot 5 */ {
+export interface Repo extends PartenairesRepo /* --- Lot 3 --- */, CrmRepo /* Lot 5 */, EngagementRepo /* --- Lot 4 --- */ {
   /* profils */
   getProfile(id: string): Promise<Profile | null>;
   /** Annuaire : adhérentes et fondatrices. */

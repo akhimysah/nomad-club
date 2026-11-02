@@ -6,10 +6,11 @@ import { getRepo } from "@/lib/data";
 import { membershipAmount } from "@/lib/domain/membership";
 import { paymentMode } from "@/lib/env";
 import { fullName, ymdDots, ymdLong } from "@/lib/format";
+import { claimReferral } from "@/lib/modules/engagement/referral"; // --- Lot 4 ---
 import type { MembershipAction, PaidPlan } from "@/lib/types";
 import { guestSchema } from "@/lib/validation";
 
-export type MembershipInput = { action: MembershipAction; plan: PaidPlan; firstName?: string; whatsapp?: string };
+export type MembershipInput = { action: MembershipAction; plan: PaidPlan; firstName?: string; whatsapp?: string; referralCode?: string /* --- Lot 4 --- */ };
 
 export type MembershipResult =
   | { ok: true; declared: boolean; name: string; fullName: string; plan: PaidPlan; validUntil: string; validUntilLong: string; cardNumber: string }
@@ -36,6 +37,8 @@ export async function startMembership(input: MembershipInput): Promise<Membershi
     }
     profile = await repo.createGuestProfile({ firstName: parsed.data.firstName, lastName: "", whatsapp: parsed.data.whatsapp, email: null });
   }
+  // --- Lot 4 --- : adhésion parrainée (avant le rôle membre, qui déclenche la récompense de la marraine)
+  if (input.action === "join") await claimReferral(profile.id, input.referralCode);
   if (input.action === "upgrade" && profile.plan === "premium") return { ok: false, error: "Tu es déjà Premium." };
   const plan: PaidPlan = input.action === "upgrade" ? "premium" : input.action === "renew" ? (profile.plan === "premium" ? "premium" : "member") : input.plan;
   const declared = mode === "transfer";

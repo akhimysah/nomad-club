@@ -24,11 +24,19 @@ const EXTRA_NAV: Array<{ href: string; icon: IconName; label: string; title: str
   { href: "/espace/carte", icon: "pin", label: "Carte", title: "Carte", prefixes: ["/espace/carte"] },
 ];
 const extraOf = (pathname: string) => EXTRA_NAV.find((n) => n.prefixes.some((p) => pathname.startsWith(p)));
+// --- Lot 4 --- : boutique, parrainage et Espace Business (barre latérale ; sur téléphone, depuis « Moi »)
+const EXTRA: Array<{ href: string; icon: IconName; label: string; title: string }> = [
+  { href: "/espace/boutique", icon: "gift", label: "Boutique", title: "Boutique" },
+  { href: "/espace/business", icon: "star", label: "Business", title: "Business" },
+  { href: "/espace/parrainage", icon: "heart", label: "Parrainage", title: "Parrainage" },
+];
 
 function activeHref(pathname: string): string {
+  const lot4 = EXTRA.find((n) => pathname.startsWith(n.href)); // --- Lot 4 ---
+  if (lot4) return lot4.href;
   if (pathname === "/espace") return "/espace";
-  const extra = extraOf(pathname); // --- Lot 3 ---
-  if (extra) return extra.href;
+  const lot3 = extraOf(pathname); // --- Lot 3 ---
+  if (lot3) return lot3.href;
   if (pathname.startsWith("/espace/moi")) return "/espace/moi";
   if (pathname.startsWith("/espace/notifications")) return "/espace/notifications";
   return NAV.find((n) => n.href !== "/espace" && pathname.startsWith(n.href))?.href ?? "/espace";
@@ -38,7 +46,7 @@ function activeHref(pathname: string): string {
 export function MemberChrome({ name, formule, unread, notifs, spaces }: { name: string; formule: string; unread: number; notifs: number; spaces: Space[] }) {
   const pathname = usePathname();
   const active = activeHref(pathname);
-  const title = active === "/espace/moi" ? "Moi" : active === "/espace/notifications" ? "Notifications" : (NAV.find((n) => n.href === active)?.title ?? EXTRA_NAV.find((n) => n.href === active)?.title ?? "Accueil");
+  const title = active === "/espace/moi" ? "Moi" : active === "/espace/notifications" ? "Notifications" : ([...NAV, ...EXTRA, ...EXTRA_NAV].find((n) => n.href === active)?.title ?? "Accueil");
   const tabActive = EXTRA_NAV.some((n) => n.href === active) ? "/espace/carnet" : active; // --- Lot 3 ---
   return (
     <>
@@ -64,6 +72,12 @@ export function MemberChrome({ name, formule, unread, notifs, spaces }: { name: 
             Notifications
             <CountBadge value={notifs} className="nbadge" />
           </Link>
+          {EXTRA.map((n) => (
+            <Link key={n.href} href={n.href} className={"side-btn" + (active === n.href ? " on" : "")} aria-current={active === n.href ? "page" : undefined}>
+              <Icon name={n.icon} />
+              {n.label}
+            </Link>
+          ))}
         </nav>
         <div className="side-foot">
           <SpaceLinks spaces={spaces} current="member" />

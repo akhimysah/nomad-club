@@ -9,6 +9,7 @@ import { applyMembership } from "../domain/membership";
 import { newTicketCode } from "../domain/tickets";
 import { fullName } from "../format";
 import { inCircle, isAdmin } from "../permissions";
+import { createDemoEngagementRepo } from "../modules/engagement/demo"; // --- Lot 4 ---
 import { createSeed, type SeedData } from "../seed";
 // --- Lot 5 ---
 import { crmDemoRepo } from "../modules/crm/demo-repo";
@@ -60,6 +61,8 @@ export const demoRepo: Repo = {
   ...partenairesDemo(db),
   // --- Lot 5 : CRM (délégué au module) ---
   ...crmDemoRepo,
+  // --- Lot 4 --- (engagement : dashboard, boutique, parrainage, business)
+  ...createDemoEngagementRepo(db),
 
   async getProfile(id) {
     const p = db().profiles.find((x) => x.id === id);

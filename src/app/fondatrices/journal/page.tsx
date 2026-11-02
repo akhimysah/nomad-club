@@ -5,6 +5,7 @@ import { Screen } from "@/components/ui/Screen";
 import { requireCapability } from "@/lib/auth";
 import { getRepo } from "@/lib/data";
 import { dayMonthShort, fullName, hour } from "@/lib/format";
+import { ENGAGEMENT_AUDIT_LABEL } from "@/lib/modules/engagement/labels"; // --- Lot 4 ---
 import type { AuditAction } from "@/lib/types";
 import { PARTENAIRES_AUDIT_LABEL } from "@/lib/modules/partenaires/domain"; // --- Lot 3 ---
 // --- Lot 5 ---
@@ -24,6 +25,8 @@ const ACTION_LABEL: Record<AuditAction, string> = {
   ...PARTENAIRES_AUDIT_LABEL, // --- Lot 3 ---
   // --- Lot 5 ---
   ...CRM_AUDIT_LABEL,
+  // --- Lot 4 ---
+  ...ENGAGEMENT_AUDIT_LABEL,
 };
 
 /** Journal des opérations importantes (lecture seule). */

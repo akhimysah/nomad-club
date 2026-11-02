@@ -97,6 +97,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
   const [stage, setStage] = useState<Stage>("who");
   const [first, setFirst] = useState("");
   const [phone, setPhone] = useState("");
+  const [parrain, setParrain] = useState(""); // --- Lot 4 --- code de parrainage
   const [errs, setErrs] = useState<{ firstName?: string; whatsapp?: string; general?: string }>({});
   const [paying, setPaying] = useState<"idle" | "busy" | "ok">("idle");
   const [done, setDone] = useState<Done | null>(null);
@@ -109,11 +110,11 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
   const free = !c || c.kind === "wait" || c.amount === 0;
   const total = free ? (visit ? 2 : 1) : visit ? 3 : 2;
 
-  const run = async (who: { firstName?: string; whatsapp?: string }): Promise<Done | null> => {
+  const run = async (who: { firstName?: string; whatsapp?: string; referralCode?: string }): Promise<Done | null> => {
     if (!c) return null;
     setErrs({});
     if (c.kind === "ticket" || c.kind === "wait") {
-      const r = await reserve({ eventId: c.event!.id, firstName: who.firstName, whatsapp: who.whatsapp, wait: c.kind === "wait" });
+      const r = await reserve({ eventId: c.event!.id, firstName: who.firstName, whatsapp: who.whatsapp, wait: c.kind === "wait", referralCode: who.referralCode });
       if (!r.ok) {
         setErrs(r.field ? { [r.field]: r.error } : { general: r.error });
         if (r.field) setStage("who");
@@ -121,7 +122,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
       }
       return { kind: "reserve", r };
     }
-    const m = await startMembership({ action: c.kind, plan: c.plan ?? "member", firstName: who.firstName, whatsapp: who.whatsapp });
+    const m = await startMembership({ action: c.kind, plan: c.plan ?? "member", firstName: who.firstName, whatsapp: who.whatsapp, referralCode: who.referralCode });
     if (!m.ok) {
       setErrs(m.field ? { [m.field]: m.error } : { general: m.error });
       if (m.field) setStage("who");
@@ -130,7 +131,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
     return { kind: "membership", r: m };
   };
 
-  const finish = async (who: { firstName?: string; whatsapp?: string }) => {
+  const finish = async (who: { firstName?: string; whatsapp?: string; referralCode?: string }) => {
     const d = await run(who);
     if (d) {
       setDone(d);
@@ -149,6 +150,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
     setDone(null);
     setErrs({});
     setPaying("idle");
+    setParrain(/(?:^|; )nc_parrain=([^;]+)/.exec(document.cookie)?.[1] ?? ""); // --- Lot 4 ---
     if (visit) setStage("who");
     else if (free) {
       setStage("busy");
@@ -167,13 +169,13 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
     if (er.whatsapp) return phoneRef.current?.focus();
     if (free) {
       setStage("busy");
-      void finish({ firstName: first, whatsapp: phone });
+      void finish({ firstName: first, whatsapp: phone, referralCode: parrain });
     } else setStage("pay");
   };
 
   const pay = async () => {
     if (!c || paying !== "idle") return;
-    const who = visit ? { firstName: first, whatsapp: phone } : {};
+    const who = visit ? { firstName: first, whatsapp: phone, referralCode: parrain } : {};
     if (env.mode === "stripe") {
       setPaying("busy");
       const res = await fetch("/api/checkout", {
@@ -232,6 +234,11 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
             <label htmlFor="bk-whatsapp">Numéro WhatsApp</label>
             <input id="bk-whatsapp" ref={phoneRef} type="tel" inputMode="tel" autoComplete="tel" placeholder="+212 6 12 34 56 78" value={phone} onChange={(e) => setPhone(e.target.value)} />
             <span className="err-msg">{errs.whatsapp}</span>
+          </div>
+          {/* --- Lot 4 --- : parrainage */}
+          <div className="field">
+            <label htmlFor="bk-parrain">Code de parrainage (facultatif)</label>
+            <input id="bk-parrain" autoComplete="off" autoCapitalize="characters" placeholder="INES-7K2Q" maxLength={20} value={parrain} onChange={(e) => setParrain(e.target.value)} />
           </div>
           <button className="btn btn-gold btn-block" type="submit">
             {c.kind === "wait" ? "M’inscrire sur la liste" : free ? "Confirmer ma place" : "Continuer vers le paiement"} <Icon name="arrow-r" />

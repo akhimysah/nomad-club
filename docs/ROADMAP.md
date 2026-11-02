@@ -13,11 +13,11 @@ Référence : `docs/CAHIER-DES-CHARGES.md`. Architecture de départ : `docs/ARCH
 | Offres partenaires | Fiches établissements, offres, code personnel + QR, validation au comptoir, statistiques, dashboard partenaire (Lot 3) | Contrat partenaire (Lot 2) |
 | Adhésion | Annuelle Membre / Premium, renouvellement, virement déclaré, Stripe Checkout | Paiement en plusieurs fois, historique complet, échéancier |
 | Contrats | Rien | Génération PDF, acceptation / signature, envoi par e-mail, archivage |
-| Dashboard membre | Accueil fixe | Widgets obligatoires / facultatifs (actualités, événements, météo, agenda, heures de prière) |
+| Dashboard membre | Accueil à widgets personnalisables (Lot 4) | Branchement des actualités du Lot 1 |
 | Carte interactive | Carte Leaflet / OpenStreetMap : partenaires, pros, membres consentantes en position approximative (Lot 3) | — |
-| Ressources digitales | Rien | Boutique, paiement, accès automatique aux fichiers |
-| Parrainage | Rien | Codes, suivi, récompenses |
-| Espace Business | Rien | Déclaration de deals, points, retombées |
+| Ressources digitales | Boutique, mes ressources, téléchargements sécurisés, gestion admin (Lot 4) | Vrai paiement (Lot 2) |
+| Parrainage | Codes, lien, suivi, récompenses automatiques (Lot 4) | Remise automatique du mois offert (Lot 2) |
+| Espace Business | Deals confirmés par les deux, points, classement, retombées (Lot 4) | Statistiques croisées au CRM (Lot 5) |
 | Administration | Espace Fondatrices (à traiter, membres, événements, encaissements) | Rôles fins, modération, contenus, partenaires, journal des opérations |
 | CRM | Lot 5 : contacts uniques, pipeline, tâches, historique, segments, actions groupées, import / export CSV, statistiques | Retombées réelles des deals (branchement du Lot 4), contrats sur la fiche (Lot 2) |
 | Sécurité | RLS Supabase, 5 rôles cumulables + capacités, journal d'audit (Lot 0) | RGPD, sauvegardes, 2FA admin |
@@ -55,11 +55,12 @@ Chaque lot est livrable seul, testable en mode démo puis en mode réel.
 - [x] Carte interactive (Leaflet + OpenStreetMap, sans clé) : partenaires, pros, membres ayant consenti, en position approximative (quartier ou ~500 m, arrondie aussi en base), anonyme possible, retirable à tout moment (la position est alors effacée) ; repli en liste si la carte ne charge pas.
 - Reste : contrats (Lot 2), paiement réel de l'abonnement pro (Lot 2), planifier `refresh_pro_subscriptions()` chaque nuit (pg_cron) en mode réel, envoi d'e-mail des invitations d'équipe.
 
-### Lot 4 — Engagement
-- Dashboard membre à widgets : obligatoires (actualités, prochains événements) et facultatifs (météo, agenda, heures de prière, offres, deals), réorganisables.
-- Ressources digitales : boutique, paiement, accès automatique et téléchargements sécurisés.
-- Parrainage : code personnel, suivi des inscriptions, récompenses.
-- Espace Business : déclaration de deals entre membres (confirmés par les deux parties), points, classement, retombées.
+### Lot 4 — Engagement (branche `lot-4-engagement`, migration `0006_engagement.sql`, module `src/lib/modules/engagement/`)
+- [x] Dashboard membre à widgets : obligatoires (prochain rendez-vous, actualités, prochains événements) et facultatifs (adhésion, météo Open-Meteo, heures de prière Aladhan méthode Maroc avec calcul local en repli, mon agenda, salon, offres, points Business, parrainage, citation du jour, assistant, adresse du carnet). Activation et ordre enregistrés par membre (glisser-déposer, boutons, clavier). Les actualités affichent des exemples en démo et une liste vide en réel tant que le Lot 1 n'est pas fusionné (`news-source.ts`, un seul endroit à brancher).
+- [x] Ressources digitales : boutique (prix public / prix membre), fiche avec extrait et aperçu gratuit, achat avec paiement **simulé** isolé dans `billing.ts` (à remplacer au Lot 2 ; coupé par défaut en production), accès immédiat, « Mes ressources », téléchargements vérifiés côté serveur (URL signées Supabase Storage de 60 s ; PDF d'exemple au nom de l'acheteuse en démo). Admin : produits, fichiers, publication, ventes.
+- [x] Parrainage : code personnel, lien `?parrain=CODE` mémorisé 30 jours, champ code à l'inscription (connexion, réservation, adhésion), suivi des filleules ; récompenses configurables attribuées automatiquement quand la filleule devient membre (points crédités, autres à remettre par l'admin), notifications.
+- [x] Espace Business : déclaration d'un deal avec une autre membre, confirmation par elle (fonction SQL `respond_deal`), points pour les deux selon un barème réglable, classement (retrait possible), historique ; mention « aucune commission, le club n'est pas partie aux deals ». Admin : volume, deals par mois et par type, membres les plus connectées, barème.
+- [ ] À faire à la fusion : brancher les actualités du Lot 1 dans `news-source.ts`, régénérer `supabase/seed.sql`, créer le bucket privé `ressources` sur le vrai projet Supabase (la migration le fait si le schéma `storage` existe).
 
 ### Lot 5 — CRM et pilotage (branche `lot-5-crm`)
 - [x] Contacts uniques (prospects, adhérentes, anciennes membres, pros, partenaires, presse), avec ou sans compte : chaque profil de l'appli a sa fiche (déclencheur `crm_sync_profile`), statut recalculé depuis l'adhésion et les rôles pour les comptes. Sources, statuts, étiquettes, responsable (Julia / Nora), consentement marketing horodaté. Doublons détectés (e-mail, téléphone, nom) et fusion atomique (`crm_merge_contacts`). Import CSV (correspondance des colonnes, aperçu, doublons écartés) et export CSV journalisé (`crm.export`).

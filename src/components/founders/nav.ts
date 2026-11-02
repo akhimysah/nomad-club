@@ -13,6 +13,10 @@ export const FOUNDER_NAV: FounderNavItem[] = [
   { href: "/fondatrices/roles", icon: "lock", label: "Rôles et accès", tab: "Rôles", title: "Rôles", mobile: false },
   { href: "/fondatrices/journal", icon: "clock", label: "Journal", tab: "Journal", title: "Journal", mobile: false },
   { href: "/fondatrices/notifications", icon: "bell", label: "Notifications", tab: "Notifs", title: "Notifications", mobile: false },
+  // --- Lot 4 --- (engagement)
+  { href: "/fondatrices/boutique", icon: "book", label: "Boutique", tab: "Boutique", title: "Boutique", mobile: false },
+  { href: "/fondatrices/parrainage", icon: "gift", label: "Parrainage", tab: "Parrainage", title: "Parrainage", mobile: false },
+  { href: "/fondatrices/business", icon: "star", label: "Espace Business", tab: "Business", title: "Espace Business", mobile: false },
 ];
 
 export const FOUNDER_PLUS: FounderNavItem = { href: "/fondatrices/plus", icon: "plus", label: "Plus", tab: "Plus", title: "Plus", mobile: true };

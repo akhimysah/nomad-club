@@ -26,6 +26,8 @@ import { ANNUAIRE } from "./carnet-annuaire.ts";
 // --- Lot 3 ---
 import { partenairesSeed } from "./modules/partenaires/seed.ts";
 import type { Offer, PartenairesSeed } from "./modules/partenaires/types.ts";
+import { createEngagementSeed } from "./modules/engagement/seed.ts"; // --- Lot 4 ---
+import type { EngagementSeed } from "./modules/engagement/types";
 
 export type SeedData = {
   profiles: Profile[];
@@ -45,6 +47,8 @@ export type SeedData = {
   notificationPrefs: NotificationPref[];
   // --- Lot 3 --- (offres complètes, fiches, codes, statistiques, abonnements, positions)
   partenaires: PartenairesSeed & { offers: Offer[] };
+  // --- Lot 4 ---
+  engagement: EngagementSeed;
 };
 
 /** Identifiants fixes utilisés par le mode démo. */
@@ -554,5 +558,6 @@ export function createSeed(): SeedData {
     organizations, organizationMembers, auditLog, notifications, notificationPrefs,
     // --- Lot 3 --- (complète aussi organisations, rattachements et rôles ci-dessus)
     partenaires: partenairesSeed({ profiles, organizations, organizationMembers, partnerOffers }),
+    engagement: createEngagementSeed(), // --- Lot 4 ---
   };
 }

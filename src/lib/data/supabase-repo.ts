@@ -8,6 +8,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Snapshot } from "../domain/founders";
 import { fullName } from "../format";
 import { inCircle, isAdmin, isGrantableRole } from "../permissions";
+import { supabaseEngagementRepo } from "../modules/engagement/supabase"; // --- Lot 4 ---
 import { supabaseAdmin, supabaseServer } from "../supabase/server";
 // --- Lot 5 ---
 import { crmSupabaseRepo } from "../modules/crm/supabase-repo";
@@ -308,6 +309,8 @@ export const supabaseRepo: Repo = {
   ...partenairesSupabase(db, trustedWriter, today),
   // --- Lot 5 : CRM (délégué au module) ---
   ...crmSupabaseRepo,
+  // --- Lot 4 --- (engagement : dashboard, boutique, parrainage, business)
+  ...supabaseEngagementRepo,
 
   async getProfile(id) {
     const c = await db();

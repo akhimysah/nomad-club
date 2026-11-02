@@ -187,6 +187,8 @@ insert(
     crm.segments.map((g) => [q(uuid(g.id)), q(g.name), q(g.description), json(g.filters), q(uuid(g.createdBy)), q(g.createdAt), q(g.updatedAt)]),
   );
 }
+// --- Lot 4 --- (engagement)
+(await import("./seed-sql/engagement.mjs")).engagementSeedLines(s, uuid).forEach(out);
 
 out("select setval('public.card_number_seq', 700, false);");
 out("commit;");

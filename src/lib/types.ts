@@ -5,6 +5,8 @@
  */
 // --- Lot 5 ---
 import type { CrmAuditAction, CrmTargetType } from "./modules/crm/types.ts";
+// --- Lot 4 ---
+import type { EngagementAuditAction, EngagementAuditTarget, EngagementNotificationType } from "./modules/engagement/types";
 
 /**
  * Rôles cumulables (table user_roles). Une personne sans rôle est une visiteuse (« guest »).
@@ -274,14 +276,16 @@ export type AuditAction =
   // --- Lot 3 ---
   | import("./modules/partenaires/types").PartenairesAuditAction
   // --- Lot 5 ---
-  | CrmAuditAction;
+  | CrmAuditAction
+  // --- Lot 4 ---
+  | EngagementAuditAction;
 
 /** Journal des opérations importantes (qui, quoi, sur quoi, détails). */
 export type AuditEntry = {
   id: string;
   actorId: string | null;
   action: AuditAction;
-  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | CrmTargetType /* Lot 5 */;
+  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | CrmTargetType /* Lot 5 */ | EngagementAuditTarget /* Lot 4 */;
   targetId: string | null;
   /** Phrase lisible (« Virement de Lou Garnier validé · 670 $ »). */
   summary: string;
@@ -296,7 +300,9 @@ export type NotificationType =
   | "payment_validated"
   | "role_changed"
   // --- Lot 5 ---
-  | "crm_task_due";
+  | "crm_task_due"
+  // --- Lot 4 ---
+  | EngagementNotificationType;
 
 export type AppNotification = {
   id: string;
