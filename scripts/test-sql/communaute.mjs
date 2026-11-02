@@ -166,6 +166,25 @@ export async function testCommunaute({ db, as, rejects, one, count, ok, uuid }) 
   ok(await rejects(INES, "insert into public.news_reactions (post_id, profile_id, kind) select id, $1, 'bravo' from public.news_posts limit 1", [SALMA]), "Inès ne réagit pas au nom de Salma");
   ok(await rejects(INES, "insert into public.news_reactions (post_id, profile_id, kind) values ($1, $2, 'like')", [uuid("news-family"), INES]), "…ni sur un brouillon");
 
+  const SAISON = uuid("news-saison");
+  const BLOOM = uuid("news-bloom");
+  ok(await as(INES, (tx) => count(tx, "select count(*) from public.news_comments where post_id = $1", [SAISON])) === 2, "Inès lit les commentaires d'une publication");
+  ok(await as(RIM, (tx) => count(tx, "select count(*) from public.news_comments")) === 0, "Rim (hors cercle) ne lit pas les commentaires");
+  ok(await as(INES, async (tx) => {
+    await tx.query("insert into public.news_comments (post_id, author_id, body) values ($1, $2, 'Bravo !')", [SAISON, INES]);
+    return count(tx, "select count(*) from public.news_comments where post_id = $1", [SAISON]);
+  }) === 3, "Inès commente une publication ouverte aux commentaires");
+  ok(await rejects(INES, "insert into public.news_comments (post_id, author_id, body) values ($1, $2, 'Bravo !')", [BLOOM, INES]), "…pas une publication aux commentaires fermés");
+  ok(await rejects(INES, "insert into public.news_comments (post_id, author_id, body) values ($1, $2, 'Faux')", [SAISON, SALMA]), "…ni au nom de Salma");
+  ok(await as(INES, async (tx) => {
+    await tx.query("delete from public.news_comments where post_id = $1", [SAISON]);
+    return count(tx, "select count(*) from public.news_comments where post_id = $1", [SAISON]);
+  }) === 2, "Inès ne retire pas les commentaires des autres");
+  ok(await as(YASMINE, async (tx) => {
+    await tx.query("delete from public.news_comments where post_id = $1", [SAISON]);
+    return count(tx, "select count(*) from public.news_comments where post_id = $1", [SAISON]);
+  }) === 0, "Yasmine (modératrice) retire un commentaire");
+
   console.log("\nLot 1 · Annuaire et confidentialité");
   const dirInes = await as(INES, async (tx) => (await tx.query("select * from public.directory_list()")).rows);
   ok(dirInes.length > 50, `Inès voit l'annuaire (${dirInes.length} fiches)`);

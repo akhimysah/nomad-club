@@ -19,8 +19,8 @@ export default async function NewsEditPage({ params }: Props) {
   const post = isNew ? null : await getRepo().getNews(id, null);
   if (!isNew && !post) notFound();
   const initial = post
-    ? { id: post.id, title: post.title, body: post.body, image: post.image, pinned: post.pinned, published: post.status === "published" }
-    : { title: "", body: "", image: null, pinned: false, published: false };
+    ? { id: post.id, title: post.title, body: post.body, image: post.image, pinned: post.pinned, commentsEnabled: post.commentsEnabled, published: post.status === "published" }
+    : { title: "", body: "", image: null, pinned: false, commentsEnabled: false, published: false };
   return (
     <Screen group="founders" index={10} className="fscreen scroller on">
       <div className="f-inner" style={{ maxWidth: 820 }}>

@@ -65,6 +65,7 @@ function toNews(r: Row): NewsPost {
     body: str(r.body),
     image: strN(r.image),
     pinned: Boolean(r.pinned),
+    commentsEnabled: Boolean(r.comments_enabled),
     status: (r.status as NewsPost["status"]) ?? "draft",
     authorId: strN(r.author_id),
     publishedAt: strN(r.published_at),
@@ -150,10 +151,12 @@ async function newsViews(c: SupabaseClient, rows: Row[], viewerId: string | null
   if (!posts.length) return [];
   const ids = posts.map((p) => p.id);
   const authorIds = [...new Set(posts.map((p) => p.authorId).filter((x): x is string => !!x))];
-  const [reactions, authors] = await Promise.all([
+  const [reactions, authors, comments] = await Promise.all([
     c.from("news_reactions").select("post_id, profile_id, kind").in("post_id", ids),
     authorIds.length ? c.from("profiles").select("id, first_name, last_name").in("id", authorIds) : Promise.resolve({ data: [], error: null }),
+    c.from("news_comments").select("post_id").in("post_id", ids),
   ]);
+  const cs = (check(comments) as Row[]) ?? [];
   const rs = (check(reactions) as Row[]) ?? [];
   const names = new Map(((check(authors) as Row[]) ?? []).map((a) => [str(a.id), [str(a.first_name), str(a.last_name)].filter(Boolean).join(" ")]));
   return posts.map((p) => {
@@ -164,6 +167,7 @@ async function newsViews(c: SupabaseClient, rows: Row[], viewerId: string | null
       authorName: (p.authorId && names.get(p.authorId)) || "Nomad Club",
       reactions: { like: count("like"), bravo: count("bravo"), merci: count("merci") },
       mine: viewerId ? mine.filter((r) => str(r.profile_id) === viewerId).map((r) => r.kind as ReactionKind) : [],
+      commentCount: cs.filter((x) => str(x.post_id) === p.id).length,
     };
   });
 }
@@ -205,7 +209,7 @@ export const communauteSupabaseRepo: CommunauteRepo = {
   async createNews(input, authorId, status) {
     const c = await db();
     const now = new Date().toISOString();
-    const row = { title: input.title, body: input.body, image: input.image, pinned: input.pinned, status, author_id: authorId, published_at: status === "published" ? now : null };
+    const row = { title: input.title, body: input.body, image: input.image, pinned: input.pinned, comments_enabled: input.commentsEnabled, status, author_id: authorId, published_at: status === "published" ? now : null };
     return toNews(check(await c.from("news_posts").insert(row).select("*").single()) as Row);
   },
   async updateNews(id, input) {
@@ -215,6 +219,7 @@ export const communauteSupabaseRepo: CommunauteRepo = {
     if (input.body !== undefined) row.body = input.body;
     if (input.image !== undefined) row.image = input.image;
     if (input.pinned !== undefined) row.pinned = input.pinned;
+    if (input.commentsEnabled !== undefined) row.comments_enabled = input.commentsEnabled;
     return toNews(check(await c.from("news_posts").update(row).eq("id", id).select("*").single()) as Row);
   },
   async setNewsStatus(id, status) {
@@ -243,6 +248,30 @@ export const communauteSupabaseRepo: CommunauteRepo = {
     }
     check(await c.from("news_reactions").insert({ post_id: postId, profile_id: profileId, kind }));
     return { active: true };
+  },
+
+  async listNewsComments(postId) {
+    const c = await db();
+    const rows = check(
+      await c.from("news_comments").select(`*, author:profiles(${PROFILE})`).eq("post_id", postId).order("created_at"),
+    ) as Row[];
+    return rows.map((r) => {
+      const a = r.author ? toProfile(r.author as Row) : null;
+      return { id: str(r.id), postId: str(r.post_id), authorId: str(r.author_id), body: str(r.body), createdAt: str(r.created_at), authorName: a ? [a.firstName, a.lastName].filter(Boolean).join(" ") : "Membre", founder: !!a?.roles.includes("admin") };
+    });
+  },
+  async addNewsComment(postId, authorId, body) {
+    const c = await db();
+    const res = await c.from("news_comments").insert({ post_id: postId, author_id: authorId, body }).select(`*, author:profiles(${PROFILE})`).single();
+    if (res.error) throw new Error(res.error.code === "42501" ? "Les commentaires sont fermés sur cette publication." : res.error.message);
+    const r = res.data as Row;
+    const a = r.author ? toProfile(r.author as Row) : null;
+    return { id: str(r.id), postId, authorId, body: str(r.body), createdAt: str(r.created_at), authorName: a ? [a.firstName, a.lastName].filter(Boolean).join(" ") : "Membre", founder: !!a?.roles.includes("admin") };
+  },
+  async deleteNewsComment(id) {
+    const c = await db();
+    const rows = check(await c.from("news_comments").delete().eq("id", id).select("post_id, author_id, body")) as Row[];
+    return rows.length ? { postId: str(rows[0].post_id), authorId: str(rows[0].author_id), body: str(rows[0].body) } : null;
   },
 
   /* ---------- groupes ---------- */

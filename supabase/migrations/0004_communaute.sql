@@ -89,6 +89,34 @@ create policy news_reactions_insert on public.news_reactions for insert to authe
 create policy news_reactions_delete on public.news_reactions for delete to authenticated using (profile_id = auth.uid());
 revoke all on public.news_posts, public.news_reactions from anon;
 
+-- Commentaires (optionnels : activés publication par publication)
+alter table public.news_posts add column comments_enabled boolean not null default false;
+
+create table public.news_comments (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references public.news_posts (id) on delete cascade,
+  author_id uuid not null references public.profiles (id) on delete cascade,
+  body text not null check (length(trim(body)) between 1 and 1000),
+  created_at timestamptz not null default now()
+);
+create index news_comments_post_idx on public.news_comments (post_id, created_at);
+alter table public.news_comments enable row level security;
+
+-- le cercle lit les commentaires des publications publiées
+create policy news_comments_read on public.news_comments for select to authenticated using (
+  public.has_any_role(array['member', 'moderator', 'admin'])
+  and exists (select 1 from public.news_posts p where p.id = post_id and (p.status = 'published' or public.has_role('admin')))
+);
+-- chacune commente en son nom, seulement si la publication est publiée et ouverte aux commentaires
+create policy news_comments_insert on public.news_comments for insert to authenticated with check (
+  author_id = auth.uid()
+  and public.has_any_role(array['member', 'moderator', 'admin'])
+  and exists (select 1 from public.news_posts p where p.id = post_id and p.status = 'published' and p.comments_enabled)
+);
+-- on retire son propre commentaire ; la modération retire n'importe lequel
+create policy news_comments_delete on public.news_comments for delete to authenticated using (author_id = auth.uid() or public.can_moderate());
+revoke all on public.news_comments from anon;
+
 -- ---------------------------------------------------------------------
 -- 2. Groupes thématiques
 -- ---------------------------------------------------------------------

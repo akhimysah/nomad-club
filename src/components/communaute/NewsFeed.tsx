@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { toggleReactionAction } from "@/app/actions/communaute";
+import { addNewsCommentAction, deleteNewsCommentAction, listNewsCommentsAction, toggleReactionAction } from "@/app/actions/communaute";
 import { REACTION_LABEL } from "@/lib/modules/communaute/domain";
-import { REACTION_KINDS, type NewsPostView, type ReactionKind } from "@/lib/modules/communaute/types";
+import { REACTION_KINDS, type NewsCommentView, type NewsPostView, type ReactionKind } from "@/lib/modules/communaute/types";
+import { Avatar } from "../ui/Avatar";
 import { Icon } from "../ui/Icon";
 import { useToast } from "../ui/Toasts";
 
@@ -42,7 +43,96 @@ function Reactions({ post, onChange, readOnly }: { post: NewsItem; onChange: (p:
   );
 }
 
-function Post({ post: initial, readOnly }: { post: NewsItem; readOnly?: boolean }) {
+type Viewer = { meId?: string; canModerate?: boolean };
+
+/** Commentaires d'une publication (chargés à l'ouverture). */
+function Comments({ post, onCount, readOnly, meId, canModerate }: { post: NewsItem; onCount: (n: number) => void; readOnly?: boolean } & Viewer) {
+  const toast = useToast();
+  const [list, setList] = useState<NewsCommentView[] | null>(null);
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const toggle = async () => {
+    const next = !open;
+    setOpen(next);
+    if (next && !list) {
+      const r = await listNewsCommentsAction(post.id);
+      if (r.ok) setList(r.comments);
+      else toast(r.error, "bell");
+    }
+  };
+  const send = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (busy || !text.trim()) return;
+    setBusy(true);
+    const r = await addNewsCommentAction(post.id, text);
+    setBusy(false);
+    if (!r.ok) return toast(r.error, "bell");
+    const l = [...(list ?? []), r.comment];
+    setList(l);
+    onCount(l.length);
+    setText("");
+  };
+  const remove = async (c: NewsCommentView) => {
+    if (!window.confirm("Retirer ce commentaire ?")) return;
+    const r = await deleteNewsCommentAction(post.id, c.id);
+    toast(r.ok ? r.message : r.error, r.ok ? "check" : "bell");
+    if (r.ok && list) {
+      const l = list.filter((x) => x.id !== c.id);
+      setList(l);
+      onCount(l.length);
+    }
+  };
+  const n = post.commentCount;
+  if (!post.commentsEnabled && !n) return null;
+  return (
+    <div className="cm-comments">
+      <button type="button" className="link" onClick={toggle} aria-expanded={open}>
+        <Icon name="chat" />
+        {n ? `${n} commentaire${n > 1 ? "s" : ""}` : "Commenter"}
+      </button>
+      {open && (
+        <>
+          {list === null ? (
+            <span className="spin" />
+          ) : (
+            <ul className="cm-clist">
+              {list.map((c) => (
+                <li key={c.id}>
+                  <Avatar name={c.authorName} founder={c.founder} />
+                  <div>
+                    <b>{c.authorName}</b>
+                    <p>{c.body}</p>
+                  </div>
+                  {(c.authorId === meId || canModerate) && (
+                    <button type="button" className="cm-flag" onClick={() => remove(c)}>
+                      Retirer
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          {post.commentsEnabled && !readOnly ? (
+            <form className="cm-cform" onSubmit={send}>
+              <label className="sr" htmlFor={`c-${post.id}`}>
+                Ton commentaire
+              </label>
+              <input id={`c-${post.id}`} value={text} maxLength={1000} placeholder="Écrire un commentaire…" onChange={(e) => setText(e.target.value)} />
+              <button className="btn btn-ink btn-xs" disabled={busy || !text.trim()}>
+                {busy ? <span className="spin" /> : "Envoyer"}
+              </button>
+            </form>
+          ) : (
+            !post.commentsEnabled && <p className="muted" style={{ fontSize: 13.5 }}>Les commentaires sont fermés.</p>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+function Post({ post: initial, readOnly, meId, canModerate }: { post: NewsItem; readOnly?: boolean } & Viewer) {
   const [post, setPost] = useState(initial);
   const [open, setOpen] = useState(false);
   const long = post.body.length > 420;
@@ -74,13 +164,14 @@ function Post({ post: initial, readOnly }: { post: NewsItem; readOnly?: boolean 
           </button>
         )}
         <Reactions post={post} onChange={setPost} readOnly={readOnly || post.status !== "published"} />
+        <Comments post={post} onCount={(n) => setPost((p) => ({ ...p, commentCount: n }))} readOnly={readOnly || post.status !== "published"} meId={meId} canModerate={canModerate} />
       </div>
     </article>
   );
 }
 
 /** Fil d'actualités du club : épinglées d'abord, réactions simples. */
-export function NewsFeed({ posts, readOnly }: { posts: NewsItem[]; readOnly?: boolean }) {
+export function NewsFeed({ posts, readOnly, meId, canModerate }: { posts: NewsItem[]; readOnly?: boolean } & Viewer) {
   if (!posts.length)
     return (
       <div className="empty">
@@ -91,7 +182,7 @@ export function NewsFeed({ posts, readOnly }: { posts: NewsItem[]; readOnly?: bo
   return (
     <div className="cm-feed">
       {posts.map((p) => (
-        <Post key={p.id} post={p} readOnly={readOnly} />
+        <Post key={p.id} post={p} readOnly={readOnly} meId={meId} canModerate={canModerate} />
       ))}
     </div>
   );

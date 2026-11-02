@@ -30,7 +30,7 @@ async function shrink(file: File, max = 1600): Promise<string> {
   }
 }
 
-type Draft = { id?: string; title: string; body: string; image: string | null; pinned: boolean; published: boolean };
+type Draft = { id?: string; title: string; body: string; image: string | null; pinned: boolean; commentsEnabled: boolean; published: boolean };
 
 /** Lot 1 — Créer ou modifier une publication : texte, photo du club ou image importée, épinglage. */
 export function NewsEditor({ initial }: { initial: Draft }) {
@@ -47,7 +47,7 @@ export function NewsEditor({ initial }: { initial: Draft }) {
   };
   const save = async (publish: boolean) => {
     setBusy(publish ? "publish" : "draft");
-    const r = await saveNewsAction({ title: f.title, body: f.body, image: f.image, pinned: f.pinned }, { id: f.id, publish });
+    const r = await saveNewsAction({ title: f.title, body: f.body, image: f.image, pinned: f.pinned, commentsEnabled: f.commentsEnabled }, { id: f.id, publish });
     setBusy(null);
     toast(r.ok ? r.message : r.error, r.ok ? "check" : "bell");
     if (r.ok) {
@@ -94,6 +94,10 @@ export function NewsEditor({ initial }: { initial: Draft }) {
       <label className="toggle">
         Épingler en haut du fil
         <input type="checkbox" checked={f.pinned} onChange={(e) => setF({ ...f, pinned: e.target.checked })} />
+      </label>
+      <label className="toggle">
+        Autoriser les commentaires des membres
+        <input type="checkbox" checked={f.commentsEnabled} onChange={(e) => setF({ ...f, commentsEnabled: e.target.checked })} />
       </label>
       <div className="btn-row">
         <button type="submit" className="btn btn-gold" disabled={!!busy}>
@@ -147,6 +151,7 @@ export function NewsAdminList({ posts }: { posts: NewsItem[] }) {
               <span className="sub">
                 {p.status === "draft" ? "Brouillon" : "Publié"} · {p.dateLabel} · {p.authorName}
                 {p.status === "published" ? ` · ${total} réaction${total > 1 ? "s" : ""}` : ""}
+                {p.commentsEnabled || p.commentCount ? ` · ${p.commentCount} commentaire${p.commentCount > 1 ? "s" : ""}${p.commentsEnabled ? "" : " (fermés)"}` : ""}
               </span>
             </span>
             <span className="cm-acts">

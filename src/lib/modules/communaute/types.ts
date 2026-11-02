@@ -15,6 +15,8 @@ export type NewsPost = {
   /** Photo du club (/img/…) ou image importée (data:image/jpeg;base64,…). */
   image: string | null;
   pinned: boolean;
+  /** Les membres peuvent-elles commenter ? (optionnel, par publication) */
+  commentsEnabled: boolean;
   status: NewsStatus;
   authorId: string | null;
   publishedAt: string | null;
@@ -32,9 +34,13 @@ export type NewsPostView = NewsPost & {
   reactions: Record<ReactionKind, number>;
   /** Réactions de la personne qui regarde. */
   mine: ReactionKind[];
+  commentCount: number;
 };
 
-export type NewsInput = { title: string; body: string; image: string | null; pinned: boolean };
+export type NewsComment = { id: string; postId: string; authorId: string; body: string; createdAt: string };
+export type NewsCommentView = NewsComment & { authorName: string; founder: boolean };
+
+export type NewsInput = { title: string; body: string; image: string | null; pinned: boolean; commentsEnabled: boolean };
 
 /* ---------- groupes thématiques ---------- */
 
@@ -198,6 +204,7 @@ export type EventReminderSent = { eventId: string; profileId: string; sentAt: st
 export type CommunauteData = {
   news: NewsPost[];
   reactions: NewsReaction[];
+  comments: NewsComment[];
   groups: ChatGroup[];
   groupMembers: GroupMember[];
   keywords: ModerationKeyword[];

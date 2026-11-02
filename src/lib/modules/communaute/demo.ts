@@ -26,6 +26,7 @@ export function createCommunauteDemoRepo(db: () => SeedData): CommunauteRepo {
       authorName: author ? fullName(author) : "Nomad Club",
       reactions: { like: count("like"), bravo: count("bravo"), merci: count("merci") },
       mine: viewerId ? rs.filter((r) => r.profileId === viewerId).map((r) => r.kind) : [],
+      commentCount: d.communaute.comments.filter((x) => x.postId === n.id).length,
     };
   }
 
@@ -153,6 +154,7 @@ export function createCommunauteDemoRepo(db: () => SeedData): CommunauteRepo {
       const d = c();
       d.news = d.news.filter((n) => n.id !== id);
       d.reactions = d.reactions.filter((r) => r.postId !== id);
+      d.comments = d.comments.filter((r) => r.postId !== id);
     },
     async toggleReaction(postId, profileId, kind) {
       const d = c();
@@ -165,6 +167,33 @@ export function createCommunauteDemoRepo(db: () => SeedData): CommunauteRepo {
       }
       d.reactions.push({ postId, profileId, kind, createdAt: nowIso() });
       return { active: true };
+    },
+
+    async listNewsComments(postId) {
+      const d = db();
+      return d.communaute.comments
+        .filter((x) => x.postId === postId)
+        .sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1))
+        .map((x) => {
+          const a = d.profiles.find((p) => p.id === x.authorId);
+          return { ...clone(x), authorName: a ? fullName(a) : "Membre", founder: isAdmin(a ?? null) };
+        });
+    },
+    async addNewsComment(postId, authorId, body) {
+      const d = db();
+      const n = d.communaute.news.find((x) => x.id === postId && x.status === "published");
+      if (!n || !n.commentsEnabled) throw new Error("Les commentaires sont fermés sur cette publication.");
+      const x = { id: randomUUID(), postId, authorId, body, createdAt: nowIso() };
+      d.communaute.comments.push(x);
+      const a = d.profiles.find((p) => p.id === authorId);
+      return { ...clone(x), authorName: a ? fullName(a) : "Membre", founder: isAdmin(a ?? null) };
+    },
+    async deleteNewsComment(id) {
+      const d = c();
+      const x = d.comments.find((y) => y.id === id);
+      if (!x) return null;
+      d.comments = d.comments.filter((y) => y !== x);
+      return { postId: x.postId, authorId: x.authorId, body: x.body };
     },
 
     /* ---------- groupes ---------- */

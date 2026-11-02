@@ -58,7 +58,7 @@ export async function loadCercle(me: Profile, otherId: string | null) {
   return {
     salon,
     salonDay,
-    directory: directory.map(dirPerson),
+    // Lot 1 : l'annuaire brut n'est plus envoyé au navigateur (il contournait la confidentialité) ; seules les fiches filtrées le sont.
     entries,
     groups: groupItems(groups),
     threads,

@@ -143,3 +143,15 @@
   .cm-card-kv .kv{grid-template-columns:1fr;gap:2px}
   .cm-groups{grid-template-columns:1fr}
 }
+
+/* ---------- commentaires des actualités ---------- */
+.cm-comments{margin-top:12px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.cm-comments>.link{display:inline-flex;align-items:center;gap:6px}
+.cm-comments>.link .ic{width:16px;height:16px}
+.cm-clist{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;gap:10px}
+.cm-clist li{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:start}
+.cm-clist .av{width:34px;height:34px;font-size:12px}
+.cm-clist b{display:block;font-size:14px}
+.cm-clist p{margin:2px 0 0;font-size:15px;line-height:1.5;color:var(--tx2);overflow-wrap:anywhere}
+.cm-cform{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;width:100%}
+.cm-cform input{height:42px;border-radius:14px;border:1px solid var(--line2);background:var(--fill);color:var(--tx);font:500 15px var(--sans);padding:0 14px;min-width:0}

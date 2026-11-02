@@ -17,8 +17,14 @@ export function communauteSeedSql(s, { uuid, q, arr, out, insert }) {
 
   insert(
     "news_posts",
-    ["id", "title", "body", "image", "pinned", "status", "author_id", "published_at", "created_at", "updated_at"],
-    c.news.map((n) => [q(uuid(n.id)), q(n.title), q(n.body), q(n.image), q(n.pinned), q(n.status), q(uuid(n.authorId)), q(n.publishedAt), q(n.createdAt), q(n.updatedAt)]),
+    ["id", "title", "body", "image", "pinned", "comments_enabled", "status", "author_id", "published_at", "created_at", "updated_at"],
+    c.news.map((n) => [q(uuid(n.id)), q(n.title), q(n.body), q(n.image), q(n.pinned), q(n.commentsEnabled), q(n.status), q(uuid(n.authorId)), q(n.publishedAt), q(n.createdAt), q(n.updatedAt)]),
+  );
+
+  insert(
+    "news_comments",
+    ["id", "post_id", "author_id", "body", "created_at"],
+    c.comments.map((x) => [q(uuid(x.id)), q(uuid(x.postId)), q(uuid(x.authorId)), q(x.body), q(x.createdAt)]),
   );
 
   insert(

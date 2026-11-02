@@ -35,10 +35,10 @@ Chaque lot est livrable seul, testable en mode démo puis en mode réel.
 - [~] Mode réel Supabase : migrations 0001 → 0003 + seed testées avec `npm run test:sql` (PGlite : schéma, RLS, fonctions). Reste à faire tourner l'appli sur un vrai projet Supabase (connexion par lien magique, PostgREST, clé service).
 
 ### Lot 1 — Communauté
-- Actualités (publications avec image, épinglage, commentaires optionnels).
-- Événements + notifications (nouvel événement, rappel J-1, liste d'attente libérée).
-- Messagerie : groupes thématiques (création par l'admin, adhésion libre ou sur demande), modération par mots-clés (masquer / signaler automatiquement), signalements par les membres, file de modération pour les modératrices.
-- Annuaire : fiche profil complète, réglages de confidentialité.
+- [x] Actualités (publications avec image, épinglage, commentaires optionnels, réactions) : `/espace/actualites`, bloc sur l'accueil, administration dans `/fondatrices/communaute/actualites`.
+- [x] Événements + notifications (nouvel événement, rappel J-1 automatique par cron `/api/cron/rappels` ou manuel, liste d'attente libérée : la personne en attente peut prendre la place), vue calendrier mensuelle, ajout au calendrier (.ics).
+- [x] Messagerie : groupes thématiques (création par l'admin ou la modération, adhésion libre ou sur demande, groupes privés), modération par mots-clés (masquer / signaler automatiquement, y compris en privé), signalements par les membres, file de modération (`/espace/moderation`, `/fondatrices/communaute/moderation`).
+- [x] Annuaire : fiche profil complète (`/espace/moi/profil`), filtres secteur / nationalité / compétence, réglages de confidentialité appliqués côté base (`directory_list()`).
 
 ### Lot 2 — Adhésions, paiements, contrats
 - Adhésion annuelle payable en 1, 3 ou 12 fois (échéancier), relances d'échéances.

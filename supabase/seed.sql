@@ -1021,20 +1021,25 @@ insert into public.directory_profiles (profile_id, company, sector, skills, inst
   ('8a345f17-7877-4502-a1e8-14fecdb4ec38', null, 'Communication et marketing', array['Stratégie de marque', 'Réseaux sociaux', 'Relations presse']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
   ('28d2b7ef-0dbc-4962-a588-40b6110b238b', null, 'Bien-être et sport', array['Accompagnement individuel', 'Ateliers de groupe']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', false, false, '2026-10-01T09:00:00.000Z');
 
-insert into public.news_posts (id, title, body, image, pinned, status, author_id, published_at, created_at, updated_at) values
+insert into public.news_posts (id, title, body, image, pinned, comments_enabled, status, author_id, published_at, created_at, updated_at) values
   ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'La saison 2026-2027 est lancée', 'Merci à vous toutes pour cette soirée sur le toit de La Terraza ! Vous étiez plus de cinquante.
 
 Au programme de la saison : un lunch networking chaque mois, deux dîners privés, le tournoi de padel, le Family Day et, nouveauté, des groupes thématiques dans l’appli pour échanger entre deux rendez-vous.
 
-Pensez à compléter votre fiche dans l’annuaire : c’est elle qui permet aux autres membres de vous trouver.', '/img/saison-la-terraza.jpg', true, 'published', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-09-25T08:00:00.000Z', '2026-09-24T22:10:00.000Z', '2026-09-25T08:00:00.000Z'),
+Pensez à compléter votre fiche dans l’annuaire : c’est elle qui permet aux autres membres de vous trouver.', '/img/saison-la-terraza.jpg', true, true, 'published', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-09-25T08:00:00.000Z', '2026-09-24T22:10:00.000Z', '2026-09-25T08:00:00.000Z'),
   ('03d7a8aa-c551-4d6c-af73-ba3ca780ef36', 'Nouveau : les groupes thématiques', 'Lecture, mamans, entrepreneuses tech, bien-être… Rejoignez les groupes qui vous ressemblent depuis l’onglet Groupes du Cercle. Certains sont ouverts, d’autres sur demande.
 
-Une idée de groupe ? Écrivez-nous, on l’ouvre avec vous.', null, false, 'published', '284f8698-647d-42af-a8c8-4ae9fde10db0', '2026-10-06T17:30:00.000Z', '2026-10-06T17:00:00.000Z', '2026-10-06T17:30:00.000Z'),
+Une idée de groupe ? Écrivez-nous, on l’ouvre avec vous.', null, false, false, 'published', '284f8698-647d-42af-a8c8-4ae9fde10db0', '2026-10-06T17:30:00.000Z', '2026-10-06T17:00:00.000Z', '2026-10-06T17:30:00.000Z'),
   ('ba2c7766-d243-485f-ab12-f9200aced88a', 'Retour sur le brunch Neurosciences à AVABAY', 'Dimanche, une vingtaine de membres ont écouté le Dr Leïla Amrani parler de concentration et de sommeil. Ses trois conseils à retenir : la lumière du matin, une seule tâche à la fois, et pas d’écran une heure avant de dormir.
 
-Les photos sont dans le salon Général.', '/img/brunch-prise-de-parole.jpg', false, 'published', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-12T10:00:00.000Z', '2026-10-12T09:20:00.000Z', '2026-10-12T10:00:00.000Z'),
-  ('ab65f1ad-45a7-4ca6-a976-7d8d50fd31ba', 'Offre partenaire : -15 % chez Bloom House', 'Kenza ouvre les ateliers d’automne de Bloom House aux membres avec 15 % de réduction : respiration, céramique et conférence « Oser se lancer ». Montrez votre carte de membre à l’accueil.', null, false, 'published', '284f8698-647d-42af-a8c8-4ae9fde10db0', '2026-10-09T09:00:00.000Z', '2026-10-09T08:30:00.000Z', '2026-10-09T09:00:00.000Z'),
-  ('6f0b4ff4-978b-405d-a777-68b52331c2ef', 'Family Day : on prépare la journée à la ferme', 'Poneys, pique-nique et ateliers pour les enfants à The Ranch Morocco le dimanche 29 novembre. Les inscriptions ouvrent bientôt.', null, false, 'draft', '8eb1b14a-c639-4010-a09c-702b56b35d26', null, '2026-10-13T15:00:00.000Z', '2026-10-13T15:00:00.000Z');
+Les photos sont dans le salon Général.', '/img/brunch-prise-de-parole.jpg', false, true, 'published', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-12T10:00:00.000Z', '2026-10-12T09:20:00.000Z', '2026-10-12T10:00:00.000Z'),
+  ('ab65f1ad-45a7-4ca6-a976-7d8d50fd31ba', 'Offre partenaire : -15 % chez Bloom House', 'Kenza ouvre les ateliers d’automne de Bloom House aux membres avec 15 % de réduction : respiration, céramique et conférence « Oser se lancer ». Montrez votre carte de membre à l’accueil.', null, false, false, 'published', '284f8698-647d-42af-a8c8-4ae9fde10db0', '2026-10-09T09:00:00.000Z', '2026-10-09T08:30:00.000Z', '2026-10-09T09:00:00.000Z'),
+  ('6f0b4ff4-978b-405d-a777-68b52331c2ef', 'Family Day : on prépare la journée à la ferme', 'Poneys, pique-nique et ateliers pour les enfants à The Ranch Morocco le dimanche 29 novembre. Les inscriptions ouvrent bientôt.', null, false, false, 'draft', '8eb1b14a-c639-4010-a09c-702b56b35d26', null, '2026-10-13T15:00:00.000Z', '2026-10-13T15:00:00.000Z');
+
+insert into public.news_comments (id, post_id, author_id, body, created_at) values
+  ('efa10459-5d27-406a-a1a6-322dbd0b7fe7', 'e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'Quelle soirée ! Merci Julia et Nora pour l’organisation.', '2026-09-25T09:12:00.000Z'),
+  ('90197097-3ed2-4ec3-aa73-671def30dfd3', 'e7e70dc1-86b2-4e80-a59a-ceacb42b2200', '8f14bd8a-55c4-4844-a979-b0c21cc35d3d', 'Vivement le tournoi de padel 🎾', '2026-09-25T11:40:00.000Z'),
+  ('735a6686-df50-4455-af63-2a5bf1a031f5', 'ba2c7766-d243-485f-ab12-f9200aced88a', 'ee4610ef-5444-4c42-ab10-b64c7a12e9c4', 'Les conseils sur la lumière du matin m’ont convaincue, j’essaie dès demain.', '2026-10-12T12:05:00.000Z');
 
 insert into public.news_reactions (post_id, profile_id, kind, created_at) values
   ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'like', '2026-09-25T09:00:00.000Z'),

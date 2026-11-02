@@ -18,7 +18,7 @@ type DemoGlobal = typeof globalThis & { __nomadDemoDb?: SeedData };
 
 /** Jeu en mémoire d'une version antérieure (gardé par le rechargement à chaud) : on le recrée. */
 function outdated(d: SeedData): boolean {
-  return !Array.isArray(d.notifications) || !Array.isArray(d.profiles[0]?.roles) || !d.communaute /* Lot 1 */;
+  return !Array.isArray(d.notifications) || !Array.isArray(d.profiles[0]?.roles) || !d.communaute?.comments /* Lot 1 */;
 }
 
 function db(): SeedData {

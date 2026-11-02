@@ -24,8 +24,11 @@ export const newsSchema = z.object({
     .transform((s) => s || null)
     .refine((s) => s === null || isAcceptableImage(s), "Image non acceptée (photo du club, image JPEG/PNG de 1 Mo au plus)."),
   pinned: z.boolean().default(false),
+  commentsEnabled: z.boolean().default(false),
 });
 export type NewsForm = z.input<typeof newsSchema>;
+
+export const commentSchema = z.string().trim().min(1, "Écris quelques mots.").max(1000, "1000 caractères au plus.");
 
 export const reactionSchema = z.enum(REACTION_KINDS);
 

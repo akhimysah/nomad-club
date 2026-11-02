@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { NewsFeed } from "@/components/communaute/NewsFeed";
 import { Screen } from "@/components/ui/Screen";
-import { requireMember } from "@/lib/auth";
+import { requireMember, viewerCan } from "@/lib/auth";
 import { getRepo } from "@/lib/data";
 import { newsItems } from "@/lib/modules/communaute/views";
 
@@ -22,7 +22,7 @@ export default async function NewsPage() {
             <p className="scr-sub">Les annonces de Julia et Nora, les retours de rendez-vous et les offres du moment.</p>
           </div>
         </div>
-        <NewsFeed posts={newsItems(posts)} />
+        <NewsFeed posts={newsItems(posts)} meId={v.profile.id} canModerate={viewerCan(v, "messages.moderate")} />
       </div>
     </Screen>
   );

@@ -4,7 +4,7 @@
  * à générer supabase/seed.sql : ce fichier n'importe que des types et des fichiers .ts relatifs.
  */
 import type { AppNotification, Message, Profile } from "../../types.ts";
-import type { ChatGroup, CommunauteData, DirectoryProfile, GroupMember, MessageReport, ModerationKeyword, NewsPost, NewsReaction, ReactionKind } from "./types.ts";
+import type { ChatGroup, CommunauteData, DirectoryProfile, GroupMember, MessageReport, ModerationKeyword, NewsComment, NewsPost, NewsReaction, ReactionKind } from "./types.ts";
 
 const iso = (ymd: string, time = "10:00") => new Date(`${ymd}T${time}:00+01:00`).toISOString();
 
@@ -88,27 +88,27 @@ export function createCommunauteSeed(profiles: Profile[]): CommunauteData {
   /* ---------------- actualités ---------------- */
   const news: NewsPost[] = [
     {
-      id: "news-saison", title: "La saison 2026-2027 est lancée", pinned: true, status: "published", authorId: "p-julia", image: "/img/saison-la-terraza.jpg",
+      id: "news-saison", commentsEnabled: true, title: "La saison 2026-2027 est lancée", pinned: true, status: "published", authorId: "p-julia", image: "/img/saison-la-terraza.jpg",
       body: "Merci à vous toutes pour cette soirée sur le toit de La Terraza ! Vous étiez plus de cinquante.\n\nAu programme de la saison : un lunch networking chaque mois, deux dîners privés, le tournoi de padel, le Family Day et, nouveauté, des groupes thématiques dans l’appli pour échanger entre deux rendez-vous.\n\nPensez à compléter votre fiche dans l’annuaire : c’est elle qui permet aux autres membres de vous trouver.",
       publishedAt: iso("2026-09-25", "09:00"), createdAt: iso("2026-09-24", "23:10"), updatedAt: iso("2026-09-25", "09:00"),
     },
     {
-      id: "news-groupes", title: "Nouveau : les groupes thématiques", pinned: false, status: "published", authorId: "p-nora", image: null,
+      id: "news-groupes", commentsEnabled: false, title: "Nouveau : les groupes thématiques", pinned: false, status: "published", authorId: "p-nora", image: null,
       body: "Lecture, mamans, entrepreneuses tech, bien-être… Rejoignez les groupes qui vous ressemblent depuis l’onglet Groupes du Cercle. Certains sont ouverts, d’autres sur demande.\n\nUne idée de groupe ? Écrivez-nous, on l’ouvre avec vous.",
       publishedAt: iso("2026-10-06", "18:30"), createdAt: iso("2026-10-06", "18:00"), updatedAt: iso("2026-10-06", "18:30"),
     },
     {
-      id: "news-avabay", title: "Retour sur le brunch Neurosciences à AVABAY", pinned: false, status: "published", authorId: "p-julia", image: "/img/brunch-prise-de-parole.jpg",
+      id: "news-avabay", commentsEnabled: true, title: "Retour sur le brunch Neurosciences à AVABAY", pinned: false, status: "published", authorId: "p-julia", image: "/img/brunch-prise-de-parole.jpg",
       body: "Dimanche, une vingtaine de membres ont écouté le Dr Leïla Amrani parler de concentration et de sommeil. Ses trois conseils à retenir : la lumière du matin, une seule tâche à la fois, et pas d’écran une heure avant de dormir.\n\nLes photos sont dans le salon Général.",
       publishedAt: iso("2026-10-12", "11:00"), createdAt: iso("2026-10-12", "10:20"), updatedAt: iso("2026-10-12", "11:00"),
     },
     {
-      id: "news-bloom", title: "Offre partenaire : -15 % chez Bloom House", pinned: false, status: "published", authorId: "p-nora", image: null,
+      id: "news-bloom", commentsEnabled: false, title: "Offre partenaire : -15 % chez Bloom House", pinned: false, status: "published", authorId: "p-nora", image: null,
       body: "Kenza ouvre les ateliers d’automne de Bloom House aux membres avec 15 % de réduction : respiration, céramique et conférence « Oser se lancer ». Montrez votre carte de membre à l’accueil.",
       publishedAt: iso("2026-10-09", "10:00"), createdAt: iso("2026-10-09", "09:30"), updatedAt: iso("2026-10-09", "10:00"),
     },
     {
-      id: "news-family", title: "Family Day : on prépare la journée à la ferme", pinned: false, status: "draft", authorId: "p-julia", image: null,
+      id: "news-family", commentsEnabled: false, title: "Family Day : on prépare la journée à la ferme", pinned: false, status: "draft", authorId: "p-julia", image: null,
       body: "Poneys, pique-nique et ateliers pour les enfants à The Ranch Morocco le dimanche 29 novembre. Les inscriptions ouvrent bientôt.",
       publishedAt: null, createdAt: iso("2026-10-13", "16:00"), updatedAt: iso("2026-10-13", "16:00"),
     },
@@ -123,6 +123,13 @@ export function createCommunauteSeed(profiles: Profile[]): CommunauteData {
   react("news-avabay", ["p-leila", "p-justine", "p-g07", "p-g09", "p-g24", "p-g30"], "like", "2026-10-12");
   react("news-avabay", ["p-ines", "p-emma"], "merci", "2026-10-12");
   react("news-bloom", ["p-leila", "p-g11", "p-g18"], "bravo", "2026-10-09");
+
+  const comment = (id: string, postId: string, authorId: string, body: string, day: string, time: string): NewsComment => ({ id, postId, authorId, body, createdAt: iso(day, time) });
+  const comments: NewsComment[] = [
+    comment("ncom-1", "news-saison", "p-salma", "Quelle soirée ! Merci Julia et Nora pour l’organisation.", "2026-09-25", "10:12"),
+    comment("ncom-2", "news-saison", "p-nadia", "Vivement le tournoi de padel 🎾", "2026-09-25", "12:40"),
+    comment("ncom-3", "news-avabay", "p-leila", "Les conseils sur la lumière du matin m’ont convaincue, j’essaie dès demain.", "2026-10-12", "13:05"),
+  ].filter((x) => has.has(x.authorId));
 
   /* ---------------- groupes thématiques ---------------- */
   const group = (o: Pick<ChatGroup, "id" | "slug" | "name" | "description" | "icon" | "joinPolicy"> & Partial<ChatGroup>): ChatGroup => ({
@@ -211,6 +218,7 @@ export function createCommunauteSeed(profiles: Profile[]): CommunauteData {
   return {
     news,
     reactions,
+    comments,
     groups,
     groupMembers,
     keywords,

@@ -11,8 +11,8 @@ import { getRepo } from "@/lib/data";
 import { fullName } from "@/lib/format";
 import { groupIdOfChannel } from "@/lib/modules/communaute/domain";
 import { notifyNewsPublished, sendEventReminders, type ReminderRun } from "@/lib/modules/communaute/service";
-import type { NewsPostView, ReactionKind, ReportResolution } from "@/lib/modules/communaute/types";
-import { groupSchema, keywordSchema, newsSchema, profileSchema, reactionSchema, reportSchema, type GroupForm, type NewsForm, type ProfileForm } from "@/lib/modules/communaute/validation";
+import type { NewsCommentView, NewsPostView, ReactionKind, ReportResolution } from "@/lib/modules/communaute/types";
+import { commentSchema, groupSchema, keywordSchema, newsSchema, profileSchema, reactionSchema, reportSchema, type GroupForm, type NewsForm, type ProfileForm } from "@/lib/modules/communaute/validation";
 
 export type CommunauteResult = { ok: true; message: string; id?: string } | { ok: false; error: string };
 
@@ -40,6 +40,54 @@ export async function toggleReactionAction(postId: string, kind: ReactionKind): 
   const post = await repo.getNews(postId, v.profile.id);
   revalidatePath("/espace", "layout");
   return post ? { ok: true, post } : { ok: false, error: "Publication introuvable." };
+}
+
+/** Commentaires d'une publication visible par la personne. */
+export async function listNewsCommentsAction(postId: string): Promise<{ ok: true; comments: NewsCommentView[] } | { ok: false; error: string }> {
+  const v = await checkCapability("news.react");
+  if (!v) return { ok: false, error: "Réservé aux adhérentes." };
+  const post = await getRepo().getNews(postId, v.profile.id);
+  if (!post || (post.status !== "published" && !viewerCan(v, "news.manage"))) return { ok: false, error: "Publication introuvable." };
+  return { ok: true, comments: await getRepo().listNewsComments(postId) };
+}
+
+export async function addNewsCommentAction(postId: string, body: string): Promise<{ ok: true; comment: NewsCommentView } | { ok: false; error: string }> {
+  const v = await checkCapability("news.react");
+  if (!v) return { ok: false, error: "Réservé aux adhérentes." };
+  const parsed = commentSchema.safeParse(body);
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Commentaire vide." };
+  try {
+    const comment = await getRepo().addNewsComment(postId, v.profile.id, parsed.data);
+    revalidatePath("/espace", "layout");
+    return { ok: true, comment };
+  } catch (e) {
+    return { ok: false, error: errMsg(e) };
+  }
+}
+
+/** Retirer un commentaire : le sien, ou n'importe lequel pour la modération (journalisé). L'autrice est vérifiée côté serveur. */
+export async function deleteNewsCommentAction(postId: string, id: string): Promise<CommunauteResult> {
+  const v = await checkCapability("news.react");
+  if (!v) return fail("Réservé aux adhérentes.");
+  const repo = getRepo();
+  const target = (await repo.listNewsComments(postId)).find((x) => x.id === id);
+  if (!target) return fail("Commentaire introuvable.");
+  const own = target.authorId === v.profile.id;
+  if (!own && !viewerCan(v, "messages.moderate")) return fail("Tu ne peux retirer que tes commentaires.");
+  const removed = await repo.deleteNewsComment(id);
+  if (!removed) return fail("Commentaire introuvable.");
+  if (!own) {
+    await audit({
+      actorId: v.profile.id,
+      action: "moderation.hide",
+      targetType: "news",
+      targetId: postId,
+      summary: `Commentaire retiré · ${target.authorName}`,
+      details: { excerpt: target.body.slice(0, 120) },
+    });
+  }
+  revalidatePath("/espace", "layout");
+  return { ok: true, message: "Commentaire retiré." };
 }
 
 /** Créer ou modifier une publication ; `publish` la publie aussi (notification aux membres la première fois). */

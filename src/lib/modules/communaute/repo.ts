@@ -14,6 +14,7 @@ import type {
   KeywordAction,
   MessageReport,
   ModerationKeyword,
+  NewsCommentView,
   NewsInput,
   NewsPost,
   NewsPostView,
@@ -41,6 +42,11 @@ export interface CommunauteRepo {
   deleteNews(id: string): Promise<void>;
   /** Ajoute ou retire une réaction ; renvoie l'état final. */
   toggleReaction(postId: string, profileId: string, kind: ReactionKind): Promise<{ active: boolean }>;
+  listNewsComments(postId: string): Promise<NewsCommentView[]>;
+  /** Refusé si la publication n'est pas publiée ou n'accepte pas les commentaires. */
+  addNewsComment(postId: string, authorId: string, body: string): Promise<NewsCommentView>;
+  /** Renvoie le commentaire retiré (null s'il n'existe pas). Les droits sont vérifiés avant l'appel (et par la RLS). */
+  deleteNewsComment(id: string): Promise<{ postId: string; authorId: string; body: string } | null>;
 
   /* groupes thématiques */
   /** Groupes visibles par la personne (les groupes privés seulement si elle en fait partie) ; `manage` : tous. */
