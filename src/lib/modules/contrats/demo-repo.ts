@@ -188,6 +188,8 @@ export const demoContratsRepo: ContratsRepo = {
     s.acceptances.push(a);
     c.status = "accepted";
     c.acceptedAt = a.acceptedAt;
+    // même journal que la fonction SQL accept_contract()
+    await demoContratsRepo.logContractAudit({ actorId: input.profileId, action: "contract.accept", targetType: "contract", targetId: c.id, summary: `Contrat ${c.number} accepté`, details: { number: c.number, version: c.templateVersion, sha256: c.pdfSha256, provider: a.provider } });
     return clone(a);
   },
   async linkContractSubscription(contractId, reference) {
@@ -212,6 +214,12 @@ export const demoContratsRepo: ContratsRepo = {
   },
   async contractPdfDelivery() {
     return { kind: "regenerate" };
+  },
+  async contractParties(profileId, organizationId) {
+    const people = demoPeople();
+    const p = core().profiles.find((x) => x.id === profileId);
+    const signer = people.profile(profileId);
+    return { signer: signer && p ? { ...signer, firstName: p.firstName } : null, organization: organizationId ? people.organization(organizationId) : null };
   },
   async logContractAudit(entry) {
     const row: AuditEntry = { id: randomUUID(), actorId: entry.actorId, action: entry.action, targetType: entry.targetType, targetId: entry.targetId, summary: entry.summary, details: entry.details ?? {}, createdAt: nowIso() };

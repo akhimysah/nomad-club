@@ -16,6 +16,12 @@ import type {
   NewTemplateInput,
 } from "./types";
 
+/** Identité figée dans un contrat (lue aussi sans session, depuis un webhook de paiement). */
+export type ContractParties = {
+  signer: { name: string; firstName: string; email: string | null; phone: string | null; card: string | null } | null;
+  organization: { name: string; address: string | null; category: string | null } | null;
+};
+
 export type ContractPdfDelivery = { kind: "url"; url: string } | { kind: "regenerate" };
 
 export interface ContratsRepo {
@@ -47,6 +53,7 @@ export interface ContratsRepo {
   storeContractPdf(contract: Contract, pdf: Uint8Array): Promise<string | null>;
   /** URL signée de courte durée (mode réel) ou régénération à la volée (démo, ou fichier absent). */
   contractPdfDelivery(contract: Contract): Promise<ContractPdfDelivery>;
+  contractParties(profileId: string, organizationId: string | null): Promise<ContractParties>;
   /** Journal du module (clé service en mode réel : aussi depuis un webhook de paiement, sans session). */
   logContractAudit(entry: AuditInput): Promise<void>;
 }

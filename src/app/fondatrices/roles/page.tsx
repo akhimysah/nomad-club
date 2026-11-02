@@ -68,6 +68,8 @@ const CAP_LABEL: Record<Capability, string> = {
   "keywords.manage": "Gérer les mots-clés",
   "events.remind": "Envoyer les rappels J-1",
   "directory.edit_own": "Modifier sa fiche d’annuaire",
+  // --- Vague 2 · Contrats ---
+  "contracts.manage": "Gérer les contrats et leurs modèles",
 };
 
 type Props = { searchParams: Promise<{ q?: string; tous?: string }> };

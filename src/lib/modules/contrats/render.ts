@@ -122,7 +122,7 @@ export function parseBlocks(md: string): Block[] {
     }
     if (/^[-•]\s+/.test(line)) {
       if (para.length || quote.length) {
-        const keep = list;
+        const keep: string[] | null = list;
         list = null;
         flush();
         list = keep;
