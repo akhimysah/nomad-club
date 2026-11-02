@@ -81,6 +81,7 @@ export async function remindAction(key: string): Promise<FounderResult> {
     summary: `${item.cat === "free" ? "Invitation envoyée à " : "Relance envoyée · "}${item.name}`,
     details: { key, category: item.cat, profileId: item.profileId },
   });
+  await (await import("@/lib/modules/emails/triggers")).sendFounderReminder(item.profileId, item.cat); // --- E-mails ---
   refresh();
   const demo = (await getViewer()).mode === "demo";
   return { ok: true, message: `${item.cat === "free" ? "Invitation envoyée à " : "Relance envoyée · "}${item.name}.${demo ? " Simulé" : ""}` };

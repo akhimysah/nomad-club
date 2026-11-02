@@ -54,7 +54,8 @@ function define<S extends z.ZodTypeAny>(t: {
   essential: boolean;
   prefType: string | null;
   schema: S;
-  sample: z.input<S>;
+  /** Données d'exemple (les clés en plus servent aux pièces jointes : startsAt, eventSlug…). */
+  sample: z.input<S> & Record<string, unknown>;
   render(d: z.output<S>, ctx: RenderContext): RenderedParts;
   prefTypeOf?(d: z.output<S>): string | null;
 }): EmailTemplate {
@@ -132,6 +133,9 @@ const bookingConfirmed = define({
     amount: "35 $",
     eventUrl: "/rendez-vous/lunch-fer7",
     ticketUrl: "/billet/K7Q2MX",
+    eventSlug: "lunch-fer7",
+    startsAt: "2026-11-14T11:30:00.000Z",
+    endsAt: "2026-11-14T14:30:00.000Z",
   },
   render: (d, ctx) => {
     const ticketUrl = absUrl(ctx, d.ticketUrl || (d.ticketCode ? `/billet/${d.ticketCode}` : "/espace/agenda"));

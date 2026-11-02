@@ -66,6 +66,7 @@ export async function requestDeletionAction(reason?: string): Promise<DeletionRe
   if (v.roles.includes("admin") || v.profile.roles.includes("admin"))
     return { ok: false, error: "Un compte administratrice ne se supprime pas ainsi : demande d’abord à l’autre fondatrice de te retirer le rôle." };
   const r = await getRepo().requestAccountDeletion(v.profile.id, parsed.data || null);
+  await (await import("@/lib/modules/emails/triggers")).sendDeletionScheduled(v.profile, r.scheduledFor); // --- E-mails ---
   refresh();
   return { ok: true, message: `Demande enregistrée. Ton compte sera supprimé à partir du ${dayMonthShort(r.scheduledFor)}, sauf si tu changes d’avis d’ici là.`, request: r };
 }
@@ -165,6 +166,8 @@ export async function anonymizeAction(requestId: string, early = false): Promise
     summary: `Compte de ${name} anonymisé (demande du ${dayMonthShort(req.requestedAt)})`,
     details: { requestId: req.id, early, kept: ["payments", "bookings", "audit_log"] },
   });
+  // --- E-mails --- confirmation à l'ancienne adresse (non conservée dans le journal des envois)
+  await (await import("@/lib/modules/emails/triggers")).sendAccountDeleted(target?.email ?? null, target?.firstName ?? "");
   refresh();
   return { ok: true, message: `Compte de ${name} anonymisé. Les paiements sont conservés.` };
 }

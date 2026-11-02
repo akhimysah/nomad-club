@@ -62,9 +62,9 @@ export type PreparedEmail = { rendered: RenderedEmail; attachments: OutgoingAtta
 export async function prepareEmail(
   template: TemplateId,
   data: Record<string, unknown>,
-  opts: { profileId?: string | null; essential?: boolean; extra?: EmailAttachment[]; inlineAs?: "cid" | "data" } = {},
+  opts: { profileId?: string | null; essential?: boolean; extra?: EmailAttachment[]; inlineAs?: "cid" | "data"; baseUrl?: string } = {},
 ): Promise<PreparedEmail> {
-  const base = emailBaseUrl();
+  const base = (opts.baseUrl ?? emailBaseUrl()).replace(/\/$/, "");
   const attachments = [...(await generatedAttachments(template, data, base)), ...(opts.extra ?? []).map(toBase64)];
   const inline: Record<string, string> = {};
   for (const a of attachments)
