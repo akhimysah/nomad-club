@@ -2,7 +2,10 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { adminMfaRequired, MFA_PATH } from "../modules/securite/mfa-core"; // --- Lot 6 ---
 import { isGrantableRole, requiredCapability, rolesCan } from "../permissions";
+import { publicUrl as publicAt } from "../public-url";
 import type { Role } from "../types";
+
+const publicUrl = (request: NextRequest, pathname: string, search: string) => publicAt(request, pathname + search);
 
 /**
  * Rafraîchit la session Supabase (cookies) et protège les espaces privés.
@@ -33,9 +36,7 @@ export async function updateSession(request: NextRequest) {
   if (!cap) return response;
 
   const toLogin = () => {
-    const url = request.nextUrl.clone();
-    url.pathname = "/connexion";
-    url.search = `?suite=${encodeURIComponent(path)}`;
+    const url = publicUrl(request, "/connexion", `?suite=${encodeURIComponent(path)}`);
     return NextResponse.redirect(url);
   };
   if (!user) return toLogin();
@@ -46,9 +47,7 @@ export async function updateSession(request: NextRequest) {
   if (cap === "space.admin" && roles.includes("admin") && adminMfaRequired()) {
     const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
     if (aal?.currentLevel !== "aal2") {
-      const url = request.nextUrl.clone();
-      url.pathname = MFA_PATH;
-      url.search = `?suite=${encodeURIComponent(path)}`;
+      const url = publicUrl(request, MFA_PATH, `?suite=${encodeURIComponent(path)}`);
       const redirect = NextResponse.redirect(url);
       response.cookies.getAll().forEach((c) => redirect.cookies.set(c)); // garde la session rafraîchie
       return redirect;
@@ -56,9 +55,7 @@ export async function updateSession(request: NextRequest) {
   }
   if (rolesCan(roles, cap)) return response;
   if (cap === "space.member") {
-    const url = request.nextUrl.clone();
-    url.pathname = "/formules";
-    url.search = "";
+    const url = publicUrl(request, "/formules", "");
     return NextResponse.redirect(url);
   }
   return toLogin();

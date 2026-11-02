@@ -6,6 +6,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getViewer, viewerCan } from "@/lib/auth";
 import type { OrgStatKind } from "@/lib/modules/partenaires/types";
 import { getRepo } from "@/lib/data";
+import { publicUrl } from "@/lib/public-url";
 import { visibleEstablishments } from "@/lib/modules/partenaires/server";
 
 const KIND: Record<string, OrgStatKind> = { telephone: "contact", email: "contact", site: "contact", instagram: "contact", whatsapp: "whatsapp", itineraire: "directions" };
@@ -15,9 +16,9 @@ const digits = (s: string) => s.replace(/[^\d+]/g, "");
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const to = req.nextUrl.searchParams.get("vers") ?? "";
-  const back = new URL(`/espace/fiche/${slug}`, req.url);
+  const back = publicUrl(req, `/espace/fiche/${slug}`);
   const v = await getViewer();
-  if (!v.profile || !viewerCan(v, "carnet.view")) return NextResponse.redirect(new URL(`/connexion?suite=${encodeURIComponent(back.pathname)}`, req.url));
+  if (!v.profile || !viewerCan(v, "carnet.view")) return NextResponse.redirect(publicUrl(req, `/connexion?suite=${encodeURIComponent(back.pathname)}`));
   const e = (await visibleEstablishments()).find((x) => x.slug === slug);
   if (!e || !KIND[to]) return NextResponse.redirect(back);
   let target: string | null = null;
