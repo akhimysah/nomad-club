@@ -4,15 +4,26 @@
  */
 import type { Snapshot } from "../domain/founders";
 import type {
+  AppNotification,
+  AuditAction,
+  AuditEntry,
   Booking,
   BookingView,
   ClubEvent,
   DmThread,
   EventView,
+  GrantableRole,
   Memory,
   Message,
   MessageView,
   MembershipAction,
+  NotificationChannel,
+  NotificationPref,
+  NotificationType,
+  Organization,
+  OrganizationKind,
+  OrganizationMember,
+  OrganizationMemberRole,
   PaidPlan,
   PartnerOffer,
   Payment,
@@ -78,12 +89,50 @@ export type NewProfileInput = {
   email: string | null;
 };
 
+export type CancelResult = {
+  /** Rendez-vous concerné (null si la réservation n'existe pas ou n'était pas à soi). */
+  eventId: string | null;
+  /** Première personne (avec compte) de la liste d'attente quand une place vient de se libérer. */
+  waitlistProfileId: string | null;
+};
+
+export type AuditInput = {
+  actorId: string | null;
+  action: AuditAction;
+  targetType: AuditEntry["targetType"];
+  targetId: string | null;
+  summary: string;
+  details?: Record<string, unknown>;
+};
+
+export type NotificationInput = {
+  recipientId: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  link: string | null;
+};
+
+export type MyOrganization = { organization: Organization; role: OrganizationMemberRole };
+export type OrganizationMemberView = OrganizationMember & { profile: Profile | null };
+
 export interface Repo {
   /* profils */
   getProfile(id: string): Promise<Profile | null>;
   /** Annuaire : adhérentes et fondatrices. */
   listDirectory(): Promise<Profile[]>;
   createGuestProfile(input: NewProfileInput): Promise<Profile>;
+  /** Tous les profils (CRM, rôles) : administratrices uniquement en mode réel. */
+  listProfiles(): Promise<Profile[]>;
+
+  /* rôles (cumulables) */
+  grantRole(profileId: string, role: GrantableRole, actorId: string): Promise<Profile>;
+  revokeRole(profileId: string, role: GrantableRole, actorId: string): Promise<Profile>;
+
+  /* organisations (partenaires, pros) */
+  listOrganizations(opts?: { kind?: OrganizationKind }): Promise<Organization[]>;
+  listMyOrganizations(profileId: string): Promise<MyOrganization[]>;
+  listOrganizationMembers(organizationId: string): Promise<OrganizationMemberView[]>;
 
   /* contenus */
   listPlaces(): Promise<Place[]>;
@@ -104,7 +153,8 @@ export interface Repo {
   getBookingByCode(code: string): Promise<BookingView | null>;
   listBookingsByCodes(codes: string[]): Promise<BookingView[]>;
   listBookingsForProfile(profileId: string): Promise<BookingView[]>;
-  cancelBooking(bookingId: string, profileId: string | null): Promise<void>;
+  /** Annule ; profileId null = annulation système (session Stripe expirée). */
+  cancelBooking(bookingId: string, profileId: string | null): Promise<CancelResult>;
   setBookingStripeSession(bookingId: string, sessionId: string): Promise<void>;
 
   /* adhésions et paiements */
@@ -125,7 +175,22 @@ export interface Repo {
   snapshot(): Promise<Snapshot>;
   validatePayment(paymentId: string, founderId: string): Promise<Payment | null>;
   /** Clé issue du tableau de bord : renew:<id>, lapsed:<id>, unpaid:<id>, free:<id>. */
-  sendReminder(key: string, founderId: string): Promise<void>;
+  /** Renvoie l'identifiant de la relance créée. */
+  sendReminder(key: string, founderId: string): Promise<string | null>;
+
+  /* journal des opérations */
+  logAudit(entry: AuditInput): Promise<void>;
+  listAudit(opts?: { limit?: number }): Promise<AuditEntry[]>;
+
+  /* notifications in-app (+ préférences) */
+  /** Crée les notifications (en ignorant celles que la destinataire a coupées). Renvoie le nombre créé. */
+  createNotifications(rows: NotificationInput[]): Promise<number>;
+  listNotifications(profileId: string, limit?: number): Promise<AppNotification[]>;
+  countUnreadNotifications(profileId: string): Promise<number>;
+  markNotificationsRead(profileId: string, ids: string[] | "all"): Promise<void>;
+  /** Préférences enregistrées (les types absents sont actifs par défaut). */
+  listNotificationPrefs(profileId: string): Promise<NotificationPref[]>;
+  setNotificationPref(profileId: string, type: NotificationType, channel: NotificationChannel, enabled: boolean): Promise<void>;
 }
 
 export function dmChannel(a: string, b: string): string {

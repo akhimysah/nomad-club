@@ -14,6 +14,7 @@ import { getRepo } from "@/lib/data";
 import { priceFor } from "@/lib/domain/events";
 import { dayLong, dayShort, fullName, hour, messageTime, todayLong } from "@/lib/format";
 import { membershipState, nextBookingOf, payEnv, ticketData, upcomingFor } from "@/lib/views";
+import { isAdmin } from "@/lib/permissions";
 
 export const dynamic = "force-dynamic";
 
@@ -95,7 +96,7 @@ export default async function MemberHome() {
               </div>
               {salon.slice(-2).map((msg) => (
                 <div key={msg.id} className="msg-prev">
-                  <Avatar name={msg.author ? fullName(msg.author) : "Membre"} founder={msg.author?.role === "founder"} />
+                  <Avatar name={msg.author ? fullName(msg.author) : "Membre"} founder={isAdmin(msg.author)} />
                   <div>
                     <b>{msg.author ? fullName(msg.author) : "Membre"}</b>
                     <time>{messageTime(msg.createdAt, now)}</time>

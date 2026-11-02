@@ -1,6 +1,7 @@
 import { nowMs } from "./clock";
 import { fullName, messageTime } from "./format";
 import type { Message, Profile } from "./types";
+import { isAdmin } from "./permissions";
 
 /** Message prêt à afficher dans le salon ou une conversation privée. */
 export type ChatMsg = {
@@ -22,7 +23,7 @@ export function toChatMsg(m: Message, author: Profile | null, meId: string): Cha
     at: m.createdAt,
     authorId: m.authorId,
     author: author ? fullName(author) : "Membre",
-    founder: author?.role === "founder",
+    founder: isAdmin(author),
     body: m.body,
     time: messageTime(m.createdAt, nowMs()),
     mine: m.authorId === meId,

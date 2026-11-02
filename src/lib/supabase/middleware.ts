@@ -1,9 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isGrantableRole, requiredCapability, rolesCan } from "../permissions";
+import type { Role } from "../types";
 
 /**
  * Rafraîchit la session Supabase (cookies) et protège les espaces privés.
- * La vérification est refaite côté serveur dans chaque layout (requireMember / requireFounder).
+ * Chaque espace exige une capacité (src/lib/permissions.ts), calculée à partir des rôles (table user_roles).
+ * La vérification est refaite côté serveur dans chaque layout (requireCapability).
  */
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -25,9 +28,8 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const needsMember = path.startsWith("/espace");
-  const needsFounder = path.startsWith("/fondatrices");
-  if (!needsMember && !needsFounder) return response;
+  const cap = requiredCapability(path);
+  if (!cap) return response;
 
   const toLogin = () => {
     const url = request.nextUrl.clone();
@@ -37,14 +39,14 @@ export async function updateSession(request: NextRequest) {
   };
   if (!user) return toLogin();
 
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
-  const role = (profile?.role as string | undefined) ?? "guest";
-  if (needsFounder && role !== "founder") return toLogin();
-  if (needsMember && role !== "member" && role !== "founder") {
+  const { data: rows } = await supabase.from("user_roles").select("role").eq("profile_id", user.id);
+  const roles: Role[] = (rows ?? []).map((r) => r.role as unknown).filter(isGrantableRole);
+  if (rolesCan(roles, cap)) return response;
+  if (cap === "space.member") {
     const url = request.nextUrl.clone();
     url.pathname = "/formules";
     url.search = "";
     return NextResponse.redirect(url);
   }
-  return response;
+  return toLogin();
 }

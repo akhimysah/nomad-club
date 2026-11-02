@@ -6,6 +6,7 @@ import { requireFounder } from "@/lib/auth";
 import { today } from "@/lib/clock";
 import { getRepo } from "@/lib/data";
 import { loadDashboard } from "@/lib/founders-view";
+import { isAdmin } from "@/lib/permissions";
 
 export const metadata: Metadata = { title: { default: "Espace fondatrices", template: "%s · Fondatrices" }, robots: { index: false } };
 
@@ -13,7 +14,7 @@ export const metadata: Metadata = { title: { default: "Espace fondatrices", temp
 export default async function FoundersLayout({ children }: { children: React.ReactNode }) {
   await requireFounder();
   const [{ d }, places, dir] = await Promise.all([loadDashboard(), getRepo().listPlaces(), getRepo().listDirectory()]);
-  const founders = dir.filter((p) => p.role === "founder").map((p) => p.firstName);
+  const founders = dir.filter(isAdmin).map((p) => p.firstName);
   return (
     <section className="space day on" aria-label="Espace fondatrices">
       <BodyClass name="is-day" />

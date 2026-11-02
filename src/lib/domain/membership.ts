@@ -22,14 +22,13 @@ export function applyMembership(
   action: MembershipAction,
   plan: PaidPlan,
   today: string,
-): { plan: PaidPlan; planEndsAt: string; startsAt: string; role: Profile["role"] } {
-  const role = profile.role === "founder" ? "founder" : "member";
+): { plan: PaidPlan; planEndsAt: string; startsAt: string } {
   if (action === "upgrade") {
     const end = profile.planEndsAt && profile.planEndsAt >= today ? profile.planEndsAt : addYears(today, 1);
-    return { plan: "premium", planEndsAt: end, startsAt: today, role };
+    return { plan: "premium", planEndsAt: end, startsAt: today };
   }
   if (action === "renew" && profile.planEndsAt && profile.planEndsAt >= today) {
-    return { plan, planEndsAt: addYears(profile.planEndsAt, 1), startsAt: profile.planEndsAt, role };
+    return { plan, planEndsAt: addYears(profile.planEndsAt, 1), startsAt: profile.planEndsAt };
   }
-  return { plan, planEndsAt: addYears(today, 1), startsAt: today, role };
+  return { plan, planEndsAt: addYears(today, 1), startsAt: today };
 }

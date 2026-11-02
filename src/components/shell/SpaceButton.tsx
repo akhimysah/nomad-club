@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { switchSpace, type Space } from "@/app/actions/space";
+import { switchSpace } from "@/app/actions/space";
+import type { Space } from "@/lib/permissions";
 import { lastPath, SPACES } from "./spaces";
 
 /**

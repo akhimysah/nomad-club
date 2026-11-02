@@ -5,8 +5,9 @@ import { SpaceButton } from "@/components/shell/SpaceButton";
 import { SPACES } from "@/components/shell/spaces";
 import { Icon } from "@/components/ui/Icon";
 import { LoginForm } from "@/components/visit/LoginForm";
-import { getViewer } from "@/lib/auth";
+import { getViewer, viewerCan, viewerSpaces } from "@/lib/auth";
 import { fullName, PLAN_LABEL } from "@/lib/format";
+import { ROLE_LABEL, SPACE_ORDER, spaceOfPath } from "@/lib/permissions";
 
 export const metadata: Metadata = { title: "Connexion" };
 export const dynamic = "force-dynamic";
@@ -17,6 +18,7 @@ export default async function LoginPage({ searchParams }: Props) {
   const { suite, erreur, adhesion } = await searchParams;
   const next = suite && suite.startsWith("/") && !suite.startsWith("//") ? suite : "/espace";
   const viewer = await getViewer();
+  const spaces = viewerSpaces(viewer);
   return (
     <div className="vscreen on">
       <section className="vsec">
@@ -37,8 +39,8 @@ export default async function LoginPage({ searchParams }: Props) {
                 <p className="sh-sub">
                   Ceci est un aperçu avec des données d’exemple : pas besoin de te connecter. Choisis l’espace à visiter. Dans la vraie appli, tu recevras un lien de connexion par e-mail.
                 </p>
-                {(["visit", "member", "founders"] as const).map((s) => (
-                  <SpaceButton key={s} space={s} demo className="space-opt" href={s === "member" && next.startsWith("/espace") ? next : s === "founders" && next.startsWith("/fondatrices") ? next : undefined}>
+                {SPACE_ORDER.map((s) => (
+                  <SpaceButton key={s} space={s} demo className="space-opt" href={s !== "visit" && spaceOfPath(next) === s ? next : undefined}>
                     <span className="so-ic">
                       <Icon name={SPACES[s].icon} />
                     </span>
@@ -53,15 +55,15 @@ export default async function LoginPage({ searchParams }: Props) {
             ) : viewer.profile ? (
               <>
                 <p className="sh-sub">
-                  Tu es connectée : <b>{fullName(viewer.profile)}</b> · {viewer.role === "founder" ? "Fondatrice" : PLAN_LABEL[viewer.profile.plan]}.
+                  Tu es connectée : <b>{fullName(viewer.profile)}</b> · {viewer.profile.roles.length ? viewer.profile.roles.map((r) => ROLE_LABEL[r]).join(", ") : PLAN_LABEL[viewer.profile.plan]}.
                 </p>
                 <div className="btn-row">
-                  {viewer.role !== "guest" && (
-                    <Link className="btn btn-gold" href={viewer.role === "founder" && next.startsWith("/fondatrices") ? next : "/espace"}>
-                      Ouvrir mon espace <Icon name="arrow-r" />
+                  {spaces.filter((s) => s !== "visit").map((s) => (
+                    <Link key={s} className="btn btn-gold" href={spaceOfPath(next) === s ? next : SPACES[s].home}>
+                      {spaces.length > 2 ? `Espace ${SPACES[s].label}` : "Ouvrir mon espace"} <Icon name="arrow-r" />
                     </Link>
-                  )}
-                  {viewer.role === "guest" && (
+                  ))}
+                  {!viewerCan(viewer, "space.member") && (
                     <Link className="btn btn-gold" href="/formules">
                       Adhérer au club
                     </Link>

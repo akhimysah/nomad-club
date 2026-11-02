@@ -8,6 +8,8 @@ import { today, ymdOf } from "@/lib/clock";
 import { getRepo } from "@/lib/data";
 import { priceFor } from "@/lib/domain/events";
 import { paymentMode } from "@/lib/env";
+import { bookingConfirmed, waitlistSpot } from "@/lib/notify";
+import { inCircle } from "@/lib/permissions";
 import { guestSchema } from "@/lib/validation";
 import { ticketData } from "@/lib/views";
 
@@ -91,6 +93,7 @@ export async function reserve(input: ReserveInput): Promise<ReserveResult> {
   }
   const view = await repo.getBookingByCode(result.booking.ticketCode);
   if (!view) return { ok: false, error: "Réservation introuvable." };
+  if (profile && result.status === "booked") await bookingConfirmed(profile, view.event, view.ticketCode, view.status === "pending");
   return { ok: true, kind: "booked", ticket: await ticketData(view), name, phone, pending: view.status === "pending", already: result.status === "already" };
 }
 
@@ -98,7 +101,12 @@ export async function reserve(input: ReserveInput): Promise<ReserveResult> {
 export async function cancelMyBooking(bookingId: string): Promise<{ ok: boolean }> {
   const viewer = await getViewer();
   if (!viewer.profile) return { ok: false };
-  await getRepo().cancelBooking(bookingId, viewer.profile.id);
+  const repo = getRepo();
+  const { eventId, waitlistProfileId } = await repo.cancelBooking(bookingId, viewer.profile.id);
+  if (eventId && waitlistProfileId) {
+    const [ev, next] = await Promise.all([repo.getEventById(eventId), repo.getProfile(waitlistProfileId)]);
+    if (ev) await waitlistSpot(waitlistProfileId, ev, next ? inCircle(next) : false);
+  }
   revalidateAll();
   return { ok: true };
 }

@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type Stripe from "stripe";
 import { getRepo } from "@/lib/data";
 import { getStripe } from "@/lib/stripe";
+import { waitlistSpot } from "@/lib/notify";
 
 /**
  * Webhook Stripe : la signature est vérifiée avec STRIPE_WEBHOOK_SECRET.
@@ -33,7 +34,11 @@ export async function POST(req: NextRequest) {
   } else if (event.type === "checkout.session.expired") {
     const s = event.data.object;
     if (s.metadata?.kind === "booking" && s.metadata.id) {
-      await repo.cancelBooking(s.metadata.id, null);
+      const { eventId, waitlistProfileId } = await repo.cancelBooking(s.metadata.id, null);
+      if (eventId && waitlistProfileId) {
+        const ev = await repo.getEventById(eventId);
+        if (ev) await waitlistSpot(waitlistProfileId, ev, true);
+      }
       revalidatePath("/", "layout");
     }
   }

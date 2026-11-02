@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getViewer } from "@/lib/auth";
+import { checkCapability } from "@/lib/auth";
 import { toChatMsg, type ChatMsg, type ChatTarget } from "@/lib/chat";
 import { nowMs } from "@/lib/clock";
 import { getRepo } from "@/lib/data";
@@ -9,18 +9,17 @@ import { dmChannel } from "@/lib/data/repo";
 import { eventGroupLabel } from "@/lib/domain/events";
 import { dayNumber } from "@/lib/format";
 import { messageSchema } from "@/lib/validation";
+import { inCircle } from "@/lib/permissions";
 
 async function memberOrNull() {
-  const v = await getViewer();
-  if (!v.profile || (v.role !== "member" && v.role !== "founder")) return null;
-  return { ...v, profile: v.profile };
+  return checkCapability("messages.post");
 }
 
 async function channelFor(target: ChatTarget, meId: string): Promise<string | null> {
   if (target.kind === "general") return "general";
   if (target.otherId === meId) return null;
   const other = await getRepo().getProfile(target.otherId);
-  if (!other || (other.role !== "member" && other.role !== "founder")) return null;
+  if (!other || !inCircle(other)) return null;
   return dmChannel(meId, other.id);
 }
 

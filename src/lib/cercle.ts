@@ -6,6 +6,7 @@ import { dmChannel } from "./data/repo";
 import { daysBetween } from "./clock";
 import { dayMonthShort, fullName, messageTime } from "./format";
 import type { Profile } from "./types";
+import { hasRole, isAdmin } from "./permissions";
 
 export function dirPerson(p: Profile): DirPerson {
   return {
@@ -15,7 +16,7 @@ export function dirPerson(p: Profile): DirPerson {
     job: p.job ?? "Membre du club",
     country: p.country ?? "Marrakech",
     since: p.marrakechSince,
-    badge: p.role === "founder" ? "Fondatrice" : p.plan === "premium" ? "Premium" : null,
+    badge: isAdmin(p) ? "Fondatrice" : p.plan === "premium" ? "Premium" : null,
   };
 }
 
@@ -25,7 +26,7 @@ export async function loadCercle(me: Profile, otherId: string | null) {
   const t = today();
   const [salonRaw, dir, threadsRaw] = await Promise.all([repo.listMessages("general"), repo.listDirectory(), repo.listDmThreads(me.id)]);
   const directory = dir.filter((p) => p.id !== me.id);
-  const activeMembers = dir.filter((p) => p.role === "member" && p.plan !== "free" && p.planEndsAt && p.planEndsAt >= t);
+  const activeMembers = dir.filter((p) => hasRole(p, "member") && p.plan !== "free" && p.planEndsAt && p.planEndsAt >= t);
   const salon: ChatMsg[] = salonRaw.map((m) => toChatMsg(m, m.author, me.id));
   const last = salonRaw[salonRaw.length - 1];
   const d = last ? daysBetween(ymdOf(last.createdAt), t) : 0;

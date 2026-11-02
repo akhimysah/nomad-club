@@ -7,6 +7,7 @@ import { PRICES } from "../content";
 import { dayLong, dayMonthShort, fullName, monthShortName, PLAN_LABEL, ymdShort, ymdShortYear } from "../format";
 import type { Booking, ClubEvent, EventStats, Payment, Profile, Reminder, ReminderReason } from "../types";
 import { eventGroupLabel, eventStats } from "./events";
+import { hasRole, isAdmin, isGuest } from "../permissions";
 
 export type Snapshot = {
   profiles: Profile[];
@@ -105,7 +106,7 @@ function lastDayOfYm(ym: string): string {
 }
 
 export function isActiveMember(p: Profile, today: string): boolean {
-  return p.role === "member" && p.plan !== "free" && !!p.planEndsAt && p.planEndsAt >= today;
+  return hasRole(p, "member") && p.plan !== "free" && !!p.planEndsAt && p.planEndsAt >= today;
 }
 
 export function computeDashboard(s: Snapshot, nowMs: number): Dashboard {
@@ -144,7 +145,7 @@ export function computeDashboard(s: Snapshot, nowMs: number): Dashboard {
 
   /* ----- relances ----- */
   const rel: TodoRel[] = [];
-  const members = s.profiles.filter((p) => p.role === "member");
+  const members = s.profiles.filter((p) => hasRole(p, "member"));
   for (const p of members) {
     if (!p.planEndsAt || p.plan === "free" || pendingMembershipBy.has(p.id)) continue;
     const name = fullName(p);
@@ -190,7 +191,7 @@ export function computeDashboard(s: Snapshot, nowMs: number): Dashboard {
     });
   }
   // comptes gratuits à faire adhérer
-  for (const p of s.profiles.filter((x) => x.role === "guest")) {
+  for (const p of s.profiles.filter(isGuest)) {
     const last = lastSent("invite", p.id, null);
     if (last) continue;
     const n = s.bookings.filter((b) => b.profileId === p.id && b.status === "paid").length;
@@ -310,19 +311,19 @@ export function computeDashboard(s: Snapshot, nowMs: number): Dashboard {
     declared.filter((p) => p.profileId).map((p) => [p.profileId!, p] as const),
   );
   const memberRows: MemberRow[] = s.profiles
-    .filter((p) => p.role !== "founder")
+    .filter((p) => !isAdmin(p) && (hasRole(p, "member") || isGuest(p)))
     .map((p) => {
       const pend = pendingMembershipBy.get(p.id);
       const r = relByProfile.get(p.id);
       const v = virByProfile.get(p.id);
       let status: MemberStatus;
       if (pend) status = "pending";
-      else if (p.role === "guest") status = r ? "free" : "done";
+      else if (isGuest(p)) status = r ? "free" : "done";
       else if (!p.planEndsAt || p.planEndsAt < today) status = r ? "lapsed" : recentlySent(lastSent("expired", p.id, null)) ? "done" : "lapsed";
       else if (daysBetween(today, p.planEndsAt) <= 30) status = r ? "renew" : "done";
       else status = "active";
-      const formule = pend?.plan ? PLAN_LABEL[pend.plan] : PLAN_LABEL[p.role === "guest" ? "free" : p.plan];
-      const due = pend ? "virement déclaré" : p.role === "guest" ? "—" : p.planEndsAt ? ymdShortYear(p.planEndsAt) : "—";
+      const formule = pend?.plan ? PLAN_LABEL[pend.plan] : PLAN_LABEL[isGuest(p) ? "free" : p.plan];
+      const due = pend ? "virement déclaré" : isGuest(p) ? "—" : p.planEndsAt ? ymdShortYear(p.planEndsAt) : "—";
       const action: MemberRow["action"] = v
         ? { type: "vir", id: v.id }
         : r

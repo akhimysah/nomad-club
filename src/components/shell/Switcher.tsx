@@ -2,12 +2,11 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState, useTransition } from "react";
-import { switchSpace, type Space } from "@/app/actions/space";
+import { switchSpace } from "@/app/actions/space";
+import { SPACE_ORDER as ORDER, type Space } from "@/lib/permissions";
 import { Icon } from "../ui/Icon";
 import { Sheet } from "../ui/Sheet";
 import { lastPath, rememberPath, SPACES, spaceOf } from "./spaces";
-
-const ORDER: Space[] = ["visit", "member", "founders"];
 
 /** Bandeau du haut (mode démo) : aperçu privé, choix de l'espace, date du jour. */
 export function Switcher({ dateLabel }: { dateLabel: string }) {
@@ -79,7 +78,7 @@ export function Switcher({ dateLabel }: { dateLabel: string }) {
       <Sheet open={open} onClose={() => setOpen(false)} label="Changer d’espace">
         <div className="eyebrow">Aperçu privé · données d’exemple</div>
         <h2 className="sh-title">Changer d’espace</h2>
-        <p className="sh-sub">Vois l’appli comme une visiteuse, une membre ou une fondatrice.</p>
+        <p className="sh-sub">Vois l’appli comme une visiteuse, une membre, une partenaire, une pro ou une fondatrice.</p>
         {ORDER.map((s) => (
           <button key={s} className={"space-opt" + (s === shown ? " on" : "")} onClick={() => go(s)}>
             <span className="so-ic">

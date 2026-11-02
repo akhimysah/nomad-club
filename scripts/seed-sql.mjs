@@ -35,7 +35,7 @@ const insert = (table, cols, rows, conflict = "") => {
 };
 
 out("-- Données d'exemple du Nomad Club (générées par scripts/seed-sql.mjs depuis src/lib/seed.ts).");
-out("-- Date de référence : mercredi 14 octobre 2026. À exécuter APRÈS supabase/migrations/0001_init.sql.");
+out("-- Date de référence : mercredi 14 octobre 2026. À exécuter APRÈS toutes les migrations (supabase/migrations/*.sql).");
 out("-- Attention : ces comptes sont fictifs. Ne lancez pas ce fichier sur la base de production réelle.");
 out("");
 out("begin;");
@@ -52,9 +52,17 @@ insert(
 
 insert(
   "profiles",
-  ["id", "first_name", "last_name", "whatsapp", "email", "job", "country", "bio", "role", "plan", "plan_ends_at", "marrakech_since", "card_number", "created_at"],
-  s.profiles.map((p) => [q(uuid(p.id)), q(p.firstName), q(p.lastName), q(p.whatsapp), q(p.email), q(p.job), q(p.country), q(p.bio), q(p.role), q(p.plan), q(p.planEndsAt), q(p.marrakechSince), q(p.cardNumber), q(p.createdAt)]),
-  "on conflict (id) do update set first_name = excluded.first_name, last_name = excluded.last_name, whatsapp = excluded.whatsapp, email = excluded.email, job = excluded.job, country = excluded.country, bio = excluded.bio, role = excluded.role, plan = excluded.plan, plan_ends_at = excluded.plan_ends_at, marrakech_since = excluded.marrakech_since, card_number = excluded.card_number, created_at = excluded.created_at",
+  ["id", "first_name", "last_name", "whatsapp", "email", "job", "country", "bio", "plan", "plan_ends_at", "marrakech_since", "card_number", "created_at"],
+  s.profiles.map((p) => [q(uuid(p.id)), q(p.firstName), q(p.lastName), q(p.whatsapp), q(p.email), q(p.job), q(p.country), q(p.bio), q(p.plan), q(p.planEndsAt), q(p.marrakechSince), q(p.cardNumber), q(p.createdAt)]),
+  "on conflict (id) do update set first_name = excluded.first_name, last_name = excluded.last_name, whatsapp = excluded.whatsapp, email = excluded.email, job = excluded.job, country = excluded.country, bio = excluded.bio, plan = excluded.plan, plan_ends_at = excluded.plan_ends_at, marrakech_since = excluded.marrakech_since, card_number = excluded.card_number, created_at = excluded.created_at",
+);
+
+out("-- Rôles cumulables (0003_socle.sql).");
+insert(
+  "user_roles",
+  ["profile_id", "role", "granted_at"],
+  s.profiles.flatMap((p) => p.roles.map((r) => [q(uuid(p.id)), q(r), q(p.createdAt)])),
+  "on conflict do nothing",
 );
 
 insert(
@@ -106,14 +114,45 @@ insert(
   s.reminders.map((r) => [q(uuid(r.id)), q(uuid(r.profileId)), q(uuid(r.eventId)), q(r.reason), q(r.dueAt), q(r.sentAt), q(r.answered), q(r.scheduledFor)]),
 );
 
+out("-- Organisations, journal et notifications (0003_socle.sql).");
+insert(
+  "organizations",
+  ["id", "slug", "name", "kinds", "category", "description", "address", "area", "lat", "lng", "contact_name", "phone", "email", "website", "instagram", "status", "place_id", "created_at"],
+  s.organizations.map((o) => [q(uuid(o.id)), q(o.slug), q(o.name), arr(o.kinds), q(o.category), q(o.description), q(o.address), q(o.area), q(o.lat), q(o.lng), q(o.contactName), q(o.phone), q(o.email), q(o.website), q(o.instagram), q(o.status), q(uuid(o.placeId)), q(o.createdAt)]),
+);
+
+insert(
+  "organization_members",
+  ["organization_id", "profile_id", "role", "created_at"],
+  s.organizationMembers.map((m) => [q(uuid(m.organizationId)), q(uuid(m.profileId)), q(m.role), q(m.createdAt)]),
+);
+
 insert(
   "partner_offers",
-  ["id", "badge", "partner", "detail", "sort_order"],
-  s.partnerOffers.map((o, i) => [q(uuid(o.id)), q(o.badge), q(o.partner), q(o.detail), i]),
+  ["id", "badge", "partner", "detail", "organization_id", "sort_order"],
+  s.partnerOffers.map((o, i) => [q(uuid(o.id)), q(o.badge), q(o.partner), q(o.detail), q(uuid(o.organizationId)), i]),
+);
+
+insert(
+  "audit_log",
+  ["id", "actor_id", "action", "target_type", "target_id", "summary", "details", "created_at"],
+  s.auditLog.map((a) => [q(uuid(a.id)), q(uuid(a.actorId)), q(a.action), q(a.targetType), q(uuid(a.targetId)), q(a.summary), json(a.details), q(a.createdAt)]),
+);
+
+insert(
+  "notifications",
+  ["id", "recipient_id", "type", "title", "body", "link", "read_at", "created_at"],
+  s.notifications.map((n) => [q(uuid(n.id)), q(uuid(n.recipientId)), q(n.type), q(n.title), q(n.body), q(n.link), q(n.readAt), q(n.createdAt)]),
+);
+
+insert(
+  "notification_prefs",
+  ["profile_id", "type", "in_app", "email", "push"],
+  s.notificationPrefs.map((p) => [q(uuid(p.profileId)), q(p.type), q(p.inApp), q(p.email), q(p.push)]),
 );
 
 out("select setval('public.card_number_seq', 700, false);");
 out("commit;");
 
 writeFileSync(join(root, "supabase/seed.sql"), lines.join("\n") + "\n");
-console.log(`supabase/seed.sql écrit (${s.profiles.length} profils, ${s.events.length} rendez-vous, ${s.payments.length} paiements).`);
+console.log(`supabase/seed.sql écrit (${s.profiles.length} profils, ${s.events.length} rendez-vous, ${s.payments.length} paiements, ${s.organizations.length} organisations).`);

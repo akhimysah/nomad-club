@@ -1,20 +1,35 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getViewer } from "@/lib/auth";
+import { audit } from "@/lib/audit";
+import { checkCapability, getViewer } from "@/lib/auth";
 import { nowMs, today, zonedIso } from "@/lib/clock";
 import { getRepo } from "@/lib/data";
 import type { EventInput } from "@/lib/data/repo";
 import { computeDashboard } from "@/lib/domain/founders";
-import { money } from "@/lib/format";
+import { fullName, money } from "@/lib/format";
+import { eventPublished, paymentValidated } from "@/lib/notify";
+import type { Capability } from "@/lib/permissions";
+import type { Payment } from "@/lib/types";
 import { eventFormSchema, type EventForm } from "@/lib/validation";
 
 export type FounderResult = { ok: true; message: string } | { ok: false; error: string };
 
-async function founder() {
-  const v = await getViewer();
-  if (!v.profile || v.role !== "founder") return null;
-  return v.profile;
+/** Administratrice ayant la capacité demandée (null sinon). */
+async function founder(cap: Capability) {
+  return (await checkCapability(cap))?.profile ?? null;
+}
+
+async function logValidation(actorId: string, pay: Payment) {
+  await audit({
+    actorId,
+    action: "payment.validate",
+    targetType: "payment",
+    targetId: pay.id,
+    summary: `Virement de ${pay.payerName} validé · ${money(pay.amount)}`,
+    details: { amount: pay.amount, kind: pay.kind, plan: pay.plan, bookingId: pay.bookingId },
+  });
+  await paymentValidated(pay);
 }
 
 function refresh() {
@@ -23,35 +38,49 @@ function refresh() {
 
 /** Valider un virement déclaré (billet ou adhésion). */
 export async function validatePaymentAction(paymentId: string): Promise<FounderResult> {
-  const f = await founder();
+  const f = await founder("payments.validate");
   if (!f) return { ok: false, error: "Réservé aux fondatrices." };
   const pay = await getRepo().validatePayment(paymentId, f.id);
   if (!pay) return { ok: false, error: "Ce virement est déjà traité." };
+  await logValidation(f.id, pay);
   refresh();
   return { ok: true, message: `Virement de ${pay.payerName} validé · ${money(pay.amount)}` };
 }
 
 /** Valider tous les virements déclarés. */
 export async function validateAllAction(): Promise<FounderResult> {
-  const f = await founder();
+  const f = await founder("payments.validate");
   if (!f) return { ok: false, error: "Réservé aux fondatrices." };
   const repo = getRepo();
   const d = computeDashboard(await repo.snapshot(), nowMs());
   let n = 0;
-  for (const v of d.vir) if (await repo.validatePayment(v.id, f.id)) n++;
+  for (const v of d.vir) {
+    const pay = await repo.validatePayment(v.id, f.id);
+    if (!pay) continue;
+    n++;
+    await logValidation(f.id, pay);
+  }
   refresh();
   return { ok: true, message: n ? `${n} virement${n > 1 ? "s" : ""} validé${n > 1 ? "s" : ""}` : "Aucun virement à valider." };
 }
 
 /** Relancer (renouvellement, adhésion échue, billets impayés) ou inviter un compte gratuit. */
 export async function remindAction(key: string): Promise<FounderResult> {
-  const f = await founder();
+  const f = await founder("reminders.send");
   if (!f) return { ok: false, error: "Réservé aux fondatrices." };
   const repo = getRepo();
   const d = computeDashboard(await repo.snapshot(), nowMs());
   const item = d.rel.find((r) => r.key === key);
   if (!item) return { ok: false, error: "Cette relance est déjà partie." };
-  await repo.sendReminder(key, f.id);
+  const reminderId = await repo.sendReminder(key, f.id);
+  await audit({
+    actorId: f.id,
+    action: "reminder.send",
+    targetType: "reminder",
+    targetId: reminderId,
+    summary: `${item.cat === "free" ? "Invitation envoyée à " : "Relance envoyée · "}${item.name}`,
+    details: { key, category: item.cat, profileId: item.profileId },
+  });
   refresh();
   const demo = (await getViewer()).mode === "demo";
   return { ok: true, message: `${item.cat === "free" ? "Invitation envoyée à " : "Relance envoyée · "}${item.name}.${demo ? " Simulé" : ""}` };
@@ -59,7 +88,7 @@ export async function remindAction(key: string): Promise<FounderResult> {
 
 /** Publier un brouillon. Le lieu est obligatoire : on peut le choisir au moment de publier. */
 export async function publishDraftAction(eventId: string, placeId?: string): Promise<FounderResult> {
-  const f = await founder();
+  const f = await founder("events.manage");
   if (!f) return { ok: false, error: "Réservé aux fondatrices." };
   const repo = getRepo();
   if (placeId) {
@@ -69,6 +98,8 @@ export async function publishDraftAction(eventId: string, placeId?: string): Pro
   }
   try {
     const ev = await repo.publishEvent(eventId);
+    await audit({ actorId: f.id, action: "event.publish", targetType: "event", targetId: ev.id, summary: `« ${ev.title} » publié par ${fullName(f)}`, details: { placeId: ev.placeId, startsAt: ev.startsAt } });
+    await eventPublished(ev, await repo.listDirectory(), f.id);
     refresh();
     return { ok: true, message: `« ${ev.title} » est publié` };
   } catch (e) {
@@ -80,7 +111,7 @@ export type SaveEventResult = { ok: true; id: string; title: string; created: bo
 
 /** Créer un brouillon ou modifier un rendez-vous. */
 export async function saveEventAction(form: EventForm, id?: string): Promise<SaveEventResult> {
-  const f = await founder();
+  const f = await founder("events.manage");
   if (!f) return { ok: false, error: "Réservé aux fondatrices." };
   const parsed = eventFormSchema.safeParse(form);
   if (!parsed.success) {
@@ -113,10 +144,13 @@ export async function saveEventAction(form: EventForm, id?: string): Promise<Sav
     const { program, ...rest } = input;
     void program;
     const ev = await repo.updateEvent(id, rest);
+    const changed = (Object.keys(rest) as Array<keyof typeof rest>).filter((k) => JSON.stringify(rest[k]) !== JSON.stringify(existing[k]));
+    await audit({ actorId: f.id, action: "event.update", targetType: "event", targetId: ev.id, summary: `« ${ev.title} » modifié`, details: { changed } });
     refresh();
     return { ok: true, id: ev.id, title: ev.title, created: false };
   }
   const ev = await repo.createEvent(input, "draft");
+  await audit({ actorId: f.id, action: "event.create", targetType: "event", targetId: ev.id, summary: `Brouillon « ${ev.title} » créé`, details: { startsAt: ev.startsAt, capacity: ev.capacity } });
   refresh();
   return { ok: true, id: ev.id, title: ev.title, created: true };
 }

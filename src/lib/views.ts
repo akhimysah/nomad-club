@@ -10,6 +10,7 @@ import { dayShort, fullName, hour, money, timeRange, ymdDots, ymdLong } from "./
 import { qrData } from "./qr";
 import { siteUrl } from "./site";
 import type { BookingView, EventView, PaidPlan, Payment, Profile, Viewer } from "./types";
+import { hasRole } from "./permissions";
 
 /** Réservations de la personne qui regarde (compte ou billets sans compte). */
 export async function viewerBookings(v: Viewer): Promise<BookingView[]> {
@@ -83,7 +84,7 @@ export function featuredOf(events: EventView[]): EventView | null {
 export async function activeMemberCount(): Promise<{ total: number; premium: number }> {
   const t = today();
   const dir = await getRepo().listDirectory();
-  const active = dir.filter((p) => p.role === "member" && p.plan !== "free" && p.planEndsAt && p.planEndsAt >= t);
+  const active = dir.filter((p) => hasRole(p, "member") && p.plan !== "free" && p.planEndsAt && p.planEndsAt >= t);
   return { total: active.length, premium: active.filter((p) => p.plan === "premium").length };
 }
 

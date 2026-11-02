@@ -1,10 +1,16 @@
 /**
  * Types du domaine Nomad Club.
- * Ils reflètent les tables de supabase/migrations/0001_init.sql (en camelCase).
+ * Ils reflètent les tables de supabase/migrations/ (0001_init.sql, 0003_socle.sql…) en camelCase.
  * Les dates « jour » sont au format AAAA-MM-JJ, les instants en ISO 8601.
  */
 
-export type Role = "guest" | "member" | "founder";
+/**
+ * Rôles cumulables (table user_roles). Une personne sans rôle est une visiteuse (« guest »).
+ * L'ancien rôle « founder » est devenu « admin » (Julia et Nora).
+ */
+export type Role = "guest" | "member" | "moderator" | "admin" | "partner" | "pro";
+/** Rôles attribuables (guest = absence de rôle). */
+export type GrantableRole = Exclude<Role, "guest">;
 export type Plan = "free" | "member" | "premium";
 export type PaidPlan = Exclude<Plan, "free">;
 
@@ -17,7 +23,8 @@ export type Profile = {
   job: string | null;
   country: string | null;
   bio: string | null;
-  role: Role;
+  /** Rôles cumulés (vide = compte gratuit / visiteuse). Jamais « guest ». */
+  roles: GrantableRole[];
   plan: Plan;
   /** Fin de l'adhésion (AAAA-MM-JJ), null pour un compte gratuit. */
   planEndsAt: string | null;
@@ -189,6 +196,8 @@ export type PartnerOffer = {
   badge: string;
   partner: string;
   detail: string;
+  /** Établissement partenaire qui propose l'offre (null si pas encore relié). */
+  organizationId: string | null;
 };
 
 /* ---------- vues dérivées ---------- */
@@ -214,9 +223,94 @@ export type DmThread = {
 
 export type MessageView = Message & { author: Profile | null };
 
+/* ---------- socle : organisations, journal, notifications ---------- */
+
+export type OrganizationKind = "partner" | "pro";
+export type OrganizationStatus = "active" | "pending" | "suspended";
+export type OrganizationMemberRole = "owner" | "staff";
+
+/** Établissement d'une partenaire (offres) ou d'une professionnelle du carnet (fiche payante), ou les deux. */
+export type Organization = {
+  id: string;
+  slug: string;
+  name: string;
+  kinds: OrganizationKind[];
+  /** Catégorie libre (bien-être, café, santé…). */
+  category: string;
+  description: string | null;
+  address: string | null;
+  /** Quartier (Guéliz, Médina, Hivernage…). */
+  area: string | null;
+  lat: number | null;
+  lng: number | null;
+  contactName: string | null;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  instagram: string | null;
+  status: OrganizationStatus;
+  /** Lieu du carnet correspondant, s'il existe. */
+  placeId: string | null;
+  createdAt: string;
+};
+
+export type OrganizationMember = {
+  organizationId: string;
+  profileId: string;
+  role: OrganizationMemberRole;
+  createdAt: string;
+};
+
+export type AuditAction =
+  | "payment.validate"
+  | "event.create"
+  | "event.update"
+  | "event.publish"
+  | "role.grant"
+  | "role.revoke"
+  | "reminder.send";
+
+/** Journal des opérations importantes (qui, quoi, sur quoi, détails). */
+export type AuditEntry = {
+  id: string;
+  actorId: string | null;
+  action: AuditAction;
+  targetType: "payment" | "event" | "profile" | "reminder" | "organization";
+  targetId: string | null;
+  /** Phrase lisible (« Virement de Lou Garnier validé · 670 $ »). */
+  summary: string;
+  details: Record<string, unknown>;
+  createdAt: string;
+};
+
+export type NotificationType = "booking_confirmed" | "waitlist_spot" | "event_published" | "payment_validated" | "role_changed";
+
+export type AppNotification = {
+  id: string;
+  recipientId: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  /** Lien interne à ouvrir (/espace/agenda/…). */
+  link: string | null;
+  readAt: string | null;
+  createdAt: string;
+};
+
+export type NotificationChannel = "inApp" | "email" | "push";
+
+export type NotificationPref = {
+  profileId: string;
+  type: NotificationType;
+  inApp: boolean;
+  email: boolean;
+  push: boolean;
+};
+
 /** La personne qui regarde la page. */
 export type Viewer = {
-  role: Role;
+  /** Rôles effectifs (["guest"] sans compte ou sans rôle). */
+  roles: Role[];
   profile: Profile | null;
   /** Codes de billets réservés sans compte (cookie). */
   guestTickets: string[];

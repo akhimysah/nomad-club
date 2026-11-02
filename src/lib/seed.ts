@@ -5,18 +5,22 @@
  * avec `npm run seed:sql`.
  */
 import type {
+  AppNotification,
+  AuditEntry,
   Booking,
   ClubEvent,
   Membership,
   Memory,
   Message,
+  NotificationPref,
+  Organization,
+  OrganizationMember,
   PartnerOffer,
   Payment,
   Place,
   Plan,
   Profile,
   Reminder,
-  Role,
 } from "./types";
 import { ANNUAIRE } from "./carnet-annuaire.ts";
 
@@ -31,11 +35,20 @@ export type SeedData = {
   messages: Message[];
   reminders: Reminder[];
   partnerOffers: PartnerOffer[];
+  organizations: Organization[];
+  organizationMembers: OrganizationMember[];
+  auditLog: AuditEntry[];
+  notifications: AppNotification[];
+  notificationPrefs: NotificationPref[];
 };
 
 /** Identifiants fixes utilisés par le mode démo. */
 export const DEMO_MEMBER_ID = "p-ines";
 export const DEMO_FOUNDER_ID = "p-julia";
+/** Kenza Lahlou : adhérente et partenaire (Bloom House). */
+export const DEMO_PARTNER_ID = "p-g11";
+/** Loubna Cherkaoui : adhérente et professionnelle du carnet (ostéopathe). */
+export const DEMO_PRO_ID = "p-g34";
 
 const iso = (ymd: string, time = "10:00") => new Date(`${ymd}T${time}:00+01:00`).toISOString();
 
@@ -67,7 +80,7 @@ function profile(p: P): Profile {
     job: null,
     country: null,
     bio: null,
-    role: "member" as Role,
+    roles: ["member"],
     plan: "member" as Plan,
     planEndsAt: null,
     avatarUrl: null,
@@ -105,10 +118,10 @@ export function createSeed(): SeedData {
 
   /* ---------------- profils ---------------- */
   const named: Profile[] = [
-    profile({ id: "p-julia", firstName: "Julia", role: "founder", plan: "premium", planEndsAt: "2027-09-01", job: "Cofondatrice du Nomad Club", country: "Française", marrakechSince: "2019", email: "julia@exemple.com", cardNumber: "NC 0001", createdAt: iso("2019-09-01") }),
-    profile({ id: "p-nora", firstName: "Nora", role: "founder", plan: "premium", planEndsAt: "2027-09-01", job: "Cofondatrice du Nomad Club", country: "Franco-marocaine", marrakechSince: "2017", email: "nora@exemple.com", cardNumber: "NC 0002", createdAt: iso("2019-09-01") }),
+    profile({ id: "p-julia", firstName: "Julia", roles: ["admin"], plan: "premium", planEndsAt: "2027-09-01", job: "Cofondatrice du Nomad Club", country: "Française", marrakechSince: "2019", email: "julia@exemple.com", cardNumber: "NC 0001", createdAt: iso("2019-09-01") }),
+    profile({ id: "p-nora", firstName: "Nora", roles: ["admin"], plan: "premium", planEndsAt: "2027-09-01", job: "Cofondatrice du Nomad Club", country: "Franco-marocaine", marrakechSince: "2017", email: "nora@exemple.com", cardNumber: "NC 0002", createdAt: iso("2019-09-01") }),
     profile({ id: "p-ines", firstName: "Inès", lastName: "Laurent", plan: "member", planEndsAt: "2026-11-18", job: "Consultante en communication", country: "Française", marrakechSince: "2025", email: "ines@exemple.com", whatsapp: "+212 6 61 42 18 07", cardNumber: "NC 0427", bio: "Je conseille des marques qui s’installent au Maroc.", createdAt: iso("2025-11-18") }),
-    profile({ id: "p-yasmine", firstName: "Yasmine", lastName: "Tazi", plan: "premium", planEndsAt: "2026-11-02", job: "Avocate d’affaires", country: "Marocaine", marrakechSince: "toujours", cardNumber: "NC 0112", createdAt: iso("2020-11-02") }),
+    profile({ id: "p-yasmine", firstName: "Yasmine", lastName: "Tazi", roles: ["member", "moderator"], plan: "premium", planEndsAt: "2026-11-02", job: "Avocate d’affaires", country: "Marocaine", marrakechSince: "toujours", cardNumber: "NC 0112", createdAt: iso("2020-11-02") }),
     profile({ id: "p-salma", firstName: "Salma", lastName: "Alaoui", plan: "premium", planEndsAt: "2026-10-24", job: "Architecte d’intérieur", country: "Marocaine", marrakechSince: "2021", cardNumber: "NC 0145", createdAt: iso("2021-10-24") }),
     profile({ id: "p-maya", firstName: "Maya", lastName: "Benkirane", plan: "premium", planEndsAt: "2026-10-08", job: "Directrice artistique", country: "Marocaine", marrakechSince: "2023", cardNumber: "NC 0298", createdAt: iso("2023-10-08") }),
     profile({ id: "p-chloe", firstName: "Chloé", lastName: "Martin", plan: "member", planEndsAt: "2026-10-19", job: "Photographe", country: "Française", marrakechSince: "2024", cardNumber: "NC 0351", createdAt: iso("2024-10-19") }),
@@ -124,9 +137,9 @@ export function createSeed(): SeedData {
     profile({ id: "p-anais", firstName: "Anaïs", lastName: "Roux", plan: "premium", planEndsAt: "2026-11-11", job: "Directrice d’hôtel", country: "Française", marrakechSince: "2021", cardNumber: "NC 0158", createdAt: iso("2021-11-11") }),
     profile({ id: "p-aurelie", firstName: "Aurélie", lastName: "Petit", plan: "member", planEndsAt: "2026-09-28", job: "Développeuse web", country: "Française", marrakechSince: "2024", cardNumber: "NC 0347", createdAt: iso("2024-09-28") }),
     profile({ id: "p-ambre", firstName: "Ambre", lastName: "Fontaine", plan: "member", planEndsAt: "2027-10-02", job: "Coach en image", country: "Belge", marrakechSince: "2026", cardNumber: "NC 0458", createdAt: iso("2026-10-02") }),
-    profile({ id: "p-hana", firstName: "Hana", lastName: "Idrissi", role: "guest", plan: "free", job: "Ingénieure", country: "Marocaine", createdAt: iso("2026-06-12") }),
-    profile({ id: "p-clara", firstName: "Clara", lastName: "Moreau", role: "guest", plan: "free", job: "Graphiste", country: "Française", createdAt: iso("2026-09-08") }),
-    profile({ id: "p-sarah", firstName: "Sarah", lastName: "Cohen", role: "guest", plan: "free", job: "Consultante en marketing", country: "Française", createdAt: iso("2026-09-24") }),
+    profile({ id: "p-hana", firstName: "Hana", lastName: "Idrissi", roles: [], plan: "free", job: "Ingénieure", country: "Marocaine", createdAt: iso("2026-06-12") }),
+    profile({ id: "p-clara", firstName: "Clara", lastName: "Moreau", roles: [], plan: "free", job: "Graphiste", country: "Française", createdAt: iso("2026-09-08") }),
+    profile({ id: "p-sarah", firstName: "Sarah", lastName: "Cohen", roles: [], plan: "free", job: "Consultante en marketing", country: "Française", createdAt: iso("2026-09-24") }),
   ];
 
   /* 49 autres adhérentes actives (dont 21 Premium) pour retrouver les chiffres du club : 61 actives, 24 Premium. */
@@ -163,7 +176,12 @@ export function createSeed(): SeedData {
       createdAt: iso(created),
     });
   });
-  const profiles = [...named, ...generated];
+  // Rôles cumulés : Kenza est aussi partenaire (Bloom House), Loubna professionnelle du carnet.
+  Object.assign(generated[10], { roles: ["member", "partner"], job: "Fondatrice de Bloom House", email: "kenza@exemple.com" });
+  Object.assign(generated[33], { roles: ["member", "pro"], job: "Ostéopathe", email: "loubna@exemple.com" });
+  // Rim gère Maison Amaj : partenaire sans adhésion.
+  const rim = profile({ id: "p-rim", firstName: "Rim", lastName: "Amajjar", roles: ["partner"], plan: "free", job: "Gérante de Maison Amaj", country: "Marocaine", email: "rim@exemple.com", createdAt: iso("2026-05-20") });
+  const profiles = [...named, ...generated, rim];
   const byId = new Map(profiles.map((p) => [p.id, p]));
   const name = (id: string) => {
     const p = byId.get(id)!;
@@ -483,10 +501,51 @@ export function createSeed(): SeedData {
   ];
 
   const partnerOffers: PartnerOffer[] = [
-    { id: "off-bloom", badge: "-15 %", partner: "Bloom House", detail: "Sur les ateliers et conférences" },
-    { id: "off-amaj", badge: "Café", partner: "Maison Amaj", detail: "Un café offert avec ta viennoiserie" },
-    { id: "off-padel", badge: "1 h", partner: "Urban Padel", detail: "Une heure de terrain offerte par trimestre" },
+    { id: "off-bloom", badge: "-15 %", partner: "Bloom House", detail: "Sur les ateliers et conférences", organizationId: "org-bloom" },
+    { id: "off-amaj", badge: "Café", partner: "Maison Amaj", detail: "Un café offert avec ta viennoiserie", organizationId: "org-amaj" },
+    { id: "off-padel", badge: "1 h", partner: "Urban Padel", detail: "Une heure de terrain offerte par trimestre", organizationId: null },
   ];
 
-  return { profiles, places, events, bookings, payments, memberships, memories, messages, reminders, partnerOffers };
+  /* ---------------- organisations (partenaires et pros) ---------------- */
+  const org = (o: Partial<Organization> & Pick<Organization, "id" | "slug" | "name" | "kinds" | "category">): Organization => ({
+    description: null, address: null, area: null, lat: null, lng: null, contactName: null, phone: null, email: null, website: null, instagram: null,
+    status: "active", placeId: null, createdAt: iso("2026-05-20"), ...o,
+  });
+  const organizations: Organization[] = [
+    org({ id: "org-bloom", slug: "bloom-house", name: "Bloom House", kinds: ["partner"], category: "Bien-être et ateliers", description: "Conférences, ateliers et soins dans une maison calme de Guéliz.", address: "14 rue de la Liberté", area: "Guéliz", lat: 31.6347, lng: -8.0102, contactName: "Kenza Lahlou", phone: "+212 6 61 20 33 14", email: "bonjour@bloomhouse.example", instagram: "@bloomhouse.marrakech", placeId: "pl-bloom", createdAt: iso("2026-02-03") }),
+    org({ id: "org-amaj", slug: "maison-amaj", name: "Maison Amaj", kinds: ["partner"], category: "Pâtisserie et petit-déjeuner", description: "La pâtisserie de Mounir El Fahsi, vainqueur du Meilleur Pâtissier.", address: "Rue Mohammed el Beqal", area: "Guéliz", lat: 31.6392, lng: -8.0127, contactName: "Rim Amajjar", phone: "+212 5 24 43 87 12", email: "contact@maisonamaj.example", instagram: "@maisonamaj", placeId: "pl-amaj", createdAt: iso("2026-05-20") }),
+    org({ id: "org-cherkaoui", slug: "cabinet-cherkaoui", name: "Cabinet Loubna Cherkaoui", kinds: ["pro"], category: "Santé · ostéopathie", description: "Ostéopathie adulte, femme enceinte et nourrisson. Consultations en français, arabe et anglais.", address: "Résidence Les Jardins, avenue Hassan II", area: "Guéliz", lat: 31.6321, lng: -8.0049, contactName: "Loubna Cherkaoui", phone: "+212 6 62 18 40 55", email: "cabinet@cherkaoui.example", createdAt: iso("2026-09-01") }),
+  ];
+  const organizationMembers: OrganizationMember[] = [
+    { organizationId: "org-bloom", profileId: "p-g11", role: "owner", createdAt: iso("2026-02-03") },
+    { organizationId: "org-amaj", profileId: "p-rim", role: "owner", createdAt: iso("2026-05-20") },
+    { organizationId: "org-cherkaoui", profileId: "p-g34", role: "owner", createdAt: iso("2026-09-01") },
+  ];
+
+  /* ---------------- journal des opérations ---------------- */
+  const auditLog: AuditEntry[] = [
+    { id: "al-1", actorId: "p-julia", action: "role.grant", targetType: "profile", targetId: "p-g11", summary: "Rôle Partenaire donné à Kenza Lahlou", details: { role: "partner" }, createdAt: iso("2026-02-03", "11:20") },
+    { id: "al-2", actorId: "p-nora", action: "role.grant", targetType: "profile", targetId: "p-rim", summary: "Rôle Partenaire donné à Rim Amajjar", details: { role: "partner" }, createdAt: iso("2026-05-20", "16:05") },
+    { id: "al-3", actorId: "p-julia", action: "role.grant", targetType: "profile", targetId: "p-g34", summary: "Rôle Professionnelle donné à Loubna Cherkaoui", details: { role: "pro" }, createdAt: iso("2026-09-01", "09:40") },
+    { id: "al-4", actorId: "p-nora", action: "role.grant", targetType: "profile", targetId: "p-yasmine", summary: "Rôle Modératrice donné à Yasmine Tazi", details: { role: "moderator" }, createdAt: iso("2026-09-12", "18:15") },
+    { id: "al-5", actorId: "p-julia", action: "event.publish", targetType: "event", targetId: "ev-diner", summary: "« Dîner privé » publié", details: {}, createdAt: iso("2026-09-26", "10:30") },
+    { id: "al-6", actorId: "p-julia", action: "reminder.send", targetType: "reminder", targetId: "rem-4", summary: "Relance envoyée · Emma Schneider", details: { reason: "expired" }, createdAt: iso("2026-09-21", "10:00") },
+    { id: "al-7", actorId: "p-nora", action: "reminder.send", targetType: "reminder", targetId: "rem-3", summary: "Relance envoyée · Leïla Benjelloun", details: { reason: "expired" }, createdAt: iso("2026-10-01", "10:00") },
+  ];
+
+  /* ---------------- notifications ---------------- */
+  const notifications: AppNotification[] = [
+    { id: "nt-1", recipientId: "p-ines", type: "booking_confirmed", title: "Ta place est réservée", body: "Lunch Raffiné & Networking, lundi 26 octobre au Fer7. Ton billet : NC-2610-0427.", link: "/espace/agenda/lunch-raffine-networking", readAt: iso("2026-10-08", "12:00"), createdAt: iso("2026-10-08", "11:58") },
+    { id: "nt-2", recipientId: "p-ines", type: "event_published", title: "Nouveau rendez-vous : Dîner privé", body: "Une grande table dans le jardin de Terrajana. Les places partent vite.", link: "/espace/agenda/diner-prive-terrajana", readAt: null, createdAt: iso("2026-09-26", "10:31") },
+    { id: "nt-3", recipientId: "p-julia", type: "event_published", title: "Nouveau rendez-vous : Dîner privé", body: "Publié et visible par toutes les membres.", link: "/fondatrices/evenements", readAt: null, createdAt: iso("2026-09-26", "10:31") },
+    { id: "nt-4", recipientId: "p-g11", type: "role_changed", title: "Bienvenue dans l’espace Partenaire", body: "Bloom House est reliée à ton compte. Les offres et statistiques arrivent bientôt.", link: "/partenaire", readAt: null, createdAt: iso("2026-02-03", "11:21") },
+    { id: "nt-5", recipientId: "p-g34", type: "role_changed", title: "Ta fiche pro est ouverte", body: "Le Cabinet Loubna Cherkaoui est relié à ton compte professionnel.", link: "/pro", readAt: null, createdAt: iso("2026-09-01", "09:41") },
+  ];
+  // Préférences : par défaut tout est actif ; Inès a coupé les e-mails des nouveaux rendez-vous.
+  const notificationPrefs: NotificationPref[] = [{ profileId: "p-ines", type: "event_published", inApp: true, email: false, push: false }];
+
+  return {
+    profiles, places, events, bookings, payments, memberships, memories, messages, reminders, partnerOffers,
+    organizations, organizationMembers, auditLog, notifications, notificationPrefs,
+  };
 }

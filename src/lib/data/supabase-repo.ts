@@ -7,8 +7,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Snapshot } from "../domain/founders";
 import { fullName } from "../format";
+import { inCircle, isAdmin, isGrantableRole } from "../permissions";
 import { supabaseAdmin, supabaseServer } from "../supabase/server";
 import type {
+  AppNotification,
+  AuditEntry,
   Booking,
   BookingView,
   ClubEvent,
@@ -17,13 +20,16 @@ import type {
   Memory,
   Message,
   MessageView,
+  NotificationPref,
+  Organization,
+  OrganizationMember,
   PartnerOffer,
   Payment,
   Place,
   Profile,
   Reminder,
 } from "../types";
-import { otherInChannel, type BookResult, type EventInput, type Repo } from "./repo";
+import { otherInChannel, type BookResult, type CancelResult, type EventInput, type NotificationInput, type Repo } from "./repo";
 
 /* ---------- lignes de la base (snake_case) ---------- */
 type Row = Record<string, unknown>;
@@ -41,7 +47,8 @@ function toProfile(r: Row): Profile {
     job: strN(r.job),
     country: strN(r.country),
     bio: strN(r.bio),
-    role: (r.role as Profile["role"]) ?? "guest",
+    // rôles embarqués : select(PROFILE)
+    roles: ((r.user_roles as Row[] | null) ?? []).map((x) => x.role).filter(isGrantableRole),
     plan: (r.plan as Profile["plan"]) ?? "free",
     planEndsAt: strN(r.plan_ends_at),
     avatarUrl: strN(r.avatar_url),
@@ -50,6 +57,77 @@ function toProfile(r: Row): Profile {
     createdAt: str(r.created_at),
   };
 }
+
+/** Jointure des rôles (user_roles a deux clés vers profiles : on précise profile_id). */
+const ROLES_JOIN = "user_roles:user_roles!user_roles_profile_id_fkey(role)";
+/** Profil avec ses rôles. */
+const PROFILE = `*, ${ROLES_JOIN}`;
+
+function toOrganization(r: Row): Organization {
+  return {
+    id: str(r.id),
+    slug: str(r.slug),
+    name: str(r.name),
+    kinds: (r.kinds as Organization["kinds"]) ?? [],
+    category: str(r.category),
+    description: strN(r.description),
+    address: strN(r.address),
+    area: strN(r.area),
+    lat: r.lat == null ? null : Number(r.lat),
+    lng: r.lng == null ? null : Number(r.lng),
+    contactName: strN(r.contact_name),
+    phone: strN(r.phone),
+    email: strN(r.email),
+    website: strN(r.website),
+    instagram: strN(r.instagram),
+    status: (r.status as Organization["status"]) ?? "pending",
+    placeId: strN(r.place_id),
+    createdAt: str(r.created_at),
+  };
+}
+
+function toOrgMember(r: Row): OrganizationMember {
+  return { organizationId: str(r.organization_id), profileId: str(r.profile_id), role: r.role as OrganizationMember["role"], createdAt: str(r.created_at) };
+}
+
+function toAudit(r: Row): AuditEntry {
+  return {
+    id: str(r.id),
+    actorId: strN(r.actor_id),
+    action: r.action as AuditEntry["action"],
+    targetType: r.target_type as AuditEntry["targetType"],
+    targetId: strN(r.target_id),
+    summary: str(r.summary),
+    details: (r.details as Record<string, unknown>) ?? {},
+    createdAt: str(r.created_at),
+  };
+}
+
+function toNotification(r: Row): AppNotification {
+  return {
+    id: str(r.id),
+    recipientId: str(r.recipient_id),
+    type: r.type as AppNotification["type"],
+    title: str(r.title),
+    body: str(r.body),
+    link: strN(r.link),
+    readAt: strN(r.read_at),
+    createdAt: str(r.created_at),
+  };
+}
+
+const PREF_COLUMN = { inApp: "in_app", email: "email", push: "push" } as const;
+
+/**
+ * Client pour écrire ce que la RLS réserve à soi-même ou aux administratrices (notifications pour une autre
+ * personne, ex. liste d'attente libérée par une membre) : clé service si elle est configurée, sinon session.
+ * N'est appelé qu'après les vérifications de l'application (server actions).
+ */
+async function trustedWriter(): Promise<SupabaseClient> {
+  return process.env.SUPABASE_SERVICE_ROLE_KEY ? supabaseAdmin() : supabaseServer();
+}
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function toPlace(r: Row): Place {
   return {
@@ -223,14 +301,58 @@ function ticketToView(j: Row | null): BookingView | null {
 export const supabaseRepo: Repo = {
   async getProfile(id) {
     const c = await db();
-    const r = check(await c.from("profiles").select("*").eq("id", id).maybeSingle()) as Row | null;
+    const r = check(await c.from("profiles").select(PROFILE).eq("id", id).maybeSingle()) as Row | null;
     return r ? toProfile(r) : null;
   },
 
   async listDirectory() {
     const c = await db();
-    const rows = check(await c.from("profiles").select("*").in("role", ["member", "founder"]).order("first_name")) as Row[];
-    return rows.map(toProfile).sort((a, b) => (a.role === b.role ? a.firstName.localeCompare(b.firstName, "fr") : a.role === "founder" ? -1 : 1));
+    // La RLS ne montre que le cercle (et soi-même) ; on garde les membres, modératrices et administratrices.
+    const rows = check(await c.from("profiles").select(PROFILE).order("first_name")) as Row[];
+    return rows
+      .map(toProfile)
+      .filter(inCircle)
+      .sort((a, b) => (isAdmin(a) === isAdmin(b) ? a.firstName.localeCompare(b.firstName, "fr") : isAdmin(a) ? -1 : 1));
+  },
+
+  async listProfiles() {
+    const c = await db();
+    return (check(await c.from("profiles").select(PROFILE).order("first_name")) as Row[]).map(toProfile);
+  },
+
+  async grantRole(profileId, role, actorId) {
+    const c = await db();
+    check(await c.from("user_roles").upsert({ profile_id: profileId, role, granted_by: actorId }, { onConflict: "profile_id,role", ignoreDuplicates: true }));
+    const p = await this.getProfile(profileId);
+    if (!p) throw new Error("Fiche introuvable.");
+    return p;
+  },
+  async revokeRole(profileId, role) {
+    const c = await db();
+    const res = await c.from("user_roles").delete().eq("profile_id", profileId).eq("role", role);
+    if (res.error) throw new Error(res.error.message.includes("last_admin") ? "Il faut garder au moins une administratrice." : res.error.message);
+    const p = await this.getProfile(profileId);
+    if (!p) throw new Error("Fiche introuvable.");
+    return p;
+  },
+
+  async listOrganizations(opts) {
+    const c = await db();
+    let qy = c.from("organizations").select("*").order("name");
+    if (opts?.kind) qy = qy.contains("kinds", [opts.kind]);
+    return (check(await qy) as Row[]).map(toOrganization);
+  },
+  async listMyOrganizations(profileId) {
+    const c = await db();
+    const rows = check(await c.from("organization_members").select("role, organization:organizations(*)").eq("profile_id", profileId)) as Row[];
+    return rows
+      .filter((r) => r.organization)
+      .map((r) => ({ organization: toOrganization(r.organization as Row), role: r.role as OrganizationMember["role"] }));
+  },
+  async listOrganizationMembers(organizationId) {
+    const c = await db();
+    const rows = check(await c.from("organization_members").select(`*, profile:profiles(${PROFILE})`).eq("organization_id", organizationId)) as Row[];
+    return rows.map((r) => ({ ...toOrgMember(r), profile: r.profile ? toProfile(r.profile as Row) : null }));
   },
 
   async createGuestProfile() {
@@ -261,7 +383,7 @@ export const supabaseRepo: Repo = {
   async listPartnerOffers() {
     const c = await db();
     const rows = check(await c.from("partner_offers").select("*").order("sort_order")) as Row[];
-    return rows.map((r): PartnerOffer => ({ id: str(r.id), badge: str(r.badge), partner: str(r.partner), detail: str(r.detail) }));
+    return rows.map((r): PartnerOffer => ({ id: str(r.id), badge: str(r.badge), partner: str(r.partner), detail: str(r.detail), organizationId: strN(r.organization_id) }));
   },
 
   async listEvents(opts) {
@@ -361,14 +483,21 @@ export const supabaseRepo: Repo = {
       .filter((x): x is BookingView => !!x)
       .sort((a, b) => (a.event.startsAt < b.event.startsAt ? -1 : 1));
   },
-  async cancelBooking(bookingId, profileId) {
+  async cancelBooking(bookingId, profileId): Promise<CancelResult> {
     if (profileId === null) {
       // webhook Stripe (session expirée) : libère la place retenue
-      check(await supabaseAdmin().from("bookings").update({ status: "cancelled" }).eq("id", bookingId).eq("status", "pending"));
-      return;
+      const admin = supabaseAdmin();
+      const rows = check(await admin.from("bookings").update({ status: "cancelled" }).eq("id", bookingId).eq("status", "pending").select("event_id")) as Row[];
+      if (!rows.length) return { eventId: null, waitlistProfileId: null };
+      const eventId = str(rows[0].event_id);
+      const next = check(
+        await admin.from("bookings").select("profile_id").eq("event_id", eventId).eq("status", "waitlist").not("profile_id", "is", null).order("created_at").limit(1),
+      ) as Row[];
+      return { eventId, waitlistProfileId: next.length ? strN(next[0].profile_id) : null };
     }
     const c = await db();
-    check(await c.rpc("cancel_booking", { p_booking: bookingId }));
+    const r = (check(await c.rpc("cancel_booking", { p_booking: bookingId })) as Row | null) ?? {};
+    return { eventId: strN(r.event_id), waitlistProfileId: strN(r.waitlist_profile_id) };
   },
   async setBookingStripeSession(bookingId, sessionId) {
     check(await supabaseAdmin().from("bookings").update({ stripe_session_id: sessionId }).eq("id", bookingId));
@@ -408,7 +537,7 @@ export const supabaseRepo: Repo = {
   async listMessages(channel, limit = 200) {
     const c = await db();
     const rows = check(
-      await c.from("messages").select("*, author:profiles(*)").eq("channel", channel).order("created_at", { ascending: false }).limit(limit),
+      await c.from("messages").select(`*, author:profiles(${PROFILE})`).eq("channel", channel).order("created_at", { ascending: false }).limit(limit),
     ) as Row[];
     return rows.reverse().map((r): MessageView => ({ ...toMessage(r), author: r.author ? toProfile(r.author as Row) : null }));
   },
@@ -420,7 +549,7 @@ export const supabaseRepo: Repo = {
     const c = await db();
     const rows = (check(await c.from("messages").select("*").like("channel", `dm:%${profileId}%`).order("created_at")) as Row[]).map(toMessage);
     const others = [...new Set(rows.map((m) => otherInChannel(m.channel, profileId)).filter((x): x is string => !!x))];
-    const profiles = others.length ? (check(await c.from("profiles").select("*").in("id", others)) as Row[]).map(toProfile) : [];
+    const profiles = others.length ? (check(await c.from("profiles").select(PROFILE).in("id", others)) as Row[]).map(toProfile) : [];
     const map = new Map<string, DmThread>();
     for (const m of rows) {
       const other = otherInChannel(m.channel, profileId);
@@ -448,7 +577,7 @@ export const supabaseRepo: Repo = {
   async snapshot(): Promise<Snapshot> {
     const c = await db();
     const [profiles, events, bookings, payments, reminders] = await Promise.all([
-      c.from("profiles").select("*"),
+      c.from("profiles").select(PROFILE),
       c.from("events").select("*"),
       c.from("bookings").select("*"),
       c.from("payments").select("*").limit(20000),
@@ -472,13 +601,70 @@ export const supabaseRepo: Repo = {
     const [kind, id] = key.split(":");
     const base = { sent_at: new Date().toISOString(), answered: false, sent_by: founderId };
     if (kind === "unpaid") {
-      check(await c.from("reminders").insert({ ...base, event_id: id, reason: "unpaid" }));
-      return;
+      const r = check(await c.from("reminders").insert({ ...base, event_id: id, reason: "unpaid" }).select("id").single()) as Row;
+      return str(r.id);
     }
     const p = check(await c.from("profiles").select("plan_ends_at").eq("id", id).maybeSingle()) as Row | null;
     if (!p) throw new Error("Fiche introuvable.");
     const reason = kind === "renew" ? "renewal" : kind === "lapsed" ? "expired" : "invite";
-    check(await c.from("reminders").insert({ ...base, profile_id: id, reason, due_at: p.plan_ends_at ?? null }));
+    const r = check(await c.from("reminders").insert({ ...base, profile_id: id, reason, due_at: p.plan_ends_at ?? null }).select("id").single()) as Row;
+    return str(r.id);
+  },
+
+  async logAudit(entry) {
+    const c = await db();
+    check(
+      await c.from("audit_log").insert({
+        actor_id: entry.actorId,
+        action: entry.action,
+        target_type: entry.targetType,
+        target_id: entry.targetId && UUID_RE.test(entry.targetId) ? entry.targetId : null,
+        summary: entry.summary.slice(0, 300),
+        details: entry.details ?? {},
+      }),
+    );
+  },
+  async listAudit(opts) {
+    const c = await db();
+    return (check(await c.from("audit_log").select("*").order("created_at", { ascending: false }).limit(opts?.limit ?? 50)) as Row[]).map(toAudit);
+  },
+
+  async createNotifications(rows: NotificationInput[]) {
+    if (!rows.length) return 0;
+    const c = await trustedWriter();
+    // les notifications coupées sont écartées par le déclencheur notifications_respect_prefs
+    const res = await c.from("notifications").insert(rows.map((r) => ({ recipient_id: r.recipientId, type: r.type, title: r.title, body: r.body, link: r.link })), { count: "exact" });
+    if (res.error) throw new Error(res.error.message);
+    return res.count ?? rows.length;
+  },
+  async listNotifications(profileId, limit = 50) {
+    const c = await db();
+    return (check(await c.from("notifications").select("*").eq("recipient_id", profileId).order("created_at", { ascending: false }).limit(limit)) as Row[]).map(toNotification);
+  },
+  async countUnreadNotifications(profileId) {
+    const c = await db();
+    const res = await c.from("notifications").select("id", { count: "exact", head: true }).eq("recipient_id", profileId).is("read_at", null);
+    if (res.error) throw new Error(res.error.message);
+    return res.count ?? 0;
+  },
+  async markNotificationsRead(profileId, ids) {
+    const c = await db();
+    let qy = c.from("notifications").update({ read_at: new Date().toISOString() }).eq("recipient_id", profileId).is("read_at", null);
+    if (ids !== "all") qy = qy.in("id", ids);
+    check(await qy);
+  },
+  async listNotificationPrefs(profileId) {
+    const c = await db();
+    const rows = check(await c.from("notification_prefs").select("*").eq("profile_id", profileId)) as Row[];
+    return rows.map((r): NotificationPref => ({ profileId: str(r.profile_id), type: r.type as NotificationPref["type"], inApp: Boolean(r.in_app), email: Boolean(r.email), push: Boolean(r.push) }));
+  },
+  async setNotificationPref(profileId, type, channel, enabled) {
+    const c = await db();
+    check(
+      await c
+        .from("notification_prefs")
+        .upsert({ profile_id: profileId, type, [PREF_COLUMN[channel]]: enabled, updated_at: new Date().toISOString() }, { onConflict: "profile_id,type" }),
+    );
   },
 };
 

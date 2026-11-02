@@ -8,15 +8,21 @@ import { eventStats, slugify, toEventView } from "../domain/events";
 import { applyMembership } from "../domain/membership";
 import { newTicketCode } from "../domain/tickets";
 import { fullName } from "../format";
+import { inCircle, isAdmin } from "../permissions";
 import { createSeed, type SeedData } from "../seed";
-import type { Booking, BookingView, ClubEvent, DmThread, MessageView, Payment, Profile } from "../types";
-import { dmChannel, otherInChannel, type BookResult, type Repo } from "./repo";
+import type { AppNotification, Booking, BookingView, ClubEvent, DmThread, MessageView, NotificationPref, Payment, Profile } from "../types";
+import { dmChannel, otherInChannel, type BookResult, type CancelResult, type Repo } from "./repo";
 
-type DemoGlobal = typeof globalThis & { __nomadDemoDb?: SeedData };
+/** À incrémenter quand la forme des données change (évite de garder un ancien jeu en mémoire au rechargement). */
+const SEED_VERSION = 2;
+type DemoGlobal = typeof globalThis & { __nomadDemoDb?: SeedData; __nomadDemoDbVersion?: number };
 
 function db(): SeedData {
   const g = globalThis as DemoGlobal;
-  if (!g.__nomadDemoDb) g.__nomadDemoDb = createSeed();
+  if (!g.__nomadDemoDb || g.__nomadDemoDbVersion !== SEED_VERSION) {
+    g.__nomadDemoDb = createSeed();
+    g.__nomadDemoDbVersion = SEED_VERSION;
+  }
   return g.__nomadDemoDb;
 }
 
@@ -36,7 +42,8 @@ function applyValidatedMembership(d: SeedData, pay: Payment) {
   const r = applyMembership(p, pay.membershipAction, pay.plan, today());
   p.plan = r.plan;
   p.planEndsAt = r.planEndsAt;
-  p.role = r.role;
+  // une adhésion payée donne le rôle « member » (les administratrices gardent le leur)
+  if (!isAdmin(p) && !p.roles.includes("member")) p.roles = [...p.roles, "member"];
   if (!p.cardNumber) p.cardNumber = `NC 0${600 + d.profiles.length}`;
   d.memberships.forEach((m) => {
     if (m.profileId === p.id && m.status === "active") m.status = r.startsAt >= m.endsAt ? "expired" : m.status;
@@ -53,8 +60,50 @@ export const demoRepo: Repo = {
   async listDirectory() {
     return clone(
       db()
-        .profiles.filter((p) => p.role === "member" || p.role === "founder")
-        .sort((a, b) => (a.role === b.role ? a.firstName.localeCompare(b.firstName, "fr") : a.role === "founder" ? -1 : 1)),
+        .profiles.filter(inCircle)
+        .sort((a, b) => (isAdmin(a) === isAdmin(b) ? a.firstName.localeCompare(b.firstName, "fr") : isAdmin(a) ? -1 : 1)),
+    );
+  },
+
+  async listProfiles() {
+    return clone(db().profiles);
+  },
+
+  async grantRole(profileId, role) {
+    const p = db().profiles.find((x) => x.id === profileId);
+    if (!p) throw new Error("Fiche introuvable.");
+    if (!p.roles.includes(role)) p.roles = [...p.roles, role];
+    return clone(p);
+  },
+  async revokeRole(profileId, role) {
+    const p = db().profiles.find((x) => x.id === profileId);
+    if (!p) throw new Error("Fiche introuvable.");
+    p.roles = p.roles.filter((r) => r !== role);
+    return clone(p);
+  },
+
+  async listOrganizations(opts) {
+    return clone(
+      db()
+        .organizations.filter((o) => !opts?.kind || o.kinds.includes(opts.kind))
+        .sort((a, b) => a.name.localeCompare(b.name, "fr")),
+    );
+  },
+  async listMyOrganizations(profileId) {
+    const d = db();
+    return clone(
+      d.organizationMembers
+        .filter((m) => m.profileId === profileId)
+        .map((m) => ({ organization: d.organizations.find((o) => o.id === m.organizationId)!, role: m.role }))
+        .filter((x) => x.organization),
+    );
+  },
+  async listOrganizationMembers(organizationId) {
+    const d = db();
+    return clone(
+      d.organizationMembers
+        .filter((m) => m.organizationId === organizationId)
+        .map((m) => ({ ...m, profile: d.profiles.find((p) => p.id === m.profileId) ?? null })),
     );
   },
 
@@ -71,7 +120,7 @@ export const demoRepo: Repo = {
       job: null,
       country: null,
       bio: null,
-      role: "guest",
+      roles: [],
       plan: "free",
       planEndsAt: null,
       avatarUrl: null,
@@ -241,9 +290,16 @@ export const demoRepo: Repo = {
       .filter((x): x is BookingView => !!x)
       .sort((a, b) => (a.event.startsAt < b.event.startsAt ? -1 : 1));
   },
-  async cancelBooking(bookingId, profileId) {
-    const b = db().bookings.find((x) => x.id === bookingId && (profileId === null || x.profileId === profileId));
-    if (b) b.status = "cancelled";
+  async cancelBooking(bookingId, profileId): Promise<CancelResult> {
+    const d = db();
+    const b = d.bookings.find((x) => x.id === bookingId && (profileId === null || x.profileId === profileId) && x.status !== "cancelled");
+    if (!b) return { eventId: null, waitlistProfileId: null };
+    const freed = b.status !== "waitlist";
+    b.status = "cancelled";
+    const first = freed
+      ? d.bookings.filter((x) => x.eventId === b.eventId && x.status === "waitlist" && x.profileId).sort((x, y) => (x.createdAt < y.createdAt ? -1 : 1))[0]
+      : undefined;
+    return { eventId: b.eventId, waitlistProfileId: first?.profileId ?? null };
   },
   async setBookingStripeSession(bookingId, sessionId) {
     const b = db().bookings.find((x) => x.id === bookingId);
@@ -365,11 +421,57 @@ export const demoRepo: Repo = {
     const base = { id: randomUUID(), sentAt: nowIso(), answered: false, scheduledFor: null };
     if (kind === "unpaid") {
       d.reminders.push({ ...base, profileId: null, eventId: id, reason: "unpaid", dueAt: null });
-      return;
+      return base.id;
     }
     const p = d.profiles.find((x) => x.id === id);
     if (!p) throw new Error("Fiche introuvable.");
     const reason = kind === "renew" ? "renewal" : kind === "lapsed" ? "expired" : "invite";
     d.reminders.push({ ...base, profileId: p.id, eventId: null, reason, dueAt: p.planEndsAt });
+    return base.id;
+  },
+
+  async logAudit(entry) {
+    db().auditLog.push({ id: randomUUID(), details: {}, ...entry, createdAt: nowIso() });
+  },
+  async listAudit(opts) {
+    return clone([...db().auditLog].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)).slice(0, opts?.limit ?? 50));
+  },
+
+  async createNotifications(rows) {
+    const d = db();
+    const muted = (r: { recipientId: string; type: NotificationPref["type"] }) =>
+      d.notificationPrefs.some((p) => p.profileId === r.recipientId && p.type === r.type && !p.inApp);
+    const fresh: AppNotification[] = rows.filter((r) => !muted(r)).map((r) => ({ id: randomUUID(), ...r, readAt: null, createdAt: nowIso() }));
+    d.notifications.push(...fresh);
+    return fresh.length;
+  },
+  async listNotifications(profileId, limit = 50) {
+    return clone(
+      db()
+        .notifications.filter((n) => n.recipientId === profileId)
+        .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+        .slice(0, limit),
+    );
+  },
+  async countUnreadNotifications(profileId) {
+    return db().notifications.filter((n) => n.recipientId === profileId && !n.readAt).length;
+  },
+  async markNotificationsRead(profileId, ids) {
+    const at = nowIso();
+    db().notifications.forEach((n) => {
+      if (n.recipientId === profileId && !n.readAt && (ids === "all" || ids.includes(n.id))) n.readAt = at;
+    });
+  },
+  async listNotificationPrefs(profileId) {
+    return clone(db().notificationPrefs.filter((p) => p.profileId === profileId));
+  },
+  async setNotificationPref(profileId, type, channel, enabled) {
+    const d = db();
+    let pref = d.notificationPrefs.find((p) => p.profileId === profileId && p.type === type);
+    if (!pref) {
+      pref = { profileId, type, inApp: true, email: true, push: true };
+      d.notificationPrefs.push(pref);
+    }
+    pref[channel] = enabled;
   },
 };
