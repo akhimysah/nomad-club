@@ -151,6 +151,9 @@ insert(
   s.notificationPrefs.map((p) => [q(uuid(p.profileId)), q(p.type), q(p.inApp), q(p.email), q(p.push)]),
 );
 
+// --- Lot 4 --- (engagement)
+(await import("./seed-sql/engagement.mjs")).engagementSeedLines(s, uuid).forEach(out);
+
 out("select setval('public.card_number_seq', 700, false);");
 out("commit;");
 
