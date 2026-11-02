@@ -7,6 +7,8 @@ import { daysBetween } from "./clock";
 import { dayMonthShort, fullName, messageTime } from "./format";
 import type { Profile } from "./types";
 import { hasRole, isAdmin } from "./permissions";
+import { HIDDEN_LABEL } from "./modules/communaute/domain";
+import { groupItems } from "./modules/communaute/views";
 
 export function dirPerson(p: Profile): DirPerson {
   return {
@@ -20,11 +22,18 @@ export function dirPerson(p: Profile): DirPerson {
   };
 }
 
-/** Données du Cercle pour une adhérente (salon, annuaire, conversations, éventuellement un fil ouvert). */
+/** Données du Cercle pour une adhérente (salon, groupes, annuaire, conversations, éventuellement un fil ouvert). */
 export async function loadCercle(me: Profile, otherId: string | null) {
   const repo = getRepo();
   const t = today();
-  const [salonRaw, dir, threadsRaw] = await Promise.all([repo.listMessages("general"), repo.listDirectory(), repo.listDmThreads(me.id)]);
+  const [salonRaw, dir, threadsRaw, entries, groups] = await Promise.all([
+    repo.listMessages("general"),
+    repo.listDirectory(),
+    repo.listDmThreads(me.id),
+    // --- Lot 1 --- annuaire avec confidentialité, groupes thématiques
+    repo.listDirectoryEntries(me, { admin: isAdmin(me) }),
+    repo.listGroups(me.id),
+  ]);
   const directory = dir.filter((p) => p.id !== me.id);
   const activeMembers = dir.filter((p) => hasRole(p, "member") && p.plan !== "free" && p.planEndsAt && p.planEndsAt >= t);
   const salon: ChatMsg[] = salonRaw.map((m) => toChatMsg(m, m.author, me.id));
@@ -34,7 +43,7 @@ export async function loadCercle(me: Profile, otherId: string | null) {
   const threads: ThreadItem[] = threadsRaw.map((th) => ({
     id: th.other.id,
     name: fullName(th.other),
-    last: th.last?.body ?? "",
+    last: th.last?.hiddenAt ? HIDDEN_LABEL : (th.last?.body ?? ""),
     lastMine: th.last?.authorId === me.id,
     unread: th.unread > 0,
     time: th.last ? messageTime(th.last.createdAt, nowMs()) : "",
@@ -50,6 +59,8 @@ export async function loadCercle(me: Profile, otherId: string | null) {
     salon,
     salonDay,
     directory: directory.map(dirPerson),
+    entries,
+    groups: groupItems(groups),
     threads,
     thread,
     activeCount: activeMembers.length,

@@ -18,18 +18,47 @@ const NAV: Array<{ href: string; icon: IconName; label: string; title: string }>
   { href: "/espace/assistant", icon: "spark", label: "Assistant", title: "Assistant" },
 ];
 
+// --- Lot 1 --- entrées sans onglet (barre latérale sur ordinateur ; sur téléphone : accueil et page Moi)
+const LOT1_NAV: Array<{ href: string; icon: IconName; label: string; title: string }> = [
+  { href: "/espace/actualites", icon: "star", label: "Actualités", title: "Actualités" },
+  { href: "/espace/moderation", icon: "inbox", label: "Modération", title: "Modération" },
+];
+
 function activeHref(pathname: string): string {
   if (pathname === "/espace") return "/espace";
+  const lot1 = LOT1_NAV.find((n) => pathname.startsWith(n.href));
+  if (lot1) return lot1.href;
   if (pathname.startsWith("/espace/moi")) return "/espace/moi";
   if (pathname.startsWith("/espace/notifications")) return "/espace/notifications";
   return NAV.find((n) => n.href !== "/espace" && pathname.startsWith(n.href))?.href ?? "/espace";
 }
 
 /** Barre latérale (ordinateur), en-tête et barre du bas (téléphone) de l'espace membre. */
-export function MemberChrome({ name, formule, unread, notifs, spaces }: { name: string; formule: string; unread: number; notifs: number; spaces: Space[] }) {
+export function MemberChrome({
+  name,
+  formule,
+  unread,
+  notifs,
+  spaces,
+  moderation,
+}: {
+  name: string;
+  formule: string;
+  unread: number;
+  notifs: number;
+  spaces: Space[];
+  /** Lot 1 : signalements ouverts (undefined si la personne ne modère pas). */
+  moderation?: number;
+}) {
   const pathname = usePathname();
   const active = activeHref(pathname);
-  const title = active === "/espace/moi" ? "Moi" : active === "/espace/notifications" ? "Notifications" : (NAV.find((n) => n.href === active)?.title ?? "Accueil");
+  const lot1 = LOT1_NAV.filter((n) => n.href !== "/espace/moderation" || moderation !== undefined);
+  const title =
+    active === "/espace/moi"
+      ? "Moi"
+      : active === "/espace/notifications"
+        ? "Notifications"
+        : (NAV.find((n) => n.href === active)?.title ?? LOT1_NAV.find((n) => n.href === active)?.title ?? "Accueil");
   return (
     <>
       <aside className="m-side">
@@ -40,6 +69,13 @@ export function MemberChrome({ name, formule, unread, notifs, spaces }: { name: 
               <Icon name={n.icon} />
               {n.label}
               {n.href === "/espace/cercle" && <CountBadge value={unread} className="nbadge" />}
+            </Link>
+          ))}
+          {lot1.map((n) => (
+            <Link key={n.href} href={n.href} className={"side-btn" + (active === n.href ? " on" : "")} aria-current={active === n.href ? "page" : undefined}>
+              <Icon name={n.icon} />
+              {n.label}
+              {n.href === "/espace/moderation" && <CountBadge value={moderation ?? 0} className="nbadge" />}
             </Link>
           ))}
           <Link href="/espace/notifications" className={"side-btn" + (active === "/espace/notifications" ? " on" : "")} aria-current={active === "/espace/notifications" ? "page" : undefined}>

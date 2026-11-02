@@ -3,6 +3,8 @@ import { StatusChip } from "@/components/events/EventBits";
 import { AdhesionCard } from "@/components/member/AdhesionCard";
 import { PlaceCard } from "@/components/member/bits";
 import { AskHome, PullToRefresh, TicketButton } from "@/components/member/Buttons";
+import { NewsHomeBlock } from "@/components/communaute/NewsHomeBlock";
+import { HIDDEN_LABEL } from "@/lib/modules/communaute/domain";
 import { Countdown } from "@/components/member/Countdown";
 import { Avatar } from "@/components/ui/Avatar";
 import { EventImage } from "@/components/ui/EventImage";
@@ -87,6 +89,8 @@ export default async function MemberHome() {
           </article>
           <div className="mh-side">
             <AdhesionCard m={m} env={env} />
+            {/* --- Lot 1 --- actualités du club */}
+            <NewsHomeBlock viewerId={v.profile.id} />
             <section className="card salon-prev">
               <div className="row-head">
                 <h2 className="h-sm">Dans le salon Général</h2>
@@ -100,7 +104,7 @@ export default async function MemberHome() {
                   <div>
                     <b>{msg.author ? fullName(msg.author) : "Membre"}</b>
                     <time>{messageTime(msg.createdAt, now)}</time>
-                    <p>{msg.body}</p>
+                    <p>{msg.hiddenAt ? HIDDEN_LABEL : msg.body}</p>
                   </div>
                 </div>
               ))}

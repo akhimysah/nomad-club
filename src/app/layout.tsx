@@ -9,6 +9,7 @@ import { nowMs } from "@/lib/clock";
 import { isRealMode } from "@/lib/env";
 import { todayLong } from "@/lib/format";
 import "./globals.css";
+import "../styles/communaute.css"; // --- Lot 1 ---
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
