@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { reserve, type ReserveResult } from "@/app/actions/booking";
 import { startMembership, type MembershipResult } from "@/app/actions/membership";
 import { money } from "@/lib/format";
+import { splitAmount } from "@/lib/modules/paiements/schedule"; // --- Vague 2 · paiements ---
+import "@/styles/paiements.css"; // --- Vague 2 · paiements ---
 import type { PaidPlan, PaymentMode } from "@/lib/types";
 import { SpaceButton } from "../shell/SpaceButton";
 import { EventImage } from "../ui/EventImage";
@@ -42,6 +44,8 @@ export type PayEnv = {
   transfer: { holder: string; iban: string };
   /** Personne connectée (prénom, nom, WhatsApp) : on saute l'étape « qui es-tu ». */
   me: { firstName: string; fullName: string; phone: string | null } | null;
+  /** --- Vague 2 · paiements --- : nombres d'échéances proposés pour l'adhésion (ex. [1, 3, 12]). */
+  installments?: number[];
 };
 
 type Stage = "who" | "contract" /* Vague 2 · Contrats */ | "pay" | "busy" | "done";
@@ -83,7 +87,7 @@ function Summary({ c }: { c: CheckoutConfig }) {
       </span>
       <div>
         <b>{t}</b>
-        <span>Valable un an · prix en dollars US</span>
+        <span>Valable un an · payable en une ou plusieurs fois</span>
       </div>
     </div>
   );
@@ -99,6 +103,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
   const [first, setFirst] = useState("");
   const [phone, setPhone] = useState("");
   const [parrain, setParrain] = useState(""); // --- Lot 4 --- code de parrainage
+  const [split, setSplit] = useState(1); // --- Vague 2 · paiements --- nombre d'échéances
   const [errs, setErrs] = useState<{ firstName?: string; whatsapp?: string; general?: string }>({});
   const [paying, setPaying] = useState<"idle" | "busy" | "ok">("idle");
   const [done, setDone] = useState<Done | null>(null);
@@ -108,6 +113,9 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
 
   const c = config;
   const visit = !env.me;
+  // --- Vague 2 · paiements --- : adhésion ou renouvellement en plusieurs fois (le passage Premium se paie comptant)
+  const splitChoices = c && (c.kind === "join" || c.kind === "renew") ? (env.installments ?? [1]) : [1];
+  const splitOn = splitChoices.length > 1 && splitChoices.includes(split) && split > 1;
   const free = !c || c.kind === "wait" || c.amount === 0;
   // --- Vague 2 · Contrats --- : adhésion, renouvellement, Premium d'une personne connectée → étape « Contrat » avant le paiement
   // (une visiteuse qui adhère accepte son contrat juste après, depuis « Mes contrats »).
@@ -126,7 +134,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
       }
       return { kind: "reserve", r };
     }
-    const m = await startMembership({ action: c.kind, plan: c.plan ?? "member", firstName: who.firstName, whatsapp: who.whatsapp, referralCode: who.referralCode });
+    const m = await startMembership({ action: c.kind, plan: c.plan ?? "member", firstName: who.firstName, whatsapp: who.whatsapp, referralCode: who.referralCode, installments: splitOn ? split : 1 });
     if (!m.ok) {
       setErrs(m.field ? { [m.field]: m.error } : { general: m.error });
       if (m.field) setStage("who");
@@ -154,6 +162,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
     setDone(null);
     setErrs({});
     setPaying("idle");
+    setSplit(1); // --- Vague 2 · paiements ---
     setParrain(/(?:^|; )nc_parrain=([^;]+)/.exec(document.cookie)?.[1] ?? ""); // --- Lot 4 ---
     if (visit) setStage("who");
     else if (free) {
@@ -185,7 +194,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ kind: c.kind, eventId: c.event?.id, plan: c.plan, ...who }),
+        body: JSON.stringify({ kind: c.kind, eventId: c.event?.id, plan: c.plan, installments: splitOn ? split : undefined, ...who }),
       });
       const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
       if (data.url) {
@@ -251,7 +260,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
         {c.kind === "ticket" && c.event && (
           <p style={{ textAlign: "center", margin: "10px 0 0" }}>
             <Link className="link" href="/formules" onClick={onClose}>
-              Voir l’adhésion · tarif membre {c.event.priceMember}&nbsp;$
+              Voir l’adhésion · tarif membre {money(c.event.priceMember)}
             </Link>
           </p>
         )}
@@ -304,6 +313,20 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
             {errs.general}
           </div>
         )}
+        {/* --- Vague 2 · paiements --- : paiement en 1, 3 ou 12 fois */}
+        {splitChoices.length > 1 && (
+          <div className="pay-split" role="group" aria-label="Paiement en plusieurs fois">
+            {splitChoices.map((n) => {
+              const parts = splitAmount(c.amount, n);
+              return (
+                <button key={n} type="button" aria-pressed={split === n} onClick={() => setSplit(n)} disabled={paying !== "idle"}>
+                  <b>{n === 1 ? "En une fois" : `En ${n} fois`}</b>
+                  <small>{n === 1 ? money(c.amount) : `${money(parts[n - 1])} / mois`}</small>
+                </button>
+              );
+            })}
+          </div>
+        )}
         <div className="pay-lines">
           <div>
             <span>{line}</span>
@@ -311,11 +334,17 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
           </div>
           <div>
             <span>Frais</span>
-            <span>0&nbsp;$</span>
+            <span>{money(0)}</span>
           </div>
+          {splitOn && (
+            <div>
+              <span>Puis chaque mois · {split - 1} échéance{split > 2 ? "s" : ""}</span>
+              <span>{money(splitAmount(c.amount, split)[1])}</span>
+            </div>
+          )}
           <div>
-            <span>Total</span>
-            <b>{money(c.amount)}</b>
+            <span>{splitOn ? "Aujourd’hui" : "Total"}</span>
+            <b>{money(splitOn ? splitAmount(c.amount, split)[0] : c.amount)}</b>
           </div>
         </div>
         {env.mode === "transfer" ? (
@@ -350,7 +379,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
           ) : (
             <>
               <Icon name="lock" />
-              {env.mode === "transfer" ? `J’ai fait le virement de ${money(c.amount)}` : `Payer ${money(c.amount)}`}
+              {env.mode === "transfer" ? `J’ai fait le virement de ${money(c.amount)}` : `Payer ${money(splitOn ? splitAmount(c.amount, split)[0] : c.amount)}${splitOn ? " aujourd’hui" : ""}`}
             </>
           )}
         </button>

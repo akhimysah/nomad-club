@@ -20,6 +20,8 @@ const HINT: Record<string, string> = {
   "/fondatrices/boutique": "Guides et ressources digitales : produits, fichiers, ventes.",
   "/fondatrices/parrainage": "Parrainages, récompenses à remettre, réglages.",
   "/fondatrices/business": "Deals entre membres, retombées du réseau, barème des points.",
+  // --- Vague 2 · paiements ---
+  "/fondatrices/paiements": "Encaissements par type, échéances, impayés, remboursements, événements Stripe.",
   // --- Lot 6 ---
   "/fondatrices/securite": "Double authentification, demandes de suppression, protections.",
   // --- E-mails ---

@@ -4,6 +4,7 @@ import { messageTime } from "./format";
 import { NOTIFICATION_LABEL, NOTIFICATION_TYPES, STAFF_NOTIFICATION_TYPES } from "./notify";
 import { ENGAGEMENT_NOTIFICATION_ICON } from "./modules/engagement/labels"; // --- Lot 4 ---
 import { CONTRATS_NOTIFICATION_ICON } from "./modules/contrats/labels"; // --- Vague 2 · Contrats ---
+import { PAIEMENTS_NOTIFICATION_ICON } from "./modules/paiements/labels"; // --- Vague 2 · paiements ---
 import type { NotificationType } from "./types";
 import type { IconName } from "@/components/IconSprite";
 
@@ -26,6 +27,8 @@ export const NOTIFICATION_ICON: Record<NotificationType, IconName> = {
   moderation_warning: "x",
   // --- Vague 2 · Contrats ---
   ...CONTRATS_NOTIFICATION_ICON,
+  // --- Vague 2 · paiements ---
+  ...PAIEMENTS_NOTIFICATION_ICON,
 };
 
 export type NotificationItem = {

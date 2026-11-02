@@ -3,6 +3,7 @@ import Link from "next/link";
 import { signOut } from "@/app/actions/auth";
 import { MembershipButton, OfferButton, TicketButton } from "@/components/member/Buttons";
 import { InstallHelp } from "@/components/securite/InstallHelp";
+import { MembershipNote } from "@/components/paiements/MembershipNote"; // --- Vague 2 · paiements ---
 import { EventImage } from "@/components/ui/EventImage";
 import { Icon } from "@/components/ui/Icon";
 import { MemberCard } from "@/components/ui/MemberCard";
@@ -45,6 +46,11 @@ export default async function MoiPage() {
             <Link className="btn btn-ghost btn-sm" href="/espace/actualites">
               <Icon name="star" />
               Actualités
+            </Link>
+            {/* --- Vague 2 · paiements --- */}
+            <Link className="btn btn-ghost btn-sm" href="/espace/paiements">
+              <Icon name="wallet" />
+              Mes paiements
             </Link>
             {viewerCan(v, "messages.moderate") && (
               <Link className="btn btn-ghost btn-sm" href="/espace/moderation">
@@ -90,6 +96,7 @@ export default async function MoiPage() {
                   <i style={{ width: `${pct}%` }} />
                 </div>
               </div>
+              <MembershipNote profileId={v.profile.id} /* --- Vague 2 · paiements --- */ />
               <div className="btn-row" style={{ marginTop: 12 }}>
                 {!m.renewed && !m.pending && (
                   <MembershipButton kind="renew" plan={m.plan} amount={m.price} env={env} className="btn btn-gold btn-sm">

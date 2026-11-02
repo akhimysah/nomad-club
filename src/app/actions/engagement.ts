@@ -10,6 +10,7 @@ import { payForProduct } from "@/lib/modules/engagement/billing";
 import { dealAnswered, dealDeclared, purchaseCompleted } from "@/lib/modules/engagement/notifications";
 import type { DealCategory, WidgetPref } from "@/lib/modules/engagement/types";
 import { sanitizeWidgetPrefs } from "@/lib/modules/engagement/widgets";
+import { siteUrl } from "@/lib/site"; // --- Vague 2 · paiements ---
 
 export type EngagementResult = { ok: true; message: string } | { ok: false; error: string };
 
@@ -30,8 +31,12 @@ export async function saveWidgetPrefsAction(widgets: WidgetPref[]): Promise<Enga
 
 /* ---------- boutique ---------- */
 
-/** Achat d'une ressource : paiement (simulé, billing.ts), accès immédiat, notification. */
-export async function buyProductAction(productId: string): Promise<EngagementResult & { already?: boolean }> {
+/**
+ * Achat d'une ressource. --- Vague 2 · paiements --- : paiement par le prestataire configuré (billing.ts) ;
+ * l'accès n'est accordé qu'à la confirmation du paiement (webhook). Avec Stripe, `url` renvoie vers la page
+ * de paiement ; une ressource gratuite est ajoutée tout de suite.
+ */
+export async function buyProductAction(productId: string): Promise<EngagementResult & { already?: boolean; url?: string }> {
   const v = await checkCapability("shop.buy");
   if (!v) return { ok: false, error: "La boutique est réservée aux membres." };
   if (typeof productId !== "string" || productId.length > 80) return { ok: false, error: "Ressource introuvable." };
@@ -39,15 +44,17 @@ export async function buyProductAction(productId: string): Promise<EngagementRes
   const product = await repo.getProduct({ id: productId });
   if (!product || product.status !== "published") return { ok: false, error: "Cette ressource n’est plus disponible." };
   if (await repo.hasPurchased(v.profile.id, product.id)) return { ok: true, message: "Tu as déjà cette ressource.", already: true };
-  const settings = await repo.getEngagementSettings();
-  const charge = await payForProduct(product, v.profile, { simulatedAllowed: v.mode === "demo" || settings.simulatedPayments });
+  const charge = await payForProduct(product, v.profile, { base: await siteUrl() });
   if (!charge.ok) return { ok: false, error: charge.error };
-  try {
-    const p = await repo.recordPurchase({ productId: product.id, profileId: v.profile.id, amount: charge.amount, method: charge.method, paymentRef: charge.reference });
-    await purchaseCompleted(v.profile.id, product, p.amount);
-  } catch (e) {
-    console.error("[boutique]", e instanceof Error ? e.message : e);
-    return { ok: false, error: "L’achat n’a pas abouti. Réessaie dans un instant." };
+  if (charge.kind === "redirect") return { ok: true, message: "Ouverture de la page de paiement…", url: charge.url };
+  if (charge.kind === "free") {
+    try {
+      const p = await repo.recordPurchase({ productId: product.id, profileId: v.profile.id, amount: 0, method: "free", paymentRef: null });
+      await purchaseCompleted(v.profile.id, product, p.amount);
+    } catch (e) {
+      console.error("[boutique]", e instanceof Error ? e.message : e);
+      return { ok: false, error: "L’ajout n’a pas abouti. Réessaie dans un instant." };
+    }
   }
   revalidate();
   return { ok: true, message: charge.amount > 0 ? `Paiement accepté · ${money(charge.amount)}` : "Ajouté à tes ressources" };

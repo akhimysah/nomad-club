@@ -1,4 +1,5 @@
 import type { PaymentMode } from "./types";
+import { resolveProviderId } from "./modules/paiements/config.ts"; // --- Vague 2 · paiements ---
 
 /**
  * Le mode est choisi par les variables d'environnement :
@@ -13,10 +14,14 @@ export function appMode(): "demo" | "real" {
   return isRealMode() ? "real" : "demo";
 }
 
-/** Stripe si une clé secrète est présente, sinon paiement simulé (démo) ou virement déclaré (réel). */
+/**
+ * Prestataire de paiement actif, vu par les écrans : « stripe », « transfer » (virement déclaré) ou
+ * « demo » (paiement simulé). --- Vague 2 · paiements --- : choisi par PAYMENT_PROVIDER (défaut : Stripe si
+ * une clé est présente, sinon virement en réel et simulé en démo ; le simulé est refusé en mode réel).
+ */
 export function paymentMode(): PaymentMode {
-  if (process.env.STRIPE_SECRET_KEY) return "stripe";
-  return isRealMode() ? "transfer" : "demo";
+  const id = resolveProviderId();
+  return id === "simulated" ? "demo" : id;
 }
 
 /** Coordonnées bancaires affichées pour un virement (mode réel sans Stripe). */

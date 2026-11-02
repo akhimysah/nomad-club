@@ -16,6 +16,7 @@ import {
   type ValidateState,
 } from "@/app/actions/partenaires";
 import { CATEGORY_KEYS, CATEGORY_LABEL, PRO_PLANS, PRO_PLAN_KEYS } from "@/lib/modules/partenaires/domain";
+import { formatMoney } from "@/lib/modules/paiements/money"; // --- Vague 2 · paiements ---
 import type { Establishment, Offer, ProPlan } from "@/lib/modules/partenaires/types";
 import { Icon } from "../ui/Icon";
 import { useContractGate } from "../contrats/ContractGate"; // --- Vague 2 · Contrats ---
@@ -339,13 +340,34 @@ export function ValidateCodeForm({ initialCode }: { initialCode: string }) {
 
 /* ---------- abonnement pro ---------- */
 
-export function SubscriptionActions({ organizationId, current, cancelAtPeriodEnd, needsPayment, hasSubscription }: { organizationId: string; current: ProPlan | null; cancelAtPeriodEnd: boolean; needsPayment: boolean; hasSubscription: boolean }) {
+export function SubscriptionActions({
+  organizationId,
+  current,
+  cancelAtPeriodEnd,
+  needsPayment,
+  hasSubscription,
+  mode = "simulated",
+  autoBilled = false,
+}: {
+  organizationId: string;
+  current: ProPlan | null;
+  cancelAtPeriodEnd: boolean;
+  needsPayment: boolean;
+  hasSubscription: boolean;
+  /** --- Vague 2 · paiements --- : prestataire actif et abonnement prélevé automatiquement (Stripe). */
+  mode?: "simulated" | "stripe" | "transfer";
+  autoBilled?: boolean;
+}) {
   const [busy, setBusy] = useState<string | null>(null);
   const toast = useToast();
   const router = useRouter();
-  const run = async (key: string, fn: () => Promise<{ ok: boolean; message: string }>) => {
+  const run = async (key: string, fn: () => Promise<{ ok: boolean; message: string; url?: string }>) => {
     setBusy(key);
     const r = await fn();
+    if (r.ok && r.url) {
+      window.location.href = r.url; // page de paiement du prestataire
+      return;
+    }
     setBusy(null);
     toast(r.message, r.ok ? "check" : "bell");
     router.refresh();
@@ -354,17 +376,24 @@ export function SubscriptionActions({ organizationId, current, cancelAtPeriodEnd
   const { gate, sheet } = useContractGate();
   const withContract = (plan: ProPlan, fn: () => Promise<{ ok: boolean; message: string }>) => async () =>
     (await gate({ kind: "pro", plan, organizationId })) ? fn() : { ok: false, message: "Le contrat doit être accepté avant le paiement." };
+  const canPay = mode === "simulated" || (mode === "stripe" && !autoBilled);
   return (
     <>
       {sheet}
       <div className="btn-row" style={{ marginTop: 16 }}>
-        {current && (
+        {current && canPay && (
           <button className="btn btn-ink btn-sm" type="button" disabled={!!busy} onClick={() => run("pay", withContract(current, () => paySubscriptionAction(organizationId, current)))}>
             <Icon name="card" />
-            {busy === "pay" ? "Paiement…" : needsPayment ? `Régler l’échéance · ${PRO_PLANS[current].price} $` : `Payer le mois suivant · ${PRO_PLANS[current].price} $`}
+            {busy === "pay"
+              ? "Paiement…"
+              : mode === "stripe"
+                ? `S’abonner · ${formatMoney(PRO_PLANS[current].price)} / mois`
+                : needsPayment
+                  ? `Régler l’échéance · ${formatMoney(PRO_PLANS[current].price)}`
+                  : `Payer le mois suivant · ${formatMoney(PRO_PLANS[current].price)}`}
           </button>
         )}
-        {current && (
+        {current && mode === "simulated" && (
           <button className="btn btn-ghost btn-sm" type="button" disabled={!!busy} onClick={() => run("fail", () => paySubscriptionAction(organizationId, current, true))}>
             Simuler un refus de carte
           </button>
@@ -383,7 +412,7 @@ export function SubscriptionActions({ organizationId, current, cancelAtPeriodEnd
             <div key={k} className={"plan" + (on ? " on" : "")}>
               <h3>{p.label}</h3>
               <div className="price">
-                {p.price} $ <small>/ mois</small>
+                {formatMoney(p.price)} <small>/ mois</small>
               </div>
               <ul>
                 {p.perks.map((x) => (
@@ -394,7 +423,7 @@ export function SubscriptionActions({ organizationId, current, cancelAtPeriodEnd
                 <span className="chip solid">Ta formule</span>
               ) : (
                 <button className="btn btn-ghost btn-sm" type="button" disabled={!!busy} onClick={() => run("plan-" + k, withContract(k, () => changePlanAction(organizationId, k)))}>
-                  {busy === "plan-" + k ? "Un instant…" : hasSubscription ? "Choisir" : `S’abonner · ${p.price} $`}
+                  {busy === "plan-" + k ? "Un instant…" : hasSubscription ? "Choisir" : `S’abonner · ${formatMoney(p.price)}`}
                 </button>
               )}
             </div>

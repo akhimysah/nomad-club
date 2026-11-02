@@ -1,10 +1,14 @@
 import { TZ, daysBetween, ymdInTz } from "./clock";
+import { formatMoney } from "./modules/paiements/money.ts"; // --- Vague 2 · paiements ---
 
 const NBSP = " ";
 
-/** 1250 -> « 1 250 $ » */
+/**
+ * 1250 -> « 1 250 $ ». --- Vague 2 · paiements --- : délègue à formatMoney() (devise NEXT_PUBLIC_CURRENCY),
+ * la fonction unique d'affichage des montants.
+ */
 export function money(n: number): string {
-  return num(n) + NBSP + "$";
+  return formatMoney(n);
 }
 
 export function num(n: number): string {

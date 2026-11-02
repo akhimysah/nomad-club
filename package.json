@@ -11,6 +11,7 @@
     "test:sql": "node --no-warnings scripts/test-sql.mjs",
     "test:securite": "node --experimental-strip-types --no-warnings scripts/test-securite.mts",
     "test:emails": "node --experimental-strip-types --no-warnings scripts/test-emails.mts",
+    "test:paiements": "node --experimental-strip-types --no-warnings scripts/test-paiements.mts",
     "carnet:site": "node --no-warnings scripts/build-carnet-site.mjs",
     "carnet:deploy": "npm run carnet:site && rsync -az --delete carnet-site/ root@srv2104549.hstgr.cloud:/opt/carnet/site/ && rsync -az carnet-server/server.mjs root@srv2104549.hstgr.cloud:/opt/carnet/server/ && ssh root@srv2104549.hstgr.cloud systemctl restart carnet"
   },

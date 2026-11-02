@@ -9,15 +9,15 @@ import { z } from "zod";
 import { audit } from "@/lib/audit";
 import { checkCapability } from "@/lib/auth";
 import { getRepo } from "@/lib/data";
-import { fullName } from "@/lib/format";
+import { fullName, money } from "@/lib/format";
 import { paySubscription } from "@/lib/modules/partenaires/billing";
+import { changeProPlan, setProCancelAtPeriodEnd } from "@/lib/modules/paiements/service"; // --- Vague 2 · paiements ---
 import { inMarrakech, isAudience, isCategory, isProPlan, normalizeOfferCode, PRO_PLANS, quartier, validationUrl } from "@/lib/modules/partenaires/domain";
 import { orgAccess } from "@/lib/modules/partenaires/server";
 import type { EstablishmentInput, OfferInput, ValidatedCode } from "@/lib/modules/partenaires/types";
 import { roleGranted } from "@/lib/notify";
 import { rolesCan } from "@/lib/permissions";
 import { qrData, type QrData } from "@/lib/qr";
-import { emitProSubscriptionActivated } from "@/lib/modules/contrats/emit"; // --- Vague 2 · Contrats ---
 import { siteUrl } from "@/lib/site";
 
 export type FormState = { ok: boolean; message: string; errors?: Record<string, string> } | null;
@@ -277,31 +277,34 @@ export async function validateCodeAction(_: ValidateState, fd: FormData): Promis
 }
 
 /* =====================================================================
-   Abonnement des pros (paiement simulé, voir billing.ts)
+   Abonnement des pros — Vague 2 · paiements : prestataire réel (Stripe), simulé en démo (voir billing.ts)
    ===================================================================== */
 
-export async function paySubscriptionAction(organizationId: string, plan: string, simulateFailure = false): Promise<{ ok: boolean; message: string }> {
+export async function paySubscriptionAction(organizationId: string, plan: string, simulateFailure = false): Promise<{ ok: boolean; message: string; url?: string }> {
   const acc = await orgAccess(organizationId, "subscription.manage_own");
   if (!acc) return { ok: false, message: "Tu ne peux pas gérer cet abonnement." };
   if (!isProPlan(plan)) return { ok: false, message: "Formule inconnue." };
-  const r = await paySubscription(organizationId, plan, { fail: simulateFailure });
+  const r = await paySubscription(organizationId, plan, acc.profile, { base: await siteUrl(), fail: simulateFailure });
   if (!r.ok) {
     revalidateOrg();
     return { ok: false, message: r.error };
   }
-  // --- Vague 2 · Contrats --- : abonnement payé par l'établissement → contrat relié (ou généré, à accepter)
-  if (acc.role !== "admin") await emitProSubscriptionActivated({ profileId: acc.profile.id, organizationId, plan, amount: r.amount, reference: r.reference });
-  await audit({ actorId: acc.profile.id, action: "subscription.pay", targetType: "organization", targetId: organizationId, summary: `Abonnement ${PRO_PLANS[plan].label} payé · ${r.amount} $ (${r.reference})`, details: { plan, reference: r.reference } });
+  if (r.kind === "redirect") return { ok: true, message: "Ouverture de la page de paiement…", url: r.url };
+  const sub = await getRepo().getSubscription(organizationId);
+  await audit({ actorId: acc.profile.id, action: "subscription.pay", targetType: "organization", targetId: organizationId, summary: `Abonnement ${PRO_PLANS[plan].label} payé · ${money(PRO_PLANS[plan].price)}`, details: { plan } });
   revalidateOrg();
-  return { ok: true, message: `Paiement reçu (${r.reference}). Ta fiche est en ligne jusqu’au ${new Date(r.subscription.currentPeriodEnd + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}.` };
+  return { ok: true, message: sub ? `Paiement reçu. Ta fiche est en ligne jusqu’au ${new Date(sub.currentPeriodEnd + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}.` : "Paiement reçu." };
 }
 
-export async function changePlanAction(organizationId: string, plan: string): Promise<{ ok: boolean; message: string }> {
+export async function changePlanAction(organizationId: string, plan: string): Promise<{ ok: boolean; message: string; url?: string }> {
   const acc = await orgAccess(organizationId, "subscription.manage_own");
   if (!acc) return { ok: false, message: "Tu ne peux pas gérer cet abonnement." };
   if (!isProPlan(plan)) return { ok: false, message: "Formule inconnue." };
   const repo = getRepo();
   if (!(await repo.getSubscription(organizationId))) return paySubscriptionAction(organizationId, plan);
+  // --- Vague 2 · paiements --- : le nouveau montant est appliqué chez le prestataire à la prochaine échéance
+  const changed = await changeProPlan(organizationId, plan).catch((e: unknown) => ({ ok: false, error: e instanceof Error ? e.message : "Changement refusé." }));
+  if (!changed.ok) return { ok: false, message: changed.error ?? "Changement impossible." };
   await repo.updateSubscription(organizationId, { plan, monthlyPrice: PRO_PLANS[plan].price });
   await audit({ actorId: acc.profile.id, action: "subscription.change", targetType: "organization", targetId: organizationId, summary: `Formule ${PRO_PLANS[plan].label} choisie`, details: { plan } });
   revalidateOrg();
@@ -313,6 +316,12 @@ export async function setCancelAction(organizationId: string, cancel: boolean): 
   if (!acc) return { ok: false, message: "Tu ne peux pas gérer cet abonnement." };
   const repo = getRepo();
   if (!(await repo.getSubscription(organizationId))) return { ok: false, message: "Aucun abonnement en cours." };
+  // --- Vague 2 · paiements --- : arrêt (ou reprise) programmé aussi chez le prestataire
+  try {
+    await setProCancelAtPeriodEnd(organizationId, cancel);
+  } catch (e) {
+    return { ok: false, message: e instanceof Error ? e.message : "Le prestataire a refusé la demande." };
+  }
   await repo.updateSubscription(organizationId, { cancelAtPeriodEnd: cancel });
   await audit({ actorId: acc.profile.id, action: "subscription.cancel", targetType: "organization", targetId: organizationId, summary: cancel ? "Arrêt de l’abonnement programmé à l’échéance" : "Abonnement repris" });
   revalidateOrg();

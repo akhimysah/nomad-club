@@ -13,7 +13,7 @@ import "@/styles/engagement.css";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: Promise<{ slug: string }>; searchParams?: Promise<{ paiement?: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = await getRepo().getProduct({ slug: (await params).slug });
@@ -21,8 +21,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /** Fiche d'une ressource : présentation, extrait, fichiers (aperçu gratuit, le reste après achat). */
-export default async function ProductPage({ params }: Props) {
+export default async function ProductPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const paiement = (await searchParams)?.paiement; // --- Vague 2 · paiements ---
   const v = await requireCapability("shop.buy", { next: `/espace/boutique/${slug}`, fallback: "/formules" });
   const repo = getRepo();
   const p = await repo.getProduct({ slug });
@@ -60,6 +61,13 @@ export default async function ProductPage({ params }: Props) {
               <div className="pd-buy">
                 <PriceTag p={p} member />
                 <BuyButton productId={p.id} title={p.title} amount={amount} label={amount > 0 ? "Acheter" : "L’obtenir"} demo={v.mode === "demo"} />
+              </div>
+            )}
+            {/* --- Vague 2 · paiements --- : retour de la page de paiement, avant la confirmation du webhook */}
+            {!bought && paiement === "ok" && (
+              <div className="flash" role="status">
+                <Icon name="clock" />
+                Paiement reçu, confirmation en cours : ta ressource apparaît ici dans quelques secondes (recharge la page).
               </div>
             )}
             <p className="pd-desc">{p.description}</p>

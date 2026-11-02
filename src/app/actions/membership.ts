@@ -7,20 +7,31 @@ import { membershipAmount } from "@/lib/domain/membership";
 import { paymentMode } from "@/lib/env";
 import { fullName, ymdDots, ymdLong } from "@/lib/format";
 import { claimReferral } from "@/lib/modules/engagement/referral"; // --- Lot 4 ---
+import { startMembershipPayment } from "@/lib/modules/paiements/service"; // --- Vague 2 · paiements ---
+import { siteUrl } from "@/lib/site";
 import type { MembershipAction, PaidPlan } from "@/lib/types";
 import { guestSchema } from "@/lib/validation";
-import { emitMembershipActivated } from "@/lib/modules/contrats/emit"; // --- Vague 2 · Contrats ---
 
-export type MembershipInput = { action: MembershipAction; plan: PaidPlan; firstName?: string; whatsapp?: string; referralCode?: string /* --- Lot 4 --- */ };
+export type MembershipInput = {
+  action: MembershipAction;
+  plan: PaidPlan;
+  firstName?: string;
+  whatsapp?: string;
+  referralCode?: string /* --- Lot 4 --- */;
+  /** --- Vague 2 · paiements --- : 1, 3 ou 12 échéances. */
+  installments?: number;
+};
 
 export type MembershipResult =
   | { ok: true; declared: boolean; name: string; fullName: string; plan: PaidPlan; validUntil: string; validUntilLong: string; cardNumber: string }
   | { ok: false; error: string; field?: "firstName" | "whatsapp"; needLogin?: boolean };
 
 /**
- * Adhérer, renouveler ou passer Premium.
- * Démo : paiement simulé, appliqué tout de suite (une visiteuse qui adhère devient une nouvelle adhérente).
- * Réel sans Stripe : virement déclaré, appliqué quand les fondatrices le valident.
+ * Adhérer, renouveler ou passer Premium, sans page de paiement externe :
+ * - démo : paiement simulé par le module paiements (même traitement que le webhook), adhésion ouverte
+ *   au premier encaissement ; en plusieurs fois, les échéances suivantes sont prélevées par la tâche quotidienne ;
+ * - réel sans Stripe : virement déclaré, appliqué quand les fondatrices le valident.
+ * Avec Stripe, le tunnel passe par /api/checkout.
  */
 export async function startMembership(input: MembershipInput): Promise<MembershipResult> {
   const viewer = await getViewer();
@@ -42,18 +53,19 @@ export async function startMembership(input: MembershipInput): Promise<Membershi
   if (input.action === "join") await claimReferral(profile.id, input.referralCode);
   if (input.action === "upgrade" && profile.plan === "premium") return { ok: false, error: "Tu es déjà Premium." };
   const plan: PaidPlan = input.action === "upgrade" ? "premium" : input.action === "renew" ? (profile.plan === "premium" ? "premium" : "member") : input.plan;
-  const declared = mode === "transfer";
-  const payment = await repo.recordMembership({
-    profileId: profile.id,
-    payerName: fullName(profile),
+  const base = await siteUrl();
+  const r = await startMembershipPayment({
+    profile,
     action: input.action,
     plan,
     amount: membershipAmount(input.action, plan),
-    method: declared ? "transfer" : "card",
-    status: declared ? "declared" : "validated",
+    installments: Number(input.installments) || 1,
+    base,
+    successUrl: `${base}/mes-paiements`,
+    cancelUrl: `${base}/espace/moi`,
   });
-  // --- Vague 2 · Contrats --- : adhésion payée → contrat relié (ou généré, à accepter). À reprendre par le chantier paiements.
-  await emitMembershipActivated(payment);
+  if (!r.ok) return { ok: false, error: r.error };
+  const declared = r.type === "manual";
   const updated = (await repo.getProfile(profile.id)) ?? profile;
   revalidatePath("/", "layout");
   return {

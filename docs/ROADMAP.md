@@ -41,6 +41,21 @@ Chaque lot est livrable seul, testable en mode démo puis en mode réel.
 - [x] Annuaire : fiche profil complète (`/espace/moi/profil`), filtres secteur / nationalité / compétence, réglages de confidentialité appliqués côté base (`directory_list()`).
 
 ### Lot 2 — Adhésions, paiements, contrats
+- [x] **Paiements réels (vague 2 · 2a, branche `v2-paiements`, migration `0009_paiements.sql`, module `src/lib/modules/paiements/`)** :
+  interface `PaymentProvider` (Stripe Checkout + Billing, virement déclaré, simulé réservé à la démo), choix par `PAYMENT_PROVIDER` ;
+  point d'entrée unique (`service.ts`) et webhook unique idempotent (`/api/stripe/webhook` = `/api/paiements/webhook`, événements
+  stockés et rejouables) ; devise `NEXT_PUBLIC_CURRENCY` et `formatMoney()` partout.
+- [x] Adhésion annuelle payable en 1, 3 ou 12 fois (montants configurables) : échéancier (`installment_plans`, `installments`),
+  abonnement Stripe limité à N prélèvements, statut par échéance, carte refusée → notification + e-mail, relances tous les N jours,
+  « en retard » visible côté membre (Mes paiements, Ma carte) et fondatrices (Paiements et échéances), accès maintenu pendant le
+  délai de grâce puis suspendu (rôle `member` retiré), rétabli au paiement ; rappels de renouvellement J-30 / J-7 / J-1
+  (`/api/cron/paiements`).
+- [x] Abonnements mensuels des pros par Stripe (Checkout + portail client : carte, factures, résiliation), statuts actif / en retard /
+  suspendu synchronisés par webhook ; boutique et billets par le même prestataire, accès accordé à la confirmation seulement.
+- [x] Historique : « Mes paiements » (paiements, échéances à venir, reçus : facture Stripe ou reçu PDF généré), reçus côté pro,
+  pilotage des fondatrices (encaissements par type, échéances, impayés, remboursements via Stripe, événements), journal d'audit.
+- [ ] Côté cliente : entité et compte Stripe (Stripe refuse les sociétés marocaines), réglages Stripe (webhook, portail, relances),
+  passage en live ; ou prestataire marocain (CMI) à brancher derrière `PaymentProvider`.
 - Adhésion annuelle payable en 1, 3 ou 12 fois (échéancier), relances d'échéances.
 - Abonnements mensuels des pros.
 - Contrats (vague 2, chantier 2b, branche `v2-contrats`, migration `0010_contrats.sql`, module `src/lib/modules/contrats/`) :

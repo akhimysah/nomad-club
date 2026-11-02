@@ -76,19 +76,54 @@ dans « Virements à valider ». Indiquez le titulaire et l'IBAN dans `NEXT_PUBL
 
 ### 3.2 Stripe (paiement par carte, en mode test d'abord)
 
-1. Créez un compte sur [stripe.com](https://stripe.com). Restez en **mode test** (interrupteur « Test mode »).
-2. **Développeurs > Clés API** : copiez la clé secrète de test (`sk_test_…`) dans `STRIPE_SECRET_KEY`.
-3. **Développeurs > Webhooks > Ajouter un endpoint** :
-   - adresse : `https://votre-site/api/stripe/webhook` ;
-   - événements : `checkout.session.completed` et `checkout.session.expired` ;
+Tous les paiements passent par une interface unique (`src/lib/modules/paiements/`, voir `docs/ARCHITECTURE.md`, section
+« Paiements ») : adhésion annuelle en 1, 3 ou 12 fois, abonnement mensuel des pros, boutique, billets. Le prestataire se
+choisit par `PAYMENT_PROVIDER` (`stripe`, `transfer` ; `simulated` est réservé à la démo et refusé en mode réel).
+
+> **Préalable** : Stripe n'ouvre pas de compte à une entreprise immatriculée au Maroc. Il faut une entité dans un pays
+> pris en charge (France / UE…), avec son compte bancaire. Sinon : virement déclaré (déjà en place), puis un prestataire
+> marocain (CMI…) à brancher derrière la même interface (voir plus bas).
+
+1. Créez le compte Stripe de l'entité qui encaisse. Restez en **mode test** (interrupteur « Test mode »).
+2. **Paramètres > Informations sur l'entreprise / Marque** : nom public « Nomad Club », logo, couleur, adresse de support ;
+   **Paramètres > E-mails clients** : activez les reçus de paiement et les e-mails de factures si vous le souhaitez.
+3. **Développeurs > Clés API** : clé secrète de test (`sk_test_…`) dans `STRIPE_SECRET_KEY`.
+4. **Produits** (facultatif) : l'appli crée les prix à la volée (montants de `NEXT_PUBLIC_PRICE_*` et des formules pro).
+   Pour des prix gérés dans Stripe, créez un produit « Carnet d'adresses » avec trois prix mensuels récurrents
+   (Essentiel, Visibilité, Vitrine) et copiez leurs identifiants dans `STRIPE_PRICE_PRO_ESSENTIEL`, `STRIPE_PRICE_PRO_VISIBILITE`,
+   `STRIPE_PRICE_PRO_VITRINE`.
+5. **Développeurs > Webhooks > Ajouter un endpoint** :
+   - adresse : `https://votre-site/api/stripe/webhook` (ou `https://votre-site/api/paiements/webhook`, même traitement) ;
+   - événements : `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.expired`,
+     `invoice.paid`, `invoice.payment_failed`, `customer.subscription.updated`, `customer.subscription.deleted`, `charge.refunded` ;
    - copiez le « Secret de signature » (`whsec_…`) dans `STRIPE_WEBHOOK_SECRET`.
 
-   En local, on peut utiliser l'outil [Stripe CLI](https://stripe.com/docs/stripe-cli) :
-   `stripe listen --forward-to localhost:3000/api/stripe/webhook` (il affiche le `whsec_…` à utiliser).
-4. Pour payer en test, utilisez la carte `4242 4242 4242 4242`, une date future et n'importe quel code.
-5. Quand tout est prêt, passez Stripe en mode réel et remplacez les clés de test par les clés réelles.
+   En local : [Stripe CLI](https://stripe.com/docs/stripe-cli), `stripe listen --forward-to localhost:3000/api/stripe/webhook`.
+   Chaque événement est stocké (table `payment_events`) et traité une seule fois ; un événement en échec se rejoue depuis
+   Fondatrices > Paiements et échéances.
+6. **Paramètres > Billing > Portail client** : activez le portail ; autorisez « mettre à jour le moyen de paiement »,
+   « voir l'historique des factures » et « annuler l'abonnement (à la fin de la période) ». C'est le bouton « Gérer ma carte ».
+7. **Paramètres > Billing > Abonnements et e-mails > Gérer les paiements échoués** : activez les nouvelles tentatives
+   intelligentes (par exemple 4 tentatives sur 2 semaines) ; après la dernière tentative, choisissez « marquer l'abonnement
+   comme impayé » (la fiche pro passe alors « suspendue »). Côté adhésion, l'accès est maintenu `MEMBERSHIP_GRACE_DAYS` jours
+   (15 par défaut) puis suspendu, et rétabli dès que l'échéance est réglée.
+8. Tâche quotidienne `/api/cron/paiements` (déjà dans `vercel.json`) : relances des échéances en retard, suspensions,
+   rappels de renouvellement J-30 / J-7 / J-1. Elle demande `CRON_SECRET` et `SUPABASE_SERVICE_ROLE_KEY`.
+9. Tests : carte `4242 4242 4242 4242` (réussite), `4000 0000 0000 0341` (s'enregistre puis échoue aux prélèvements suivants),
+   date future, n'importe quel code. Pour avancer le temps sur un abonnement : Stripe > Billing > Horloges de test.
+10. **Passage en live** : activez le compte (justificatifs de l'entité, compte bancaire), refaites l'étape 5 en mode live
+    (nouveau `whsec_…`), remplacez `STRIPE_SECRET_KEY` par la clé `sk_live_…` (ou une clé restreinte `rk_live_…`), refaites
+    les étapes 4, 6 et 7 en live (les réglages test et live sont séparés). Aucun changement de code ; le bandeau « mode test »
+    disparaît des pages.
 
 Une place payée par carte est retenue 30 minutes pendant le paiement ; si le paiement n'aboutit pas, elle est libérée.
+L'accès (adhésion, ressource de la boutique, fiche pro, billet) n'est accordé qu'à la confirmation par le webhook.
+
+**Brancher un prestataire marocain (CMI…)** : écrire `src/lib/modules/paiements/providers/cmi.ts` qui implémente
+`PaymentProvider` (création de la page de paiement hébergée, vérification du retour serveur à serveur → `verifyWebhook`,
+traduction en événements normalisés), l'ajouter à `providers/index.ts` et à `PAYMENT_PROVIDER`. Les écrans, les échéanciers,
+le grand livre et les relances restent identiques. Le CMI ne gérant pas d'abonnements, les échéances suivantes seront
+prélevées par la tâche quotidienne (carte enregistrée chez le CMI) ou réglées par lien de paiement.
 
 ### 3.3 Mettre en ligne sur Vercel
 
@@ -125,6 +160,7 @@ Pour envoyer pour de vrai (billets, reçus, rappels, invitations…) :
 - `npm run dev` : développement · `npm run build` : version de production · `npm run lint` : vérification du code.
 - `npm run seed:sql` : régénère `supabase/seed.sql` à partir de `src/lib/seed.ts`.
 - `npm run test:sql` : exécute toutes les migrations et le seed dans un Postgres embarqué (PGlite) et vérifie rôles et sécurité (RLS).
+- `npm run test:paiements` : échéancier, montants, webhooks Stripe signés localement, traitement idempotent (sans réseau).
 - Architecture : `docs/ARCHITECTURE.md`. Toutes les données passent par l'interface `src/lib/data/repo.ts`
   (implémentations `demo-repo.ts` et `supabase-repo.ts`, choix automatique dans `src/lib/data/index.ts`).
 - Pages : `src/app/(visite)` (compte gratuit), `src/app/espace` (membre), `src/app/partenaire`, `src/app/pro`, `src/app/fondatrices` (admin).

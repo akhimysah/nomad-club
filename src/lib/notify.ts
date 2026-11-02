@@ -10,6 +10,7 @@ import { dayLong, dayMonthShort, hour, money } from "./format";
 import { inCircle, ROLE_LABEL } from "./permissions";
 import { ENGAGEMENT_NOTIFICATION_LABEL } from "./modules/engagement/labels"; // --- Lot 4 ---
 import { CONTRATS_NOTIFICATION_LABEL } from "./modules/contrats/labels"; // --- Vague 2 · Contrats ---
+import { PAIEMENTS_NOTIFICATION_LABEL } from "./modules/paiements/labels"; // --- Vague 2 · paiements ---
 import type { ClubEvent, GrantableRole, NotificationType, Payment, Profile } from "./types";
 
 export const NOTIFICATION_LABEL: Record<NotificationType, { label: string; hint: string }> = {
@@ -31,6 +32,8 @@ export const NOTIFICATION_LABEL: Record<NotificationType, { label: string; hint:
   moderation_warning: { label: "Messages de la modération", hint: "Un avertissement sur l’un de tes messages." },
   // --- Vague 2 · Contrats ---
   ...CONTRATS_NOTIFICATION_LABEL,
+  // --- Vague 2 · paiements ---
+  ...PAIEMENTS_NOTIFICATION_LABEL,
 };
 
 /** Types réservés à l'équipe (masqués des préférences des membres). */

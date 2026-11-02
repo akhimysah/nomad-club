@@ -1,6 +1,7 @@
 /**
- * Vague 2 · Contrats — émission de « souscription activée » depuis les parcours existants, EN ATTENDANT le
- * chantier paiements (qui émettra lui-même l'événement depuis son module, avec l'échéancier réel).
+ * Vague 2 · Contrats — émission de « souscription activée » pour les cas qui ne passent pas par le module
+ * paiements : l'adhésion réglée par virement, activée quand une fondatrice valide le virement.
+ * (Carte et démo : c'est le module paiements qui émet l'événement, avec l'échéancier réel.)
  * Chaque appel est sans risque : erreurs avalées, et handleSubscriptionActivated est idempotent (un même
  * paiement émis deux fois ne crée pas deux contrats).
  */

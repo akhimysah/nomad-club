@@ -29,6 +29,7 @@ const EXTRA: Array<{ href: string; icon: IconName; label: string; title: string 
   { href: "/espace/boutique", icon: "gift", label: "Boutique", title: "Boutique" },
   { href: "/espace/business", icon: "star", label: "Business", title: "Business" },
   { href: "/espace/parrainage", icon: "heart", label: "Parrainage", title: "Parrainage" },
+  { href: "/espace/paiements", icon: "wallet", label: "Paiements", title: "Mes paiements" }, // --- Vague 2 · paiements ---
 ];
 // --- Lot 1 --- entrées sans onglet (barre latérale sur ordinateur ; sur téléphone : accueil et page Moi)
 const LOT1_NAV: Array<{ href: string; icon: IconName; label: string; title: string }> = [

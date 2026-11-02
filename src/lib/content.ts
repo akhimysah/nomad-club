@@ -1,11 +1,11 @@
 /** Textes fixes du site (repris de la maquette validée). */
+import { membershipPrices } from "./modules/paiements/config.ts"; // --- Vague 2 · paiements ---
 
-export const PRICES = {
-  member: 670,
-  premium: 1250,
-  /** Différence Membre vers Premium. */
-  upgrade: 580,
-} as const;
+/**
+ * Tarifs annuels. --- Vague 2 · paiements --- : configurables (NEXT_PUBLIC_PRICE_MEMBER, NEXT_PUBLIC_PRICE_PREMIUM,
+ * NEXT_PUBLIC_PRICE_UPGRADE ; défaut 670 / 1 250 / différence), voir src/lib/modules/paiements/config.ts.
+ */
+export const PRICES: Readonly<{ member: number; premium: number; upgrade: number }> = membershipPrices();
 
 export const LUNCH_STEPS: ReadonlyArray<{ title: string; text: string }> = [
   { title: "Cercle d’ouverture", text: "Chacune se présente en une phrase : prénom, métier, depuis quand à Marrakech." },

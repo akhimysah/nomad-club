@@ -12,6 +12,7 @@ import { eventPublished, paymentValidated } from "@/lib/notify";
 import type { Capability } from "@/lib/permissions";
 import type { Payment } from "@/lib/types";
 import { eventFormSchema, type EventForm } from "@/lib/validation";
+import { recordTransferValidated } from "@/lib/modules/paiements/service"; // --- Vague 2 · paiements ---
 import { emitMembershipActivated } from "@/lib/modules/contrats/emit"; // --- Vague 2 · Contrats ---
 
 export type FounderResult = { ok: true; message: string } | { ok: false; error: string };
@@ -31,7 +32,11 @@ async function logValidation(actorId: string, pay: Payment) {
     details: { amount: pay.amount, kind: pay.kind, plan: pay.plan, bookingId: pay.bookingId },
   });
   await paymentValidated(pay);
-  // --- Vague 2 · Contrats --- : adhésion validée → contrat relié (ou généré, à accepter). À reprendre par le chantier paiements.
+  // --- Vague 2 · paiements --- : le virement validé entre au grand livre (reçu téléchargeable, pilotage)
+  const label = pay.kind === "booking" ? "Billet (virement)" : pay.membershipAction === "upgrade" ? "Passage à Premium (virement)" : `${pay.membershipAction === "renew" ? "Renouvellement" : "Adhésion"} ${pay.plan === "premium" ? "Premium" : "Membre"} · 1 an (virement)`;
+  await recordTransferValidated(pay, label);
+  // --- Vague 2 · Contrats --- : une adhésion payée par virement ne passe pas par le prestataire de paiement :
+  // c'est sa validation qui active la souscription (et prépare le contrat).
   await emitMembershipActivated(pay);
 }
 

@@ -22,7 +22,9 @@ export async function GET(req: NextRequest) {
   if (!secret) return NextResponse.json({ error: "CRON_SECRET n’est pas configuré." }, { status: 503 });
   if (!authorized(req, secret)) return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   try {
-    const renewals = await sendRenewalReminders();
+    // Les rappels de renouvellement sont envoyés par /api/cron/paiements (il connaît les échéanciers).
+    // Ils ne partent d'ici que si ce dernier les a coupés (PAYMENT_RENEWAL_REMINDERS=false) : jamais deux fois.
+    const renewals = process.env.PAYMENT_RENEWAL_REMINDERS === "false" ? await sendRenewalReminders() : 0;
     const purged = await purgeEmailLog().catch((e) => {
       console.error("[cron e-mails] purge :", e instanceof Error ? e.message : e);
       return 0;

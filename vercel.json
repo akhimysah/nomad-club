@@ -3,6 +3,7 @@
   "crons": [
     { "path": "/api/cron/securite", "schedule": "30 3 * * *" },
     { "path": "/api/cron/rappels", "schedule": "0 17 * * *" },
-    { "path": "/api/cron/emails", "schedule": "0 8 * * *" }
+    { "path": "/api/cron/emails", "schedule": "0 8 * * *" },
+    { "path": "/api/cron/paiements", "schedule": "0 8 * * *" }
   ]
 }

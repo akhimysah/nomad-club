@@ -21,6 +21,21 @@ export const NOTIFICATION_TEMPLATE: Record<string, TemplateId> = {
 /** Types de notifications dont l'e-mail part toujours (billet, reçu, sécurité). */
 export const ESSENTIAL_NOTIFICATION_TYPES: readonly string[] = ["booking_confirmed", "payment_validated", "role_changed"];
 
+/**
+ * Types dont le module d'origine envoie déjà son propre e-mail détaillé (avec pièces jointes ou données riches) :
+ * on ne les relaie pas, sinon la personne recevrait deux e-mails.
+ */
+export const SENT_BY_MODULE_NOTIFICATION_TYPES: readonly string[] = [
+  // --- Vague 2 · paiements ---
+  "payment_receipt",
+  "payment_failed",
+  "payment_reminder",
+  "membership_renewal",
+  // --- Vague 2 · Contrats ---
+  "contract_ready",
+  "contract_accepted",
+];
+
 export type ChannelRow = { recipientId: string; type: string; title: string; body: string; link: string | null };
 export type ChannelPref = { profileId: string; type: string; email: boolean };
 export type ChannelRecipient = { email: string | null; firstName: string };
@@ -58,6 +73,7 @@ export function planNotificationEmails(
 ): PlannedEmail[] {
   const out: PlannedEmail[] = [];
   rows.forEach((row, i) => {
+    if (SENT_BY_MODULE_NOTIFICATION_TYPES.includes(row.type)) return;
     const who = ctx.recipients.get(row.recipientId);
     if (!who?.email) return;
     const essential = isEssentialNotification(row.type);

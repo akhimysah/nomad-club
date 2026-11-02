@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/Icon";
 import { Sheet } from "@/components/ui/Sheet";
 import { useToast } from "@/components/ui/Toasts";
 import { EIcon } from "./EIcon";
+import { formatMoney } from "@/lib/modules/paiements/money"; // --- Vague 2 · paiements ---
 
 const pause = (ms: number) => new Promise((r) => setTimeout(r, typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 50 : ms));
 
@@ -26,6 +27,11 @@ export function BuyButton({ productId, title, amount, label, demo }: { productId
     if (!r.ok) {
       setError(r.error);
       setStage("recap");
+      return;
+    }
+    // --- Vague 2 · paiements --- : paiement sur la page du prestataire (Stripe), accès à la confirmation
+    if (r.url) {
+      window.location.href = r.url;
       return;
     }
     setStage("done");
@@ -78,16 +84,17 @@ export function BuyButton({ productId, title, amount, label, demo }: { productId
             </div>
             <div className="kv">
               <span>Total</span>
-              <b>{amount > 0 ? `${amount} $` : "Offert aux membres"}</b>
+              <b>{amount > 0 ? formatMoney(amount) : "Offert aux membres"}</b>
             </div>
             <button className="btn btn-gold btn-block" onClick={pay} disabled={stage === "busy"} style={{ marginTop: 18 }}>
               {stage === "busy" ? <span className="spin" /> : <Icon name="check" />}
-              {amount > 0 ? `Payer ${amount} $` : "L’ajouter à mes ressources"}
+              {amount > 0 ? `Payer ${formatMoney(amount)}` : "L’ajouter à mes ressources"}
             </button>
             {amount > 0 && (
               <p className="fine">
                 <Icon name="lock" />
-                {demo ? "Aperçu : paiement simulé, aucune somme n’est débitée." : "Paiement simulé pendant le lancement de la boutique."}
+                {/* --- Vague 2 · paiements --- */}
+                {demo ? "Aperçu : paiement simulé, aucune somme n’est débitée." : "Paiement sécurisé par carte. L’accès s’ouvre dès que le paiement est confirmé."}
               </p>
             )}
           </>

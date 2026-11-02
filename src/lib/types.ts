@@ -298,7 +298,9 @@ export type AuditAction =
   | "keyword.add"
   | "keyword.remove"
   | "event.remind"
-  | import("./modules/contrats/types").ContratsAuditAction; // --- Vague 2 · Contrats ---
+  | import("./modules/contrats/types").ContratsAuditAction // --- Vague 2 · Contrats ---
+  // --- Vague 2 · paiements ---
+  | import("./modules/paiements/types").PaiementsAuditAction;
 
 /** Journal des opérations importantes (qui, quoi, sur quoi, détails). */
 export type AuditEntry = {
@@ -330,7 +332,9 @@ export type NotificationType =
   | "group_joined"
   | "moderation_report"
   | "moderation_warning"
-  | import("./modules/contrats/types").ContratsNotificationType; // --- Vague 2 · Contrats ---
+  | import("./modules/contrats/types").ContratsNotificationType // --- Vague 2 · Contrats ---
+  // --- Vague 2 · paiements ---
+  | import("./modules/paiements/types").PaiementsNotificationType;
 
 export type AppNotification = {
   id: string;

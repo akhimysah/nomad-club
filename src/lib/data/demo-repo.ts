@@ -17,6 +17,7 @@ import { crmDemoRepo } from "../modules/crm/demo-repo";
 import type { AppNotification, Booking, BookingView, ClubEvent, DmThread, MessageView, NotificationPref, Payment, Profile } from "../types";
 import { demoSecuriteRepo } from "../modules/securite/demo-repo"; // --- Lot 6 ---
 import { demoContratsRepo } from "../modules/contrats/demo-repo"; // --- Vague 2 · Contrats ---
+import { paiementsDemoRepo } from "../modules/paiements/demo"; // --- Vague 2 · paiements ---
 import { dmChannel, otherInChannel, type BookResult, type CancelResult, type Repo } from "./repo";
 // --- Lot 3 ---
 import { partenairesDemo } from "../modules/partenaires/demo";
@@ -71,6 +72,8 @@ export const demoRepo: Repo = {
   ...demoSecuriteRepo,
   // --- Vague 2 · Contrats ---
   ...demoContratsRepo,
+  // --- Vague 2 · paiements --- (échéanciers, grand livre, événements ; même mémoire que la démo)
+  ...paiementsDemoRepo(db, (e) => demoRepo.logAudit(e)),
 
   async getProfile(id) {
     const p = db().profiles.find((x) => x.id === id);

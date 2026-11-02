@@ -83,6 +83,8 @@ function toSubscription(r: Row): ProSubscription {
   return {
     organizationId: str(r.organization_id), plan: r.plan as ProSubscription["plan"], monthlyPrice: num(r.monthly_price), status: r.status as ProSubscription["status"],
     startedAt: str(r.started_at), currentPeriodEnd: str(r.current_period_end), cancelAtPeriodEnd: Boolean(r.cancel_at_period_end), updatedAt: str(r.updated_at),
+    // --- Vague 2 · paiements --- (colonnes de 0009 ; absentes avant la migration)
+    provider: r.provider == null ? undefined : str(r.provider), subscriptionRef: strN(r.subscription_ref), customerRef: strN(r.customer_ref),
   };
 }
 
@@ -257,7 +259,7 @@ export function partenairesSupabase(db: () => Promise<SupabaseClient>, trusted: 
       const w = await trusted();
       check(
         await w.from("pro_subscription_payments").insert({
-          organization_id: input.organizationId, plan: input.plan, amount: input.amount, status: input.status, method: "simulated",
+          organization_id: input.organizationId, plan: input.plan, amount: input.amount, status: input.status, method: input.method ?? "simulated" /* Vague 2 */,
           reference: input.reference, period_start: input.periodStart, period_end: input.periodEnd,
         }),
       );
@@ -266,12 +268,14 @@ export function partenairesSupabase(db: () => Promise<SupabaseClient>, trusted: 
           await w.from("pro_subscriptions").upsert({
             organization_id: input.organizationId, plan: input.plan, monthly_price: input.monthlyPrice, status: "active",
             current_period_end: input.periodEnd, cancel_at_period_end: false, updated_at: new Date().toISOString(),
+            ...(input.provider ? { provider: input.provider } : {}), // --- Vague 2 ---
           }),
         );
       }
-      const s = await this.getSubscription(input.organizationId);
-      if (!s) throw new Error("Paiement refusé : aucun abonnement créé.");
-      return s;
+      // --- Vague 2 --- : relu avec le même client (le webhook n'a pas de session)
+      const r = check(await w.from("pro_subscriptions").select("*").eq("organization_id", input.organizationId).maybeSingle()) as Row | null;
+      if (!r) throw new Error("Paiement refusé : aucun abonnement créé.");
+      return toSubscription(r);
     },
     async updateSubscription(organizationId, patch) {
       const w = await trusted();
@@ -279,6 +283,12 @@ export function partenairesSupabase(db: () => Promise<SupabaseClient>, trusted: 
       if (patch.plan) row.plan = patch.plan;
       if (patch.monthlyPrice !== undefined) row.monthly_price = patch.monthlyPrice;
       if (patch.cancelAtPeriodEnd !== undefined) row.cancel_at_period_end = patch.cancelAtPeriodEnd;
+      // --- Vague 2 · paiements --- (synchronisation par le webhook du prestataire)
+      if (patch.status) row.status = patch.status;
+      if (patch.currentPeriodEnd) row.current_period_end = patch.currentPeriodEnd;
+      if (patch.provider) row.provider = patch.provider;
+      if (patch.subscriptionRef !== undefined) row.subscription_ref = patch.subscriptionRef;
+      if (patch.customerRef !== undefined) row.customer_ref = patch.customerRef;
       return toSubscription(check(await w.from("pro_subscriptions").update(row).eq("organization_id", organizationId).select("*").single()) as Row);
     },
     async refreshSubscriptions() {

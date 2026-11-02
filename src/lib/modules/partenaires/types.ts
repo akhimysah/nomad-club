@@ -137,6 +137,10 @@ export type ProSubscription = {
   currentPeriodEnd: string;
   cancelAtPeriodEnd: boolean;
   updatedAt: string;
+  // --- Vague 2 · paiements --- : prestataire et références de l'abonnement (Stripe…)
+  provider?: string;
+  subscriptionRef?: string | null;
+  customerRef?: string | null;
 };
 
 export type SubscriptionPayment = {
