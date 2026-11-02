@@ -178,7 +178,7 @@ export function createSeed(): SeedData {
   });
   // Rôles cumulés : Kenza est aussi partenaire (Bloom House), Loubna professionnelle du carnet.
   Object.assign(generated[10], { roles: ["member", "partner"], job: "Fondatrice de Bloom House", email: "kenza@exemple.com" });
-  Object.assign(generated[33], { roles: ["member", "pro"], job: "Ostéopathe", email: "loubna@exemple.com" });
+  Object.assign(generated[33], { roles: ["member", "pro"], lastName: "Cherkaoui", job: "Ostéopathe", email: "loubna@exemple.com" });
   // Rim gère Maison Amaj : partenaire sans adhésion.
   const rim = profile({ id: "p-rim", firstName: "Rim", lastName: "Amajjar", roles: ["partner"], plan: "free", job: "Gérante de Maison Amaj", country: "Marocaine", email: "rim@exemple.com", createdAt: iso("2026-05-20") });
   const profiles = [...named, ...generated, rim];

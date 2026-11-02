@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MemberChrome } from "@/components/member/MemberChrome";
-import { requireMember } from "@/lib/auth";
+import { requireMember, viewerSpaces } from "@/lib/auth";
 import { getRepo } from "@/lib/data";
 import { fullName, PLAN_LABEL } from "@/lib/format";
 import { isAdmin } from "@/lib/permissions";
@@ -10,11 +10,12 @@ export const metadata: Metadata = { title: { default: "Espace membre", template:
 /** Espace membre : réservé aux adhérentes (et aux fondatrices). */
 export default async function MemberLayout({ children }: { children: React.ReactNode }) {
   const v = await requireMember();
-  const unread = await getRepo().countUnreadDms(v.profile.id);
+  const repo = getRepo();
+  const [unread, notifs] = await Promise.all([repo.countUnreadDms(v.profile.id), repo.countUnreadNotifications(v.profile.id)]);
   const formule = isAdmin(v.profile) ? "Fondatrice" : `Formule ${PLAN_LABEL[v.profile.plan]}`;
   return (
     <section className="space on" aria-label="Espace membre">
-      <MemberChrome name={fullName(v.profile)} formule={formule} unread={unread} />
+      <MemberChrome name={fullName(v.profile)} formule={formule} unread={unread} notifs={notifs} spaces={v.mode === "real" ? viewerSpaces(v) : []} />
       <div className="m-main">{children}</div>
     </section>
   );

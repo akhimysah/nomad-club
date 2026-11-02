@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FounderChrome } from "@/components/founders/FounderChrome";
 import { FounderHost } from "@/components/founders/FounderHost";
 import { BodyClass } from "@/components/ui/BodyClass";
-import { requireFounder } from "@/lib/auth";
+import { requireFounder, viewerSpaces } from "@/lib/auth";
 import { today } from "@/lib/clock";
 import { getRepo } from "@/lib/data";
 import { loadDashboard } from "@/lib/founders-view";
@@ -12,14 +12,21 @@ export const metadata: Metadata = { title: { default: "Espace fondatrices", temp
 
 /** Espace fondatrices (version jour de la maquette) : réservé au rôle « founder ». */
 export default async function FoundersLayout({ children }: { children: React.ReactNode }) {
-  await requireFounder();
-  const [{ d }, places, dir] = await Promise.all([loadDashboard(), getRepo().listPlaces(), getRepo().listDirectory()]);
+  const v = await requireFounder();
+  const repo = getRepo();
+  const [{ d }, places, dir, notifs] = await Promise.all([loadDashboard(), repo.listPlaces(), repo.listDirectory(), repo.countUnreadNotifications(v.profile.id)]);
   const founders = dir.filter(isAdmin).map((p) => p.firstName);
   return (
     <section className="space day on" aria-label="Espace fondatrices">
       <BodyClass name="is-day" />
       <FounderHost places={places.map((p) => ({ id: p.id, name: p.name }))} minDate={today()}>
-        <FounderChrome urgent={d.urgent} vir={d.counts.vir} names={founders.length ? founders.join(" et ") : "Fondatrices"} />
+        <FounderChrome
+          urgent={d.urgent}
+          vir={d.counts.vir}
+          names={founders.length ? founders.join(" et ") : "Fondatrices"}
+          notifs={notifs}
+          spaces={v.mode === "real" ? viewerSpaces(v) : []}
+        />
         <div className="f-main">{children}</div>
       </FounderHost>
     </section>

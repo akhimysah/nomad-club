@@ -13,16 +13,16 @@ import { createSeed, type SeedData } from "../seed";
 import type { AppNotification, Booking, BookingView, ClubEvent, DmThread, MessageView, NotificationPref, Payment, Profile } from "../types";
 import { dmChannel, otherInChannel, type BookResult, type CancelResult, type Repo } from "./repo";
 
-/** À incrémenter quand la forme des données change (évite de garder un ancien jeu en mémoire au rechargement). */
-const SEED_VERSION = 2;
-type DemoGlobal = typeof globalThis & { __nomadDemoDb?: SeedData; __nomadDemoDbVersion?: number };
+type DemoGlobal = typeof globalThis & { __nomadDemoDb?: SeedData };
+
+/** Jeu en mémoire d'une version antérieure (gardé par le rechargement à chaud) : on le recrée. */
+function outdated(d: SeedData): boolean {
+  return !Array.isArray(d.notifications) || !Array.isArray(d.profiles[0]?.roles);
+}
 
 function db(): SeedData {
   const g = globalThis as DemoGlobal;
-  if (!g.__nomadDemoDb || g.__nomadDemoDbVersion !== SEED_VERSION) {
-    g.__nomadDemoDb = createSeed();
-    g.__nomadDemoDbVersion = SEED_VERSION;
-  }
+  if (!g.__nomadDemoDb || outdated(g.__nomadDemoDb)) g.__nomadDemoDb = createSeed();
   return g.__nomadDemoDb;
 }
 

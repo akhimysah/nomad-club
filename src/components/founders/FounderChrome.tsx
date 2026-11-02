@@ -3,28 +3,35 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import type { IconName } from "../IconSprite";
+import type { Space } from "@/lib/permissions";
+import { NotifBell } from "../shell/NotifBell";
+import { FOUNDER_NAV, FOUNDER_PLUS } from "./nav";
+import { SpaceLinks, SpaceSheetButton } from "../shell/SpaceSwitch";
 import { Icon } from "../ui/Icon";
 import { CountBadge } from "../ui/TweenNumber";
 import { NewEventButton } from "./FounderHost";
 
-const NAV: Array<{ href: string; icon: IconName; label: string; tab: string; title: string }> = [
-  { href: "/fondatrices", icon: "grid", label: "Vue d’ensemble", tab: "Aperçu", title: "Vue d’ensemble" },
-  { href: "/fondatrices/a-traiter", icon: "inbox", label: "À traiter", tab: "À traiter", title: "À traiter" },
-  { href: "/fondatrices/membres", icon: "users", label: "Membres", tab: "Membres", title: "Membres" },
-  { href: "/fondatrices/evenements", icon: "cal", label: "Événements", tab: "Événements", title: "Événements" },
-  { href: "/fondatrices/encaissements", icon: "wallet", label: "Encaissements", tab: "Paiements", title: "Encaissements" },
-];
+const NAV = FOUNDER_NAV;
+const PLUS = FOUNDER_PLUS;
+const TABS = [...NAV.filter((n) => n.mobile), PLUS];
 
 /** Barre latérale, en-tête (téléphone) et barre du bas de l'espace fondatrices. */
-export function FounderChrome({ urgent, vir, names }: { urgent: number; vir: number; names: string }) {
+export function FounderChrome({ urgent, vir, names, notifs, spaces }: { urgent: number; vir: number; names: string; notifs: number; spaces: Space[] }) {
   const pathname = usePathname();
   const router = useRouter();
   const [q, setQ] = useState("");
-  const active = pathname === "/fondatrices" ? "/fondatrices" : (NAV.find((n) => n.href !== "/fondatrices" && pathname.startsWith(n.href))?.href ?? "/fondatrices");
-  const title = NAV.find((n) => n.href === active)?.title ?? "Vue d’ensemble";
+  const active =
+    pathname === "/fondatrices" ? "/fondatrices" : ([...NAV, PLUS].find((n) => n.href !== "/fondatrices" && pathname.startsWith(n.href))?.href ?? "/fondatrices");
+  const title = [...NAV, PLUS].find((n) => n.href === active)?.title ?? "Vue d’ensemble";
+  const tabActive = NAV.find((n) => n.href === active)?.mobile === false ? PLUS.href : active;
   const badge = (href: string, cls: string) =>
-    href === "/fondatrices/a-traiter" ? <CountBadge value={urgent} className={cls} /> : href === "/fondatrices/encaissements" ? <CountBadge value={vir} className={cls + (cls === "nbadge" ? " gold" : "")} style={cls === "badge" ? { background: "var(--accent)" } : undefined} /> : null;
+    href === "/fondatrices/a-traiter" ? (
+      <CountBadge value={urgent} className={cls} />
+    ) : href === "/fondatrices/encaissements" ? (
+      <CountBadge value={vir} className={cls + (cls === "nbadge" ? " gold" : "")} style={cls === "badge" ? { background: "var(--accent)" } : undefined} />
+    ) : href === "/fondatrices/notifications" || href === PLUS.href ? (
+      <CountBadge value={notifs} className={cls} />
+    ) : null;
   return (
     <>
       <aside className="f-side">
@@ -60,6 +67,7 @@ export function FounderChrome({ urgent, vir, names }: { urgent: number; vir: num
             </Link>
           ))}
         </nav>
+        <SpaceLinks spaces={spaces} current="founders" />
         <div className="f-who">
           <span className="stack">
             <span className="av f">J</span>
@@ -76,11 +84,15 @@ export function FounderChrome({ urgent, vir, names }: { urgent: number; vir: num
           <img src="/img/monogramme-clair.png" alt="" />
         </span>
         <span className="ttl">{title}</span>
-        <NewEventButton className="btn btn-ink btn-sm" label="Nouvel" />
+        <span className="head-r">
+          <SpaceSheetButton spaces={spaces} current="founders" />
+          <NotifBell href="/fondatrices/notifications" count={notifs} />
+          <NewEventButton className="btn btn-ink btn-sm" label="Nouvel" />
+        </span>
       </header>
       <nav className="tabbar" aria-label="Navigation fondatrices">
-        {NAV.map((n) => (
-          <Link key={n.href} href={n.href} className={"tab" + (active === n.href ? " on" : "")} aria-current={active === n.href ? "page" : undefined}>
+        {TABS.map((n) => (
+          <Link key={n.href} href={n.href} className={"tab" + (tabActive === n.href ? " on" : "")} aria-current={tabActive === n.href ? "page" : undefined}>
             <Icon name={n.icon} />
             <span className="lbl">{n.tab}</span>
             {badge(n.href, "badge")}
