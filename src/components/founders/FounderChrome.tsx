@@ -8,6 +8,7 @@ import { NotifBell } from "../shell/NotifBell";
 import { FOUNDER_NAV, FOUNDER_PLUS } from "./nav";
 import { SpaceLinks, SpaceSheetButton } from "../shell/SpaceSwitch";
 import { Icon } from "../ui/Icon";
+import { TabIndicator } from "../ui/TabIndicator";
 import { CountBadge } from "../ui/TweenNumber";
 import { NewEventButton } from "./FounderHost";
 
@@ -91,6 +92,7 @@ export function FounderChrome({ urgent, vir, names, notifs, spaces }: { urgent: 
         </span>
       </header>
       <nav className="tabbar" aria-label="Navigation fondatrices">
+        <TabIndicator />
         {TABS.map((n) => (
           <Link key={n.href} href={n.href} className={"tab" + (tabActive === n.href ? " on" : "")} aria-current={tabActive === n.href ? "page" : undefined}>
             <Icon name={n.icon} />

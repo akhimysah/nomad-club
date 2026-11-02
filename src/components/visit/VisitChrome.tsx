@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SpaceButton } from "../shell/SpaceButton";
 import { Icon } from "../ui/Icon";
+import { TabIndicator } from "../ui/TabIndicator";
 import { useToast } from "../ui/Toasts";
 
 const SECTIONS: Record<string, string> = { "/rendez-vous": "v-agenda", "/club": "v-club", "/formules": "v-formules" };
@@ -119,6 +120,7 @@ export function VTabbar({ demo }: { demo: boolean }) {
   const active = pathname === "/" ? "/" : TABS.find((t) => t.href !== "/" && pathname.startsWith(t.href))?.href;
   return (
     <nav className="tabbar" aria-label="Navigation de l’appli">
+      <TabIndicator />
       {TABS.map((t) => (
         <Link key={t.href} href={t.href} className={"tab" + (active === t.href ? " on" : "")} aria-current={active === t.href ? "page" : undefined}>
           <Icon name={t.icon} />

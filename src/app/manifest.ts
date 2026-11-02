@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Nomad Club",
     short_name: "Nomad Club",
     description: "Le club des femmes et entrepreneuses à Marrakech.",
-    start_url: "/",
+    start_url: "/espace",
     scope: "/",
     display: "standalone",
     orientation: "portrait",

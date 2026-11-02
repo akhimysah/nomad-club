@@ -8,6 +8,7 @@ import { NotifBell } from "../shell/NotifBell";
 import { SpaceLinks, SpaceSheetButton } from "../shell/SpaceSwitch";
 import { Avatar } from "../ui/Avatar";
 import { Icon } from "../ui/Icon";
+import { TabIndicator } from "../ui/TabIndicator";
 import { CountBadge } from "../ui/TweenNumber";
 
 /** `tab: false` : entrée de la barre latérale seulement (pas d'onglet sur téléphone). */
@@ -89,6 +90,7 @@ export function OrgChrome({
         </span>
       </header>
       <nav className="tabbar" aria-label={title}>
+        <TabIndicator />
         {real.filter((n) => n.tab !== false).map((n) => (
           <Link key={n.href} href={n.href} className={"tab" + (active === n.href ? " on" : "")} aria-current={active === n.href ? "page" : undefined}>
             <Icon name={n.icon} />

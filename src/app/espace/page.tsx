@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { AdhesionCard } from "@/components/member/AdhesionCard";
 import { AskHome, PullToRefresh } from "@/components/member/Buttons";
+import { Stories } from "@/components/member/Stories";
 import { Screen } from "@/components/ui/Screen";
 import { requireMember } from "@/lib/auth";
 import { nowMs, today } from "@/lib/clock";
@@ -8,6 +9,7 @@ import { getRepo } from "@/lib/data";
 import { fullName, todayLong } from "@/lib/format";
 import { listDashboardNews } from "@/lib/modules/engagement/news-source";
 import { quoteOfDay } from "@/lib/modules/engagement/quotes";
+import { buildStories } from "@/lib/modules/engagement/stories";
 import type { WidgetId } from "@/lib/modules/engagement/types";
 import { resolveWidgets, type ResolvedWidget } from "@/lib/modules/engagement/widgets";
 import { membershipState, nextBookingOf, payEnv, ticketData, upcomingFor } from "@/lib/views";
@@ -122,7 +124,7 @@ export default async function MemberHome() {
           </div>
         )),
     );
-  const [main, side] = await Promise.all([column("main"), column("side")]);
+  const [main, side, stories] = await Promise.all([column("main"), column("side"), buildStories({ me: v.profile, events, mine, news })]);
   const toItem = (w: ResolvedWidget): CustomizerItem => ({ id: w.id, label: w.label, hint: w.hint, icon: w.icon, mandatory: w.mandatory, enabled: w.enabled });
 
   return (
@@ -137,6 +139,7 @@ export default async function MemberHome() {
             <WidgetCustomizer items={widgets.map(toItem)} defaults={resolveWidgets(null).map(toItem)} />
           </div>
         </div>
+        <Stories groups={stories} />
         <div className="dash">
           <div className="dash-col main">{main}</div>
           <div className="dash-col side">{side}</div>

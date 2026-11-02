@@ -8,6 +8,8 @@ import { NotifBell } from "../shell/NotifBell";
 import { SpaceLinks, SpaceSheetButton } from "../shell/SpaceSwitch";
 import { Avatar } from "../ui/Avatar";
 import { Icon } from "../ui/Icon";
+import { SwipeBack } from "../ui/SwipeBack";
+import { TabIndicator } from "../ui/TabIndicator";
 import { CountBadge } from "../ui/TweenNumber";
 
 const NAV: Array<{ href: string; icon: IconName; label: string; title: string }> = [
@@ -128,6 +130,8 @@ export function MemberChrome({
       </aside>
       <MemberHeadPortal title={title} home={active === "/espace"} name={name} notifs={notifs} spaces={spaces} />
       <nav className="tabbar" aria-label="Navigation de l’appli">
+        <TabIndicator />
+        <SwipeBack base="/espace" />
         {NAV.map((n) => (
           <Link key={n.href} href={n.href} className={"tab" + (tabActive === n.href ? " on" : "")} aria-current={tabActive === n.href ? "page" : undefined}>
             <Icon name={n.icon} />

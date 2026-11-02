@@ -5,6 +5,7 @@ import { IconSprite } from "@/components/IconSprite";
 import { PwaRegister } from "@/components/securite/PwaRegister";
 import { Switcher } from "@/components/shell/Switcher";
 import { FlyCatcher } from "@/components/ui/fly";
+import { ScrollChrome } from "@/components/ui/ScrollChrome";
 import { ToastProvider } from "@/components/ui/Toasts";
 import { nowMs } from "@/lib/clock";
 import { demoAllowed, isRealMode } from "@/lib/env";
@@ -12,6 +13,7 @@ import { publicSiteUrl } from "@/lib/modules/lancement/seo"; // --- Lancement --
 import { todayLong } from "@/lib/format";
 import "./globals.css";
 import "../styles/communaute.css"; // --- Lot 1 ---
+import "../styles/app-feel.css"; // sensation d’appli (barre flottante, en-tête en verre, cascade)
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -54,12 +56,26 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const real = isRealMode();
   const showSwitcher = !real && demoAllowed(); // --- Lancement --- jamais de sélecteur démo si NEXT_PUBLIC_DEMO=false
   return (
-    <html lang="fr" className={`${playfair.variable} ${albert.variable}${showSwitcher ? "" : " no-switch"}`}>
+    <html lang="fr" className={`${playfair.variable} ${albert.variable}${showSwitcher ? "" : " no-switch"}`} suppressHydrationWarning>
+      <head>
+        {/* Écran de lancement : seulement dans l'appli installée, une fois par ouverture */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if((matchMedia('(display-mode: standalone)').matches||navigator.standalone)&&!sessionStorage.getItem('nc-launch')){sessionStorage.setItem('nc-launch','1');document.documentElement.classList.add('launching');setTimeout(function(){document.documentElement.classList.remove('launching')},1500)}}catch(e){}",
+          }}
+        />
+      </head>
       <body>
+        <div className="launch" aria-hidden="true">
+          <img src="/img/monogramme-clair.png" alt="" />
+          <span className="launch-word">Nomad Club</span>
+        </div>
         <IconSprite />
         <ToastProvider>
           <CheckoutHost>
             <FlyCatcher />
+            <ScrollChrome />
             {showSwitcher && <Switcher dateLabel={todayLong(nowMs())} />}
             <main id="spaces">{children}</main>
           </CheckoutHost>
