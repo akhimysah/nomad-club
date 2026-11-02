@@ -17,6 +17,8 @@ export async function GET(request: NextRequest) {
       // --- Lot 4 --- : rattache l'inscription à sa marraine (cookie nc_parrain)
       const { data } = await supabase.auth.getUser();
       if (data.user) await (await import("@/lib/modules/engagement/referral")).claimReferral(data.user.id);
+      // --- E-mails --- bienvenue à la première connexion d'un compte tout juste créé (une seule fois)
+      if (data.user) await (await import("@/lib/modules/emails/triggers")).sendWelcomeIfNew(data.user);
       // --- Lot 6 --- connexion journalisée pour les administratrices (puis double authentification)
       const { afterSignIn } = await import("@/lib/modules/securite/sign-in");
       return NextResponse.redirect(new URL(await afterSignIn(supabase, dest), url));

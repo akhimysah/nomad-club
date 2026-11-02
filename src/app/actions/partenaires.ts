@@ -180,6 +180,15 @@ export async function inviteMemberAction(organizationId: string, _: FormState, f
   const org = await repo.getEstablishment(organizationId);
   await audit({ actorId: acc.profile.id, action: "organization.invite", targetType: "organization", targetId: organizationId, summary: `${email.data} invitée dans l’équipe de ${org?.name ?? "l’établissement"}`, details: { joined: r.joinedProfileId } });
   if (r.joinedProfileId && org) await roleGranted(r.joinedProfileId, org.kinds.includes("partner") ? "partner" : "pro");
+  // --- E-mails --- invitation d'équipe envoyée à l'adresse saisie
+  if (org)
+    await (await import("@/lib/modules/emails/triggers")).sendTeamInvite({
+      email: email.data,
+      inviterName: acc.profile.firstName,
+      organizationName: org.name,
+      kind: org.kinds.includes("partner") ? "partner" : "pro",
+      joinedProfileId: r.joinedProfileId ?? null,
+    });
   revalidateOrg();
   return { ok: true, message: r.joinedProfileId ? "Elle fait maintenant partie de l’équipe : son espace est ouvert." : "Invitation enregistrée : elle rejoindra l’équipe à la création de son compte." };
 }

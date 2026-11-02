@@ -79,6 +79,13 @@ Chaque lot est livrable seul, testable en mode démo puis en mode réel.
 - [~] API pour applis natives : l'export (`/api/moi/export`) et les règles sont prêts ; les applis natives pourront utiliser Supabase directement (RLS) avec le même jeton. Une API REST dédiée reste à concevoir avec le besoin réel.
 - [ ] À faire en mode réel : activer MFA TOTP dans Supabase, générer les clés VAPID, `CRON_SECRET`, planifier `scripts/backup.sh`, faire valider les textes juridiques, brancher le consentement `directory` sur l'annuaire et `geolocation` sur la carte (Lot 3) à la fusion.
 
+### Vague 2 — E-mails transactionnels (branche `v2-emails`, migration `0011_emails.sql`, module `src/lib/modules/emails/`)
+- [x] Interface `Mailer` : Resend (API HTTP, envoi groupé par 100), console (démo / sans clé : journal + derniers envois en mémoire), SMTP prévu et documenté ; branchée sur `registerMailer` (`src/instrumentation.ts` + branchement à la demande dans `src/lib/mail-hook.ts`).
+- [x] 16 modèles en français (+ un modèle générique), noir et blanc, tables + styles en ligne, version texte, lien de désinscription en un clic (RFC 8058) pour les non essentiels ; billet avec QR intégré et `.ics` en pièce jointe.
+- [x] Canal e-mail de `notify()` : préférences « e-mail » respectées, essentiels (billet, reçu, accès) toujours envoyés. Déclencheurs : bienvenue, suppression programmée / effectuée, export de données, invitation d'équipe, relances des fondatrices, rappels de renouvellement J-30 / J-7 / J-1 (`/api/cron/emails`).
+- [x] Journal `email_log` (RLS admin + 2FA, effacé avec le compte, purge 180 jours), page `/fondatrices/emails` (filtres, renvoyer, état de la configuration) et aperçu de chaque modèle `/fondatrices/emails/apercu/[modele]` ; `npm run test:emails`.
+- [ ] À faire en production : domaine vérifié chez Resend (SPF, DKIM, DMARC), `RESEND_API_KEY`, `EMAIL_FROM`, SMTP de Supabase Auth sur Resend + modèle du lien magique (`docs/emails.md`), relecture des textes par la cliente. Paiements / contrats : appeler `sendEmail` (`payment_receipt`, `payment_failed`, `contract_accepted`).
+
 ## Décisions à prendre avec la cliente
 
 1. **Paiement** : Stripe n'accepte pas les entreprises immatriculées au Maroc. Le club encaisse-t-il via une société en France / UE (Stripe OK) ou au Maroc (CMI, PayPal…) ?
@@ -86,4 +93,4 @@ Chaque lot est livrable seul, testable en mode démo puis en mode réel.
 3. **Signature des contrats** : acceptation électronique simple (case + horodatage) suffit-elle au départ, ou signature qualifiée via un prestataire ?
 4. **Hébergement** : Vercel + Supabase (prévu), ou le VPS Hostinger déjà utilisé pour le carnet ?
 5. **Charte graphique** : noir et blanc actuel, ou l'une des pistes Riad Sauge / Majorelle / Nuit Rose ?
-6. **E-mails** : adresse d'envoi (ex. bonjour@nomadclub…) et nom de domaine.
+6. **E-mails** : adresse d'envoi (ex. bonjour@nomadclub…) et nom de domaine, compte Resend au nom du club (voir `docs/emails.md`).

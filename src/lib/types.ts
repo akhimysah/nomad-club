@@ -282,6 +282,7 @@ export type AuditAction =
   // --- Lot 4 ---
   | EngagementAuditAction
   | import("./modules/securite/types").SecuriteAuditAction // --- Lot 6 ---
+  | import("./modules/emails/types").EmailsAuditAction // --- E-mails ---
   // --- Lot 1 ---
   | "news.create"
   | "news.update"
@@ -303,7 +304,7 @@ export type AuditEntry = {
   id: string;
   actorId: string | null;
   action: AuditAction;
-  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | CrmTargetType /* Lot 5 */ | EngagementAuditTarget /* Lot 4 */ | /* Lot 1 */ "news" | "group" | "message" | "report" | "keyword";
+  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | CrmTargetType /* Lot 5 */ | EngagementAuditTarget /* Lot 4 */ | /* Lot 1 */ "news" | "group" | "message" | "report" | "keyword" | /* E-mails */ "email";
   targetId: string | null;
   /** Phrase lisible (« Virement de Lou Garnier validé · 670 $ »). */
   summary: string;

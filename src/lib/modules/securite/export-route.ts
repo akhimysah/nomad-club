@@ -20,6 +20,8 @@ export async function personalExportResponse(): Promise<NextResponse> {
     targetId: v.profile.id,
     summary: `${fullName(v.profile)} a téléchargé ses données`,
   });
+  // --- E-mails --- avis de sécurité : un export de données a été fait sur ce compte
+  await (await import("../emails/triggers")).sendDataExportReady(v.profile);
   return new NextResponse(JSON.stringify(data, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",

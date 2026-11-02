@@ -23,6 +23,8 @@ const COMMUNAUTE_AUDIT_LABEL: Record<string, string> = {
   "keyword.add": "Mot-clé ajouté",
   "keyword.remove": "Mot-clé retiré",
   "event.remind": "Rappels J-1",
+  // --- E-mails ---
+  "email.resend": "E-mail renvoyé",
 };
 
 registerAuditLabels({ ...COMMUNAUTE_AUDIT_LABEL, ...PARTENAIRES_AUDIT_LABEL, ...ENGAGEMENT_AUDIT_LABEL, ...CRM_AUDIT_LABEL });

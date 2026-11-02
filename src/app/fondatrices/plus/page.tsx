@@ -22,6 +22,8 @@ const HINT: Record<string, string> = {
   "/fondatrices/business": "Deals entre membres, retombées du réseau, barème des points.",
   // --- Lot 6 ---
   "/fondatrices/securite": "Double authentification, demandes de suppression, protections.",
+  // --- E-mails ---
+  "/fondatrices/emails": "E-mails envoyés, échecs à renvoyer, modèles à relire.",
 };
 
 /** Téléphone : les entrées de l'espace fondatrices qui n'ont pas d'onglet dans la barre du bas. */
