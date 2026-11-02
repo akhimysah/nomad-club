@@ -238,5 +238,8 @@ console.log("\nReprise du rôle unique (base existante)");
   await legacy.close();
 }
 
+// --- Lot 3 ---
+await (await import("./test-sql/partenaires.mjs")).default({ db, as, rejects, one, count, ok, uuid });
+
 console.log(`\n${passes} vérification${passes > 1 ? "s" : ""} réussie${passes > 1 ? "s" : ""}, ${failures} échec${failures > 1 ? "s" : ""}.`);
 process.exit(failures ? 1 : 0);

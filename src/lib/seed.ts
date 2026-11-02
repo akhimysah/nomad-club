@@ -23,6 +23,9 @@ import type {
   Reminder,
 } from "./types";
 import { ANNUAIRE } from "./carnet-annuaire.ts";
+// --- Lot 3 ---
+import { partenairesSeed } from "./modules/partenaires/seed.ts";
+import type { Offer, PartenairesSeed } from "./modules/partenaires/types.ts";
 
 export type SeedData = {
   profiles: Profile[];
@@ -40,6 +43,8 @@ export type SeedData = {
   auditLog: AuditEntry[];
   notifications: AppNotification[];
   notificationPrefs: NotificationPref[];
+  // --- Lot 3 --- (offres complètes, fiches, codes, statistiques, abonnements, positions)
+  partenaires: PartenairesSeed & { offers: Offer[] };
 };
 
 /** Identifiants fixes utilisés par le mode démo. */
@@ -547,5 +552,7 @@ export function createSeed(): SeedData {
   return {
     profiles, places, events, bookings, payments, memberships, memories, messages, reminders, partnerOffers,
     organizations, organizationMembers, auditLog, notifications, notificationPrefs,
+    // --- Lot 3 --- (complète aussi organisations, rattachements et rôles ci-dessus)
+    partenaires: partenairesSeed({ profiles, organizations, organizationMembers, partnerOffers }),
   };
 }
