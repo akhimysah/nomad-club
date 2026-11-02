@@ -9,6 +9,26 @@ export function isRealMode(): boolean {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
 
+// --- Lancement --- mode démo interdit explicitement (production) ---
+/**
+ * NEXT_PUBLIC_DEMO=false interdit le mode démo : sans Supabase, l'appli n'affiche ni sélecteur d'espace
+ * ni données d'exemple, mais la page « configuration manquante ». Par défaut (variable absente), la démo
+ * reste permise pour ne rien changer en développement.
+ */
+export function demoAllowed(): boolean {
+  return process.env.NEXT_PUBLIC_DEMO !== "false";
+}
+
+/** Ni Supabase configuré, ni démo permise : rien ne doit s'afficher hormis la page d'explication. */
+export function configMissing(): boolean {
+  return !isRealMode() && !demoAllowed();
+}
+
+/** Page de maintenance (MAINTENANCE_MODE=true). */
+export function maintenanceMode(): boolean {
+  return process.env.MAINTENANCE_MODE === "true";
+}
+
 export function appMode(): "demo" | "real" {
   return isRealMode() ? "real" : "demo";
 }

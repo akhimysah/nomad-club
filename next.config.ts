@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders() },
+      // --- Lancement --- espaces privés et parcours personnels : jamais indexés
+      {
+        source: "/:root(espace|fondatrices|partenaire|pro|mes-donnees|bienvenue|candidature|invitation|billet|auth|api|statut|hors-ligne)/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
       {
         source: "/sw.js",
         headers: [
