@@ -78,8 +78,12 @@ export function ContactsTable({
       const on = !next.has(id);
       if (shift && last !== null) {
         const [a, b] = [Math.min(last, i), Math.max(last, i)];
-        for (let k = a; k <= b; k++) (on ? next.add(ids[k]) : next.delete(ids[k]));
-      } else on ? next.add(id) : next.delete(id);
+        for (let k = a; k <= b; k++) {
+          if (on) next.add(ids[k]);
+          else next.delete(ids[k]);
+        }
+      } else if (on) next.add(id);
+      else next.delete(id);
       return next;
     });
     setLast(i);
