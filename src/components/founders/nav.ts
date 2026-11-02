@@ -9,6 +9,7 @@ export const FOUNDER_NAV: FounderNavItem[] = [
   { href: "/fondatrices/membres", icon: "users", label: "Membres", tab: "Membres", title: "Membres", mobile: true },
   { href: "/fondatrices/evenements", icon: "cal", label: "Événements", tab: "Agenda", title: "Événements", mobile: true },
   { href: "/fondatrices/encaissements", icon: "wallet", label: "Encaissements", tab: "Paiements", title: "Encaissements", mobile: true },
+  { href: "/fondatrices/communaute", icon: "chat", label: "Communauté", tab: "Communauté", title: "Communauté", mobile: false }, // --- Lot 1 ---
   { href: "/fondatrices/crm", icon: "book", label: "CRM", tab: "CRM", title: "CRM", mobile: false },
   { href: "/fondatrices/roles", icon: "lock", label: "Rôles et accès", tab: "Rôles", title: "Rôles", mobile: false },
   { href: "/fondatrices/journal", icon: "clock", label: "Journal", tab: "Journal", title: "Journal", mobile: false },

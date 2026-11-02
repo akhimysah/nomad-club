@@ -7,7 +7,7 @@ import { EventImage } from "@/components/ui/EventImage";
 import { Icon } from "@/components/ui/Icon";
 import { MemberCard } from "@/components/ui/MemberCard";
 import { Screen } from "@/components/ui/Screen";
-import { requireMember } from "@/lib/auth";
+import { requireMember, viewerCan } from "@/lib/auth";
 import { today, ymdOf } from "@/lib/clock";
 import { PRICES } from "@/lib/content";
 import { getRepo } from "@/lib/data";
@@ -35,6 +35,23 @@ export default async function MoiPage() {
           <div>
             <div className="eyebrow desk-only">Moi</div>
             <h1 className="scr-title">Ma carte et mon adhésion</h1>
+          </div>
+          {/* --- Lot 1 --- accès à ma fiche, aux actualités et à la modération (téléphone : pas d'onglet) */}
+          <div className="btn-row">
+            <Link className="btn btn-ghost btn-sm" href="/espace/moi/profil">
+              <Icon name="user" />
+              Ma fiche
+            </Link>
+            <Link className="btn btn-ghost btn-sm" href="/espace/actualites">
+              <Icon name="star" />
+              Actualités
+            </Link>
+            {viewerCan(v, "messages.moderate") && (
+              <Link className="btn btn-ghost btn-sm" href="/espace/moderation">
+                <Icon name="inbox" />
+                Modération
+              </Link>
+            )}
           </div>
         </div>
         <div className="moi-grid">

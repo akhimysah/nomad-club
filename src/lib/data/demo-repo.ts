@@ -10,6 +10,7 @@ import { newTicketCode } from "../domain/tickets";
 import { fullName } from "../format";
 import { inCircle, isAdmin } from "../permissions";
 import { createDemoEngagementRepo } from "../modules/engagement/demo"; // --- Lot 4 ---
+import { createCommunauteDemoRepo } from "../modules/communaute/demo";
 import { createSeed, type SeedData } from "../seed";
 // --- Lot 5 ---
 import { crmDemoRepo } from "../modules/crm/demo-repo";
@@ -24,6 +25,7 @@ type DemoGlobal = typeof globalThis & { __nomadDemoDb?: SeedData };
 /** Jeu en mémoire d'une version antérieure (gardé par le rechargement à chaud) : on le recrée. */
 function outdated(d: SeedData): boolean {
   return !Array.isArray(d.notifications) || !Array.isArray(d.profiles[0]?.roles) || !d.partenaires /* Lot 3 */;
+  return !Array.isArray(d.notifications) || !Array.isArray(d.profiles[0]?.roles) || !d.communaute?.comments /* Lot 1 */;
 }
 
 function db(): SeedData {
@@ -246,8 +248,11 @@ export const demoRepo: Repo = {
         b.status !== "cancelled" &&
         ((input.profileId && b.profileId === input.profileId) || (!input.profileId && input.guestWhatsapp && digits(b.guestWhatsapp) === digits(input.guestWhatsapp))),
     );
-    if (existing) return { status: "already", booking: clone(existing) };
     const stats = eventStats(e, d.bookings);
+    // Lot 1 : une place s'est libérée pour une personne en liste d'attente → sa demande devient une réservation.
+    const promote = existing?.status === "waitlist" && stats.left > 0 && !input.waitlistIfFull ? existing : null;
+    if (existing && !promote) return { status: "already", booking: clone(existing) };
+    if (promote) promote.status = "cancelled";
     const base = {
       eventId: e.id,
       profileId: input.profileId,
@@ -490,4 +495,7 @@ export const demoRepo: Repo = {
     }
     pref[channel] = enabled;
   },
+
+  // --- Lot 1 --- communauté (src/lib/modules/communaute/demo.ts)
+  ...createCommunauteDemoRepo(db),
 };

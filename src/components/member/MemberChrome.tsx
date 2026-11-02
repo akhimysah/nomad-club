@@ -30,11 +30,18 @@ const EXTRA: Array<{ href: string; icon: IconName; label: string; title: string 
   { href: "/espace/business", icon: "star", label: "Business", title: "Business" },
   { href: "/espace/parrainage", icon: "heart", label: "Parrainage", title: "Parrainage" },
 ];
+// --- Lot 1 --- entrées sans onglet (barre latérale sur ordinateur ; sur téléphone : accueil et page Moi)
+const LOT1_NAV: Array<{ href: string; icon: IconName; label: string; title: string }> = [
+  { href: "/espace/actualites", icon: "star", label: "Actualités", title: "Actualités" },
+  { href: "/espace/moderation", icon: "inbox", label: "Modération", title: "Modération" },
+];
 
 function activeHref(pathname: string): string {
   const lot4 = EXTRA.find((n) => pathname.startsWith(n.href)); // --- Lot 4 ---
   if (lot4) return lot4.href;
   if (pathname === "/espace") return "/espace";
+  const lot1 = LOT1_NAV.find((n) => pathname.startsWith(n.href));
+  if (lot1) return lot1.href;
   const lot3 = extraOf(pathname); // --- Lot 3 ---
   if (lot3) return lot3.href;
   if (pathname.startsWith("/espace/moi")) return "/espace/moi";
@@ -43,10 +50,31 @@ function activeHref(pathname: string): string {
 }
 
 /** Barre latérale (ordinateur), en-tête et barre du bas (téléphone) de l'espace membre. */
-export function MemberChrome({ name, formule, unread, notifs, spaces }: { name: string; formule: string; unread: number; notifs: number; spaces: Space[] }) {
+export function MemberChrome({
+  name,
+  formule,
+  unread,
+  notifs,
+  spaces,
+  moderation,
+}: {
+  name: string;
+  formule: string;
+  unread: number;
+  notifs: number;
+  spaces: Space[];
+  /** Lot 1 : signalements ouverts (undefined si la personne ne modère pas). */
+  moderation?: number;
+}) {
   const pathname = usePathname();
   const active = activeHref(pathname);
-  const title = active === "/espace/moi" ? "Moi" : active === "/espace/notifications" ? "Notifications" : ([...NAV, ...EXTRA, ...EXTRA_NAV].find((n) => n.href === active)?.title ?? "Accueil");
+  const lot1 = LOT1_NAV.filter((n) => n.href !== "/espace/moderation" || moderation !== undefined);
+  const title =
+    active === "/espace/moi"
+      ? "Moi"
+      : active === "/espace/notifications"
+        ? "Notifications"
+        : ([...NAV, ...EXTRA, ...EXTRA_NAV, ...LOT1_NAV].find((n) => n.href === active)?.title ?? "Accueil");
   const tabActive = EXTRA_NAV.some((n) => n.href === active) ? "/espace/carnet" : active; // --- Lot 3 ---
   return (
     <>
@@ -58,6 +86,13 @@ export function MemberChrome({ name, formule, unread, notifs, spaces }: { name: 
               <Icon name={n.icon} />
               {n.label}
               {n.href === "/espace/cercle" && <CountBadge value={unread} className="nbadge" />}
+            </Link>
+          ))}
+          {lot1.map((n) => (
+            <Link key={n.href} href={n.href} className={"side-btn" + (active === n.href ? " on" : "")} aria-current={active === n.href ? "page" : undefined}>
+              <Icon name={n.icon} />
+              {n.label}
+              {n.href === "/espace/moderation" && <CountBadge value={moderation ?? 0} className="nbadge" />}
             </Link>
           ))}
           {/* --- Lot 3 --- */}

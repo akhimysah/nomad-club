@@ -28,6 +28,8 @@ import { partenairesSeed } from "./modules/partenaires/seed.ts";
 import type { Offer, PartenairesSeed } from "./modules/partenaires/types.ts";
 import { createEngagementSeed } from "./modules/engagement/seed.ts"; // --- Lot 4 ---
 import type { EngagementSeed } from "./modules/engagement/types";
+import { createCommunauteSeed } from "./modules/communaute/seed.ts"; // --- Lot 1 ---
+import type { CommunauteData } from "./modules/communaute/types.ts";
 
 export type SeedData = {
   profiles: Profile[];
@@ -49,6 +51,8 @@ export type SeedData = {
   partenaires: PartenairesSeed & { offers: Offer[] };
   // --- Lot 4 ---
   engagement: EngagementSeed;
+  /** Lot 1 — Communauté : actualités, groupes, modération, annuaire. */
+  communaute: CommunauteData;
 };
 
 /** Identifiants fixes utilisés par le mode démo. */
@@ -553,11 +557,17 @@ export function createSeed(): SeedData {
   // Préférences : par défaut tout est actif ; Inès a coupé les e-mails des nouveaux rendez-vous.
   const notificationPrefs: NotificationPref[] = [{ profileId: "p-ines", type: "event_published", inApp: true, email: false, push: false }];
 
+  // --- Lot 1 --- : les messages (groupes, modération) et notifications du module rejoignent les tables communes.
+  const communaute = createCommunauteSeed(profiles);
+  messages.push(...communaute.messages);
+  notifications.push(...communaute.notifications);
+
   return {
     profiles, places, events, bookings, payments, memberships, memories, messages, reminders, partnerOffers,
     organizations, organizationMembers, auditLog, notifications, notificationPrefs,
     // --- Lot 3 --- (complète aussi organisations, rattachements et rôles ci-dessus)
     partenaires: partenairesSeed({ profiles, organizations, organizationMembers, partnerOffers }),
     engagement: createEngagementSeed(), // --- Lot 4 ---
+    communaute, // --- Lot 1 ---
   };
 }

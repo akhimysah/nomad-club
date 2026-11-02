@@ -50,7 +50,7 @@ export default async function MemberHome() {
     need("salon") ? repo.listMessages("general") : none([]),
     need("address") ? repo.listPlaces() : none([]),
     membershipState(v.profile),
-    listDashboardNews(3),
+    listDashboardNews(3, me),
     need("offers") ? repo.listPartnerOffers() : none([]),
     need("points") ? repo.listPoints(me) : none([]),
     need("points") ? repo.listDeals({ profileId: me }) : none([]),

@@ -59,6 +59,15 @@ const CAP_LABEL: Record<Capability, string> = {
   "audit.export": "Exporter le journal",
   "privacy.process_deletions": "Traiter les suppressions de compte",
   "security.manage": "Réglages de sécurité",
+  // --- Lot 1 ---
+  "news.react": "Réagir aux actualités",
+  "news.manage": "Publier les actualités",
+  "groups.join": "Rejoindre les groupes",
+  "groups.manage": "Créer et gérer les groupes",
+  "messages.report": "Signaler un message",
+  "keywords.manage": "Gérer les mots-clés",
+  "events.remind": "Envoyer les rappels J-1",
+  "directory.edit_own": "Modifier sa fiche d’annuaire",
 };
 
 type Props = { searchParams: Promise<{ q?: string; tous?: string }> };

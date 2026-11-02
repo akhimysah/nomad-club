@@ -22,6 +22,9 @@ revoke execute on function public.notifications_respect_prefs() from public, ano
 
 -- Code de billet plus long (6 caractères aléatoires au lieu de 4 : ~887 millions de combinaisons par date),
 -- pour rendre l'énumération des billets (get_ticket est public) impraticable.
+-- Le format accepté couvre les anciens billets (4 caractères) et les nouveaux (6).
+alter table public.bookings drop constraint if exists bookings_ticket_code_check;
+alter table public.bookings add constraint bookings_ticket_code_check check (ticket_code ~ '^NC-[0-9]{4}-[A-Z0-9]{4}([A-Z0-9]{2})?$');
 create or replace function public.new_ticket_code(p_starts timestamptz) returns text
 language plpgsql volatile set search_path = public as $$
 declare

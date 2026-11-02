@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 
 const HINT: Record<string, string> = {
   "/fondatrices/crm": "Contacts, pipeline prospects, tâches, segments et statistiques.",
+  "/fondatrices/communaute": "Actualités du club, groupes thématiques et modération.", // --- Lot 1 ---
   "/fondatrices/roles": "Donner ou retirer un rôle, voir qui peut faire quoi.",
   "/fondatrices/journal": "Les opérations importantes : qui, quoi, quand.",
   "/fondatrices/notifications": "Vos notifications et vos préférences.",

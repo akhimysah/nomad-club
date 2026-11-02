@@ -882,7 +882,26 @@ insert into public.messages (id, channel, author_id, body, created_at, read_at) 
   ('98634fce-4268-4a57-ad1e-9a2b89e838b8', 'dm:8eb1b14a-c639-4010-a09c-702b56b35d26:9a6df925-8c06-478a-a7ac-6b27ee0e4abc', '8eb1b14a-c639-4010-a09c-702b56b35d26', 'Bienvenue encore, Inès ! Dis-moi si tu cherches une adresse ou un contact.', '2026-10-12T08:10:00.000Z', '2026-10-12T08:30:00.000Z'),
   ('f3158107-9df5-4ef7-adf7-dd713e6cff02', 'dm:8eb1b14a-c639-4010-a09c-702b56b35d26:9a6df925-8c06-478a-a7ac-6b27ee0e4abc', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'Merci Julia, à très vite au Fer7 !', '2026-10-12T08:32:00.000Z', '2026-10-12T09:00:00.000Z'),
   ('3dfb10d6-ac6c-408d-a6e1-1aa2962858e5', 'dm:9a6df925-8c06-478a-a7ac-6b27ee0e4abc:fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'On se met à côté au lunch ? Je voudrais te présenter une amie qui lance son agence.', '2026-10-13T17:40:00.000Z', null),
-  ('30c38c42-1b46-46a8-a1cd-16e61dd2e93b', 'dm:77945d38-183f-4e88-acee-1f78d34be5b4:9a6df925-8c06-478a-a7ac-6b27ee0e4abc', '77945d38-183f-4e88-acee-1f78d34be5b4', 'Coucou Inès ! Tu veux toujours le Kahneman ? Je peux te le déposer au Fer7 lundi 26.', '2026-10-14T09:11:00.000Z', null);
+  ('30c38c42-1b46-46a8-a1cd-16e61dd2e93b', 'dm:77945d38-183f-4e88-acee-1f78d34be5b4:9a6df925-8c06-478a-a7ac-6b27ee0e4abc', '77945d38-183f-4e88-acee-1f78d34be5b4', 'Coucou Inès ! Tu veux toujours le Kahneman ? Je peux te le déposer au Fer7 lundi 26.', '2026-10-14T09:11:00.000Z', null),
+  ('d8f3e8df-0a4b-40e9-a505-6a6c7295b17d', 'group:1bdba112-3a7e-41fa-a2c7-487b076a1d90', '77945d38-183f-4e88-acee-1f78d34be5b4', 'Bienvenue dans le club de lecture ! Première rencontre le jeudi 22 octobre chez Maison Amaj, 18 h.', '2026-10-06T16:30:00.000Z', null),
+  ('fd817773-e295-4a9d-a739-21f79ebc5c5d', 'group:1bdba112-3a7e-41fa-a2c7-487b076a1d90', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'Je n’ai lu que la moitié du Kahneman… on parle des chapitres 1 à 15 ?', '2026-10-11T20:05:00.000Z', null),
+  ('cbbb3015-6549-4e16-ab01-7ca7a1e26b60', 'group:1bdba112-3a7e-41fa-a2c7-487b076a1d90', '57dd531c-832f-4152-a924-f951e3853b37', 'Parfait pour moi. J’apporte la version allemande pour comparer les titres, ils sont très drôles.', '2026-10-12T07:40:00.000Z', null),
+  ('4c4eeb05-39e6-4fb2-a39b-fc677b8d8468', 'group:1bdba112-3a7e-41fa-a2c7-487b076a1d90', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'Je viens ! Quelqu’un a une idée pour le livre de novembre ?', '2026-10-13T18:12:00.000Z', null),
+  ('adbc9171-616c-4583-af8e-fd97fea1cabb', 'group:3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '71b4e532-bca4-43d1-abbe-f5fd762ae677', 'Vous utilisez quoi pour la facturation au Maroc ? Je cherche un outil qui gère le dirham et l’euro.', '2026-10-08T09:15:00.000Z', null),
+  ('7d51e1a8-89ea-4bd6-a95d-a20a1a80c5ce', 'group:3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '3ead2e5f-d53e-43e1-ad2f-3bdbee485d71', 'J’utilise un tableur et un modèle Word… mais je suis preneuse d’une vraie solution.', '2026-10-08T10:02:00.000Z', null),
+  ('f8e87842-8274-414e-a64b-9a7baba3ab93', 'group:3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '70750f62-0486-4e74-ae84-2acbfa3fb69d', 'Quelqu’un s’intéresse à la crypto pour placer sa trésorerie ? J’ai trouvé une plateforme très rentable.', '2026-10-13T13:20:00.000Z', null),
+  ('54bf715c-56fc-4d97-a7b5-2e6e872a044d', 'group:3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '465d8833-64f5-4a5c-a280-4b752172485b', 'Je cherche une développeuse pour un petit site vitrine en novembre, budget raisonnable. Des recommandations ?', '2026-10-14T08:05:00.000Z', null),
+  ('a6407f68-9087-47e7-ae5c-715c56701177', 'group:e518f344-1ff8-44b8-a508-6942f30a9450', '2b33d7e1-5ea9-44fc-a5e8-d3959dd73272', 'Atelier parents-enfants samedi à 10 h à Guéliz, il reste 3 places pour les 4-7 ans.', '2026-10-10T08:00:00.000Z', null),
+  ('83a5040b-7821-4fd7-a5c6-7445bb109bd4', 'group:e518f344-1ff8-44b8-a508-6942f30a9450', 'ff0212c2-dfea-4bfb-a05a-e12aa98cea33', 'Une école bilingue à conseiller près de l’Hivernage ?', '2026-10-12T19:30:00.000Z', null),
+  ('0352d373-62c0-492c-ac5c-b4f53ae71729', 'group:e518f344-1ff8-44b8-a508-6942f30a9450', '6ddf0396-8eb9-4b1f-ae8e-eab5383cc11e', 'La nôtre est à Targa, très contente de l’équipe. Je t’envoie le contact en privé.', '2026-10-12T20:10:00.000Z', null),
+  ('bea0adf6-2deb-4f6d-af27-ab635406bec1', 'group:fcf0a0ad-3d80-449f-a556-54317733fb96', 'ee4610ef-5444-4c42-ab10-b64c7a12e9c4', 'Yoga au lever du soleil dimanche à la Palmeraie, qui vient ? On se retrouve à 7 h.', '2026-10-11T17:00:00.000Z', null),
+  ('8da95d8e-7067-4cf2-ab48-4ff1b06b1428', 'group:fcf0a0ad-3d80-449f-a556-54317733fb96', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Pensez à bien vous échauffer avant le padel du 7 novembre, je fais un petit rappel sur place si vous voulez.', '2026-10-13T11:45:00.000Z', null),
+  ('35a0492a-bc3b-4b20-a2f4-6df8e677335f', 'group:02558ae1-63e1-438d-a902-af4ab2bc5ae7', 'd2ff97f6-e943-44ab-a8cd-bae0eb064bc1', 'Retour d’expérience sur l’achat d’un riad en indivision : je peux en parler au prochain lunch.', '2026-10-09T14:00:00.000Z', null),
+  ('7d010c30-3547-4d8e-a6a8-53ea636e0b9e', 'group:02558ae1-63e1-438d-a902-af4ab2bc5ae7', '77945d38-183f-4e88-acee-1f78d34be5b4', 'Avec plaisir, et je complète sur la partie juridique (SCI ou SARL).', '2026-10-09T15:20:00.000Z', null),
+  ('ae2ec53b-3768-4367-a043-23bf4597807f', 'group:d99e6226-8305-41ff-a627-e4d2a6aed62d', '8f14bd8a-55c4-4844-a979-b0c21cc35d3d', 'Quelqu’un a déjà exporté vers le Canada ? Les démarches douanières me rendent folle.', '2026-10-10T10:00:00.000Z', null),
+  ('1658b73d-86f6-4f32-a6f0-1b7749212859', 'group:d99e6226-8305-41ff-a627-e4d2a6aed62d', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 'Oui, je te donne le nom de mon transitaire à Casablanca.', '2026-10-10T11:30:00.000Z', null),
+  ('d396cf16-c6f1-4a08-a471-4832ad934a01', 'general', 'ef60a9c1-cf93-4561-a137-07ff3310fb22', '[masqué]', '2026-10-13T21:14:00.000Z', null),
+  ('42aeebfb-2a1f-4f5c-a175-7b45d6ce3ed4', 'general', 'c4cefeba-0b6d-43eb-a90a-fe90fc722773', 'Je vends mes compléments minceur, -50 % pour les membres du club, écrivez-moi vite !', '2026-10-13T21:40:00.000Z', null);
 
 insert into public.reminders (id, profile_id, event_id, reason, due_at, sent_at, answered, scheduled_for) values
   ('5c064fe0-905f-4bea-a275-01e6566f5968', 'a4f79bdb-b39d-4d2d-a865-a3900e6a52f6', null, 'renewal', '2026-10-19', '2026-09-19T09:00:00.000Z', false, null),
@@ -933,7 +952,10 @@ insert into public.notifications (id, recipient_id, type, title, body, link, rea
   ('e21fbae9-727e-4576-a3cb-eb53b1396c6e', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'event_published', 'Nouveau rendez-vous : Dîner privé', 'Une grande table dans le jardin de Terrajana. Les places partent vite.', '/espace/agenda/diner-prive-terrajana', null, '2026-09-26T09:31:00.000Z'),
   ('b4374b06-fc5c-495d-a28d-3f56302b04ea', '8eb1b14a-c639-4010-a09c-702b56b35d26', 'event_published', 'Nouveau rendez-vous : Dîner privé', 'Publié et visible par toutes les membres.', '/fondatrices/evenements', null, '2026-09-26T09:31:00.000Z'),
   ('5fde57d7-10e5-4874-aa4d-a149e5b59d3c', '9338cf84-e1be-4199-a025-43c3366fc7e4', 'role_changed', 'Bienvenue dans l’espace Partenaire', 'Bloom House est reliée à ton compte. Les offres et statistiques arrivent bientôt.', '/partenaire', null, '2026-02-03T10:21:00.000Z'),
-  ('62fb7e78-1b9f-4b52-aaf9-b221e5df30ee', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'role_changed', 'Ta fiche pro est ouverte', 'Le Cabinet Loubna Cherkaoui est relié à ton compte professionnel.', '/pro', null, '2026-09-01T08:41:00.000Z');
+  ('62fb7e78-1b9f-4b52-aaf9-b221e5df30ee', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'role_changed', 'Ta fiche pro est ouverte', 'Le Cabinet Loubna Cherkaoui est relié à ton compte professionnel.', '/pro', null, '2026-09-01T08:41:00.000Z'),
+  ('280a9735-e72b-427c-a935-8275bc9a9ec0', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'news_published', 'Retour sur le brunch Neurosciences à AVABAY', 'Une nouvelle publication du club.', '/espace/actualites#news-avabay', null, '2026-10-12T10:00:00.000Z'),
+  ('01dacbe9-b474-4b3d-aa11-e08c84bf2757', '77945d38-183f-4e88-acee-1f78d34be5b4', 'moderation_report', 'Nouveau signalement', '« Je vends mes compléments minceur, -50 % pour les membres… »', '/espace/moderation', null, '2026-10-14T06:55:00.000Z'),
+  ('d68f4f6a-c34d-4405-a3d4-465b3e11380d', '8eb1b14a-c639-4010-a09c-702b56b35d26', 'group_request', 'Demande pour « Investisseuses »', 'Inès Laurent souhaite rejoindre le groupe.', '/fondatrices/communaute/groupes', null, '2026-10-13T11:00:00.000Z');
 
 insert into public.notification_prefs (profile_id, type, in_app, email, push) values
   ('9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'event_published', true, false, false);
@@ -1943,6 +1965,207 @@ insert into public.engagement_prefs (profile_id, widgets, leaderboard_opt_out, u
   ('9a6df925-8c06-478a-a7ac-6b27ee0e4abc', '[{"id":"next","enabled":true},{"id":"weather","enabled":true},{"id":"news","enabled":true},{"id":"adhesion","enabled":true},{"id":"events","enabled":true},{"id":"prayer","enabled":true},{"id":"points","enabled":true},{"id":"salon","enabled":true},{"id":"agenda","enabled":false},{"id":"offers","enabled":false},{"id":"referral","enabled":true},{"id":"quote","enabled":true},{"id":"ask","enabled":true},{"id":"address","enabled":true}]'::jsonb, false, '2026-10-10T09:00:00.000Z'),
   ('77945d38-183f-4e88-acee-1f78d34be5b4', '[]'::jsonb, true, '2026-09-01T09:00:00.000Z')
 on conflict (profile_id) do nothing;
+
+-- Lot 1 — Communauté (0004_communaute.sql) : annuaire, actualités, groupes, modération.
+insert into public.directory_profiles (profile_id, company, sector, skills, instagram, linkedin, website, looking_for, offering, visibility, show_whatsapp, show_email, updated_at) values
+  ('8eb1b14a-c639-4010-a09c-702b56b35d26', 'Nomad Club', 'Événementiel et voyage', array['Animation de communauté', 'Événementiel', 'Réseau à Marrakech']::text[], '@marrakechnomadclub', null, 'https://nomadclub.example', 'Des lieux qui ont une âme pour nos prochains rendez-vous.', 'Mon carnet d’adresses et un café pour chaque nouvelle arrivée.', 'all', false, true, '2026-10-01T09:00:00.000Z'),
+  ('284f8698-647d-42af-a8c8-4ae9fde10db0', 'Nomad Club', 'Événementiel et voyage', array['Partenariats', 'Négociation', 'Arabe, français, anglais']::text[], '@marrakechnomadclub', null, null, 'Des partenaires bien-être et des intervenantes inspirantes.', 'Des présentations : je connais (presque) tout Marrakech.', 'all', false, true, '2026-10-01T09:00:00.000Z'),
+  ('9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'Laurent Conseil', 'Communication et marketing', array['Relations presse', 'Stratégie de marque', 'Lancement au Maroc']::text[], null, 'linkedin.com/in/ines-laurent', null, 'Une graphiste et une photographe pour des clientes hôtelières.', 'Un regard sur ta communication et mon réseau presse en France.', 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('77945d38-183f-4e88-acee-1f78d34be5b4', 'Cabinet Tazi Avocats', 'Droit et finance', array['Droit des affaires', 'Création de société', 'Baux commerciaux']::text[], null, 'linkedin.com/in/yasmine-tazi', null, 'Des intervenantes pour un atelier « entreprendre au Maroc ».', 'Une première consultation offerte aux membres pour créer sa société.', 'all', false, true, '2026-10-01T09:00:00.000Z'),
+  ('fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'Studio Alaoui', 'Architecture et design', array['Architecture d’intérieur', 'Riads', 'Mobilier sur mesure']::text[], '@studio.alaoui', null, null, 'Une artisane zellige de confiance pour un chantier à la Médina.', 'Des conseils déco et mes adresses d’artisans.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('465d8833-64f5-4a5c-a280-4b752172485b', 'Maya B. Studio', 'Art, photo et création', array['Direction artistique', 'Identité visuelle', 'Shooting']::text[], '@mayab.studio', null, 'https://mayab.example', 'Des marques marocaines à accompagner.', 'Un audit de ton identité visuelle en 30 minutes.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('a4f79bdb-b39d-4d2d-a865-a3900e6a52f6', null, 'Art, photo et création', array['Portrait', 'Photo culinaire', 'Reportage d’événement']::text[], '@chloe.martin.photo', null, null, 'Des restaurants pour une série « tables de Marrakech ».', 'Un portrait professionnel à tarif membre.', 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('8f14bd8a-55c4-4844-a979-b0c21cc35d3d', 'Argan & Co', 'Mode, beauté et bijoux', array['Cosmétique naturelle', 'Formulation', 'Export Canada']::text[], '@argan.and.co', null, null, 'Une distributrice au Canada et en France.', 'Des échantillons et mes contacts de coopératives d’argan.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('2b33d7e1-5ea9-44fc-a5e8-d3959dd73272', null, 'Éducation et famille', array['Parentalité positive', 'Ateliers parents-enfants']::text[], null, null, null, 'Une salle pour des ateliers le samedi matin.', 'Un atelier découverte pour les mamans du club.', 'basic', false, false, '2026-10-01T09:00:00.000Z'),
+  ('ee4610ef-5444-4c42-ab10-b64c7a12e9c4', 'Studio Souffle', 'Bien-être et sport', array['Yoga vinyasa', 'Méditation', 'Retraites']::text[], '@studio.souffle', null, null, 'Un riad pour une retraite de printemps.', 'Un cours d’essai offert.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('57dd531c-832f-4152-a924-f951e3853b37', null, 'Communication et marketing', array['Traduction allemand-français', 'Interprétariat', 'Sous-titrage']::text[], null, null, null, 'Des clientes dans le tourisme haut de gamme.', 'La relecture de tes supports en allemand.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('ff0212c2-dfea-4bfb-a05a-e12aa98cea33', 'Maison Capucine', 'Architecture et design', array['Décoration', 'Home staging', 'Chine et brocante']::text[], '@maison.capucine', null, null, 'Des colocataires pour un stand au salon de la déco.', 'Mes adresses de souks pour chiner.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('71b4e532-bca4-43d1-abbe-f5fd762ae677', null, 'Tech et digital', array['Gestion de projet', 'Agile', 'Sites e-commerce']::text[], null, 'linkedin.com/in/nawal-garcia', null, 'Une développeuse freelance pour des missions ponctuelles.', 'De l’aide pour cadrer ton projet de site.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('6ddf0396-8eb9-4b1f-ae8e-eab5383cc11e', null, 'Santé', array['Kinésithérapie', 'Rééducation', 'Sport']::text[], null, null, null, 'Un cabinet à partager à Guéliz.', 'Des conseils posture pour le télétravail.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('097c42d6-61d3-4936-a308-31aae3f0fdf0', 'Lambert RH', 'Conseil et stratégie', array['Recrutement', 'Marque employeur', 'Coaching de carrière']::text[], null, 'linkedin.com/in/sophie-lambert', null, 'Des entreprises qui recrutent à Marrakech.', 'La relecture de ton CV et de ton profil LinkedIn.', 'all', false, true, '2026-10-01T09:00:00.000Z'),
+  ('f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 'Dar Karima', 'Mode, beauté et bijoux', array['Concept-store', 'Créatrices marocaines', 'Merchandising']::text[], '@dar.karima', null, null, 'De nouvelles créatrices à exposer.', 'Une vitrine dans ma boutique pour les créatrices du club.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('d2ff97f6-e943-44ab-a8cd-bae0eb064bc1', 'Riad Yasmina', 'Hôtellerie et restauration', array['Hôtellerie de luxe', 'Revenue management', 'Équipes']::text[], null, null, null, 'Des partenaires pour des séjours bien-être.', 'Des tarifs membres pour vos proches de passage.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('3ead2e5f-d53e-43e1-ad2f-3bdbee485d71', null, 'Tech et digital', array['React', 'Next.js', 'Accessibilité']::text[], null, 'linkedin.com/in/aurelie-petit', null, 'Des projets de sites pour des indépendantes.', 'Un diagnostic gratuit de ton site.', 'hidden', false, false, '2026-10-01T09:00:00.000Z'),
+  ('a7a1248c-bddc-42aa-ae48-8d4317f0f4ce', null, 'Mode, beauté et bijoux', array['Colorimétrie', 'Garde-robe capsule', 'Personal shopping']::text[], '@ambre.image', null, null, 'Des premières clientes à Marrakech.', 'Une analyse couleur à tarif découverte.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('b06e4df1-447a-4173-a096-84c5c7c1366d', null, 'Événementiel et voyage', array['Organisation d’événements', 'Réseau de prestataires']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('929a6983-8e5f-479c-ac00-f91d2977a6e0', null, 'Droit et finance', array['Droit des sociétés', 'Fiscalité', 'Création d’entreprise au Maroc']::text[], null, null, null, null, 'Un café et un retour d’expérience sur mon installation à Marrakech.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('c3d8c6ba-de51-4be6-a13f-dc3ac656ae02', null, 'Hôtellerie et restauration', array['Pâtisserie', 'Food styling']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('81135c46-5400-4cd8-a390-bb1091a4f13d', null, 'Communication et marketing', array['Stratégie de marque', 'Réseaux sociaux', 'Relations presse']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('61f757ce-4c43-49d9-abb9-8512bf634f48', null, 'Architecture et design', array['Rénovation de riads', 'Suivi de chantier']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('138e852a-3f2b-41f3-a9e8-58ee7e3ee415', null, 'Bien-être et sport', array['Accompagnement individuel', 'Ateliers de groupe', 'Gestion du stress']::text[], null, null, null, null, 'Un café et un retour d’expérience sur mon installation à Marrakech.', 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('ec90edb7-5367-43ce-aec2-2afcbca7180e', null, 'Mode, beauté et bijoux', array['Artisanat marocain', 'Vente en ligne']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('e3283e37-650b-4bb4-a7ac-d180b40ae17e', null, 'Communication et marketing', array['Stratégie de marque', 'Réseaux sociaux', 'Relations presse']::text[], null, null, null, null, null, 'basic', false, false, '2026-10-01T09:00:00.000Z'),
+  ('737db1ce-b87f-49b6-a06d-d4b6b6c0a5d4', null, 'Bien-être et sport', array['Accompagnement individuel', 'Ateliers de groupe']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('719381fa-3118-486b-a8d2-4625ad101a26', null, 'Mode, beauté et bijoux', array['Artisanat marocain', 'Vente en ligne', 'Sourcing']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', 'Un café et un retour d’expérience sur mon installation à Marrakech.', 'hidden', false, false, '2026-10-01T09:00:00.000Z'),
+  ('9338cf84-e1be-4199-a025-43c3366fc7e4', 'Bloom House', 'Bien-être et sport', array['Ateliers bien-être', 'Conférences', 'Lieu événementiel']::text[], '@bloomhouse.marrakech', null, null, null, '-15 % sur les ateliers de Bloom House.', 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('174f1774-5513-49c3-a246-2fde52c89e5c', null, 'Éducation et famille', array['Pédagogie', 'Ateliers enfants', 'Français langue étrangère']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('40f4e13c-8888-4e7a-ab7f-8321099d69ac', null, 'Communication et marketing', array['Stratégie de marque', 'Réseaux sociaux']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('45ea60a1-0c58-49ec-a426-2dc2b954a6a1', null, 'Santé', array['Ostéopathie', 'Périnatalité', 'Posture au travail']::text[], null, null, null, null, 'Un café et un retour d’expérience sur mon installation à Marrakech.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('6d257d5f-781c-4740-aa1d-012c05db1a42', null, 'Hôtellerie et restauration', array['Pâtisserie', 'Food styling']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('c60c920a-ce78-44d9-af19-843f96fcc152', null, 'Mode, beauté et bijoux', array['Artisanat marocain', 'Vente en ligne', 'Sourcing']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('1eba999b-3911-4006-ad0d-1a24c2bf82cc', null, 'Tech et digital', array['Développement web', 'Automatisation']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('3263681b-8988-43ca-a698-ae0efc977e27', null, 'Éducation et famille', array['Pédagogie', 'Ateliers enfants', 'Français langue étrangère']::text[], null, null, null, null, 'Un café et un retour d’expérience sur mon installation à Marrakech.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('e480333a-affe-409c-a9d1-e26e8905cf08', null, 'Événementiel et voyage', array['Organisation d’événements', 'Réseau de prestataires']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('70750f62-0486-4e74-ae84-2acbfa3fb69d', null, 'Tech et digital', array['Développement web', 'Automatisation', 'Produit']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('0b1c3176-7235-4da4-afc5-bd55118ed58a', null, 'Événementiel et voyage', array['Organisation d’événements', 'Réseau de prestataires']::text[], null, null, null, null, null, 'basic', true, false, '2026-10-01T09:00:00.000Z'),
+  ('b0fc6b7c-6ee9-48ca-a4e3-12d8b77aa40d', null, 'Droit et finance', array['Droit des sociétés', 'Fiscalité', 'Création d’entreprise au Maroc']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', 'Un café et un retour d’expérience sur mon installation à Marrakech.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('da6c8373-32eb-4108-a1bd-d201fea9f3c2', null, 'Hôtellerie et restauration', array['Pâtisserie', 'Food styling']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('777b3499-1936-4e79-af49-fed4b49cc181', null, 'Communication et marketing', array['Stratégie de marque', 'Réseaux sociaux', 'Relations presse']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('b945e11a-444a-4620-a6eb-eed21081d67f', null, 'Architecture et design', array['Rénovation de riads', 'Suivi de chantier']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('de100889-6fbc-4db2-a66e-db9007e9cbd0', null, 'Bien-être et sport', array['Accompagnement individuel', 'Ateliers de groupe', 'Gestion du stress']::text[], null, null, null, null, 'Un café et un retour d’expérience sur mon installation à Marrakech.', 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('ef60a9c1-cf93-4561-a137-07ff3310fb22', null, 'Mode, beauté et bijoux', array['Artisanat marocain', 'Vente en ligne']::text[], null, null, null, null, null, 'hidden', false, false, '2026-10-01T09:00:00.000Z'),
+  ('bba55507-be9d-4ca7-a989-6f273ed035d2', null, 'Communication et marketing', array['Stratégie de marque', 'Réseaux sociaux', 'Relations presse']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('c4cefeba-0b6d-43eb-a90a-fe90fc722773', null, 'Bien-être et sport', array['Accompagnement individuel', 'Ateliers de groupe']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('2701e651-8ffd-437a-ab38-92527206db40', null, 'Mode, beauté et bijoux', array['Artisanat marocain', 'Vente en ligne', 'Sourcing']::text[], null, null, null, null, 'Un café et un retour d’expérience sur mon installation à Marrakech.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('56df82bc-9906-4e4b-a9cb-56c4aecf6866', null, 'Droit et finance', array['Droit des sociétés', 'Fiscalité']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('9b5e52ed-4528-4964-a8ae-72770abb2376', null, 'Éducation et famille', array['Pédagogie', 'Ateliers enfants', 'Français langue étrangère']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('594ed44a-9998-4b0a-a2f3-3ac4862554bd', null, 'Communication et marketing', array['Stratégie de marque', 'Réseaux sociaux']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Cabinet Loubna Cherkaoui', 'Santé', array['Ostéopathie', 'Femme enceinte', 'Nourrisson']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', 'Des consultations en français, arabe et anglais.', 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('f4053e15-1e34-4e72-ab73-13f0b2e3362f', null, 'Hôtellerie et restauration', array['Pâtisserie', 'Food styling']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('182fbd7d-4182-40ce-a19e-3ebf4b7af858', null, 'Mode, beauté et bijoux', array['Artisanat marocain', 'Vente en ligne', 'Sourcing']::text[], null, null, null, null, null, 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('2ba24ce4-ce17-43c1-a9a1-2d70d333e22d', null, 'Tech et digital', array['Développement web', 'Automatisation']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('dfc9e12f-e6b0-43ea-a87d-971c150e08cc', null, 'Éducation et famille', array['Pédagogie', 'Ateliers enfants', 'Français langue étrangère']::text[], null, null, null, null, 'Un café et un retour d’expérience sur mon installation à Marrakech.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('38908842-cef4-4e0f-a78d-d1632175a0d0', null, 'Événementiel et voyage', array['Organisation d’événements', 'Réseau de prestataires']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('2d298896-57c3-4442-a486-b79e170ebfba', null, 'Tech et digital', array['Développement web', 'Automatisation', 'Produit']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('2e7d6df2-55c5-42e7-a0fd-a6e5ea40a9c3', null, 'Événementiel et voyage', array['Organisation d’événements', 'Réseau de prestataires']::text[], null, null, null, null, null, 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('8a2e68d0-dfa5-46f3-a077-ce53214050c2', null, 'Droit et finance', array['Droit des sociétés', 'Fiscalité', 'Création d’entreprise au Maroc']::text[], null, null, null, null, 'Un café et un retour d’expérience sur mon installation à Marrakech.', 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('5c2fde87-e995-4c33-a7e2-242163f25a51', null, 'Hôtellerie et restauration', array['Pâtisserie', 'Food styling']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('f89a9d03-bb04-4235-a054-a2dbd2bbc112', null, 'Communication et marketing', array['Stratégie de marque', 'Réseaux sociaux', 'Relations presse']::text[], null, null, null, null, null, 'hidden', false, false, '2026-10-01T09:00:00.000Z'),
+  ('1df1387b-a42f-4c98-a495-0b6696955170', null, 'Architecture et design', array['Rénovation de riads', 'Suivi de chantier']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('f7111905-4e2b-4c59-a10c-1716f7ee373e', null, 'Bien-être et sport', array['Accompagnement individuel', 'Ateliers de groupe', 'Gestion du stress']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', 'Un café et un retour d’expérience sur mon installation à Marrakech.', 'all', true, false, '2026-10-01T09:00:00.000Z'),
+  ('d7514c30-344b-4bbf-a58d-78f43ae42907', null, 'Mode, beauté et bijoux', array['Artisanat marocain', 'Vente en ligne']::text[], null, null, null, null, null, 'basic', false, false, '2026-10-01T09:00:00.000Z'),
+  ('8a345f17-7877-4502-a1e8-14fecdb4ec38', null, 'Communication et marketing', array['Stratégie de marque', 'Réseaux sociaux', 'Relations presse']::text[], null, null, null, null, null, 'all', false, false, '2026-10-01T09:00:00.000Z'),
+  ('28d2b7ef-0dbc-4962-a588-40b6110b238b', null, 'Bien-être et sport', array['Accompagnement individuel', 'Ateliers de groupe']::text[], null, null, null, 'Rencontrer d’autres entrepreneuses de mon secteur.', null, 'all', false, false, '2026-10-01T09:00:00.000Z');
+
+insert into public.news_posts (id, title, body, image, pinned, comments_enabled, status, author_id, published_at, created_at, updated_at) values
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'La saison 2026-2027 est lancée', 'Merci à vous toutes pour cette soirée sur le toit de La Terraza ! Vous étiez plus de cinquante.
+
+Au programme de la saison : un lunch networking chaque mois, deux dîners privés, le tournoi de padel, le Family Day et, nouveauté, des groupes thématiques dans l’appli pour échanger entre deux rendez-vous.
+
+Pensez à compléter votre fiche dans l’annuaire : c’est elle qui permet aux autres membres de vous trouver.', '/img/saison-la-terraza.jpg', true, true, 'published', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-09-25T08:00:00.000Z', '2026-09-24T22:10:00.000Z', '2026-09-25T08:00:00.000Z'),
+  ('03d7a8aa-c551-4d6c-af73-ba3ca780ef36', 'Nouveau : les groupes thématiques', 'Lecture, mamans, entrepreneuses tech, bien-être… Rejoignez les groupes qui vous ressemblent depuis l’onglet Groupes du Cercle. Certains sont ouverts, d’autres sur demande.
+
+Une idée de groupe ? Écrivez-nous, on l’ouvre avec vous.', null, false, false, 'published', '284f8698-647d-42af-a8c8-4ae9fde10db0', '2026-10-06T17:30:00.000Z', '2026-10-06T17:00:00.000Z', '2026-10-06T17:30:00.000Z'),
+  ('ba2c7766-d243-485f-ab12-f9200aced88a', 'Retour sur le brunch Neurosciences à AVABAY', 'Dimanche, une vingtaine de membres ont écouté le Dr Leïla Amrani parler de concentration et de sommeil. Ses trois conseils à retenir : la lumière du matin, une seule tâche à la fois, et pas d’écran une heure avant de dormir.
+
+Les photos sont dans le salon Général.', '/img/brunch-prise-de-parole.jpg', false, true, 'published', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-12T10:00:00.000Z', '2026-10-12T09:20:00.000Z', '2026-10-12T10:00:00.000Z'),
+  ('ab65f1ad-45a7-4ca6-a976-7d8d50fd31ba', 'Offre partenaire : -15 % chez Bloom House', 'Kenza ouvre les ateliers d’automne de Bloom House aux membres avec 15 % de réduction : respiration, céramique et conférence « Oser se lancer ». Montrez votre carte de membre à l’accueil.', null, false, false, 'published', '284f8698-647d-42af-a8c8-4ae9fde10db0', '2026-10-09T09:00:00.000Z', '2026-10-09T08:30:00.000Z', '2026-10-09T09:00:00.000Z'),
+  ('6f0b4ff4-978b-405d-a777-68b52331c2ef', 'Family Day : on prépare la journée à la ferme', 'Poneys, pique-nique et ateliers pour les enfants à The Ranch Morocco le dimanche 29 novembre. Les inscriptions ouvrent bientôt.', null, false, false, 'draft', '8eb1b14a-c639-4010-a09c-702b56b35d26', null, '2026-10-13T15:00:00.000Z', '2026-10-13T15:00:00.000Z');
+
+insert into public.news_comments (id, post_id, author_id, body, created_at) values
+  ('efa10459-5d27-406a-a1a6-322dbd0b7fe7', 'e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'Quelle soirée ! Merci Julia et Nora pour l’organisation.', '2026-09-25T09:12:00.000Z'),
+  ('90197097-3ed2-4ec3-aa73-671def30dfd3', 'e7e70dc1-86b2-4e80-a59a-ceacb42b2200', '8f14bd8a-55c4-4844-a979-b0c21cc35d3d', 'Vivement le tournoi de padel 🎾', '2026-09-25T11:40:00.000Z'),
+  ('735a6686-df50-4455-af63-2a5bf1a031f5', 'ba2c7766-d243-485f-ab12-f9200aced88a', 'ee4610ef-5444-4c42-ab10-b64c7a12e9c4', 'Les conseils sur la lumière du matin m’ont convaincue, j’essaie dès demain.', '2026-10-12T12:05:00.000Z');
+
+insert into public.news_reactions (post_id, profile_id, kind, created_at) values
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'like', '2026-09-25T09:00:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', '465d8833-64f5-4a5c-a280-4b752172485b', 'like', '2026-09-25T10:01:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'a4f79bdb-b39d-4d2d-a865-a3900e6a52f6', 'like', '2026-09-25T11:02:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', '8f14bd8a-55c4-4844-a979-b0c21cc35d3d', 'like', '2026-09-25T12:03:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', '77945d38-183f-4e88-acee-1f78d34be5b4', 'like', '2026-09-25T13:04:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'b06e4df1-447a-4173-a096-84c5c7c1366d', 'like', '2026-09-25T14:05:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', '929a6983-8e5f-479c-ac00-f91d2977a6e0', 'like', '2026-09-25T15:00:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'c3d8c6ba-de51-4be6-a13f-dc3ac656ae02', 'like', '2026-09-25T16:01:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', '61f757ce-4c43-49d9-abb9-8512bf634f48', 'like', '2026-09-25T17:02:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'e3283e37-650b-4bb4-a7ac-d180b40ae17e', 'like', '2026-09-25T18:03:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', '40f4e13c-8888-4e7a-ab7f-8321099d69ac', 'like', '2026-09-25T09:04:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', '0b1c3176-7235-4da4-afc5-bd55118ed58a', 'like', '2026-09-25T10:05:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'bravo', '2026-09-25T09:00:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'ff0212c2-dfea-4bfb-a05a-e12aa98cea33', 'bravo', '2026-09-25T10:01:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'd2ff97f6-e943-44ab-a8cd-bae0eb064bc1', 'bravo', '2026-09-25T11:02:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', '9338cf84-e1be-4199-a025-43c3366fc7e4', 'bravo', '2026-09-25T12:03:00.000Z'),
+  ('e7e70dc1-86b2-4e80-a59a-ceacb42b2200', 'c60c920a-ce78-44d9-af19-843f96fcc152', 'bravo', '2026-09-25T13:04:00.000Z'),
+  ('03d7a8aa-c551-4d6c-af73-ba3ca780ef36', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'like', '2026-10-06T09:00:00.000Z'),
+  ('03d7a8aa-c551-4d6c-af73-ba3ca780ef36', '71b4e532-bca4-43d1-abbe-f5fd762ae677', 'like', '2026-10-06T10:01:00.000Z'),
+  ('03d7a8aa-c551-4d6c-af73-ba3ca780ef36', '3ead2e5f-d53e-43e1-ad2f-3bdbee485d71', 'like', '2026-10-06T11:02:00.000Z'),
+  ('03d7a8aa-c551-4d6c-af73-ba3ca780ef36', '81135c46-5400-4cd8-a390-bb1091a4f13d', 'like', '2026-10-06T12:03:00.000Z'),
+  ('03d7a8aa-c551-4d6c-af73-ba3ca780ef36', 'e480333a-affe-409c-a9d1-e26e8905cf08', 'like', '2026-10-06T13:04:00.000Z'),
+  ('03d7a8aa-c551-4d6c-af73-ba3ca780ef36', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 'merci', '2026-10-07T09:00:00.000Z'),
+  ('03d7a8aa-c551-4d6c-af73-ba3ca780ef36', '097c42d6-61d3-4936-a308-31aae3f0fdf0', 'merci', '2026-10-07T10:01:00.000Z'),
+  ('ba2c7766-d243-485f-ab12-f9200aced88a', 'ee4610ef-5444-4c42-ab10-b64c7a12e9c4', 'like', '2026-10-12T09:00:00.000Z'),
+  ('ba2c7766-d243-485f-ab12-f9200aced88a', '6ddf0396-8eb9-4b1f-ae8e-eab5383cc11e', 'like', '2026-10-12T10:01:00.000Z'),
+  ('ba2c7766-d243-485f-ab12-f9200aced88a', 'ec90edb7-5367-43ce-aec2-2afcbca7180e', 'like', '2026-10-12T11:02:00.000Z'),
+  ('ba2c7766-d243-485f-ab12-f9200aced88a', '737db1ce-b87f-49b6-a06d-d4b6b6c0a5d4', 'like', '2026-10-12T12:03:00.000Z'),
+  ('ba2c7766-d243-485f-ab12-f9200aced88a', '777b3499-1936-4e79-af49-fed4b49cc181', 'like', '2026-10-12T13:04:00.000Z'),
+  ('ba2c7766-d243-485f-ab12-f9200aced88a', '2701e651-8ffd-437a-ab38-92527206db40', 'like', '2026-10-12T14:05:00.000Z'),
+  ('ba2c7766-d243-485f-ab12-f9200aced88a', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'merci', '2026-10-12T09:00:00.000Z'),
+  ('ba2c7766-d243-485f-ab12-f9200aced88a', '57dd531c-832f-4152-a924-f951e3853b37', 'merci', '2026-10-12T10:01:00.000Z'),
+  ('ab65f1ad-45a7-4ca6-a976-7d8d50fd31ba', 'ee4610ef-5444-4c42-ab10-b64c7a12e9c4', 'bravo', '2026-10-09T09:00:00.000Z'),
+  ('ab65f1ad-45a7-4ca6-a976-7d8d50fd31ba', '9338cf84-e1be-4199-a025-43c3366fc7e4', 'bravo', '2026-10-09T10:01:00.000Z'),
+  ('ab65f1ad-45a7-4ca6-a976-7d8d50fd31ba', '3263681b-8988-43ca-a698-ae0efc977e27', 'bravo', '2026-10-09T11:02:00.000Z');
+
+insert into public.chat_groups (id, slug, name, description, icon, join_policy, listed, created_by, created_at, archived_at) values
+  ('1bdba112-3a7e-41fa-a2c7-487b076a1d90', 'club-de-lecture', 'Club de lecture', 'Un livre par mois, une rencontre au café. Ce mois-ci : « Thinking, Fast and Slow ».', 'book', 'open', true, '77945d38-183f-4e88-acee-1f78d34be5b4', '2026-10-06T16:00:00.000Z', null),
+  ('3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', 'entrepreneuses-tech', 'Entrepreneuses tech', 'Outils, freelances, produits numériques : on s’entraide sur tout ce qui touche au digital.', 'spark', 'open', true, '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T16:00:00.000Z', null),
+  ('e518f344-1ff8-44b8-a508-6942f30a9450', 'mamans-a-marrakech', 'Mamans à Marrakech', 'Écoles, nounous, activités du mercredi : les bons plans des mamans du club.', 'home', 'open', true, '284f8698-647d-42af-a8c8-4ae9fde10db0', '2026-10-06T16:00:00.000Z', null),
+  ('fcf0a0ad-3d80-449f-a556-54317733fb96', 'bien-etre-et-sport', 'Bien-être et sport', 'Yoga, padel, randonnées dans l’Atlas : on se motive ensemble.', 'heart', 'open', true, '284f8698-647d-42af-a8c8-4ae9fde10db0', '2026-10-06T16:00:00.000Z', null),
+  ('02558ae1-63e1-438d-a902-af4ab2bc5ae7', 'investisseuses', 'Investisseuses', 'Immobilier, levées de fonds, business angels. Groupe sur demande pour garder des échanges confidentiels.', 'crown', 'request', true, '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T16:00:00.000Z', null),
+  ('d99e6226-8305-41ff-a627-e4d2a6aed62d', 'cercle-des-fondatrices', 'Cercle des fondatrices de marque', 'Groupe privé pour les membres qui dirigent une marque. Sur invitation des fondatrices.', 'star', 'request', false, '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T16:00:00.000Z', null);
+
+insert into public.chat_group_members (group_id, profile_id, status, created_at, decided_by, decided_at) values
+  ('1bdba112-3a7e-41fa-a2c7-487b076a1d90', '77945d38-183f-4e88-acee-1f78d34be5b4', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('1bdba112-3a7e-41fa-a2c7-487b076a1d90', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('1bdba112-3a7e-41fa-a2c7-487b076a1d90', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('1bdba112-3a7e-41fa-a2c7-487b076a1d90', '57dd531c-832f-4152-a924-f951e3853b37', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('1bdba112-3a7e-41fa-a2c7-487b076a1d90', '097c42d6-61d3-4936-a308-31aae3f0fdf0', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('1bdba112-3a7e-41fa-a2c7-487b076a1d90', '929a6983-8e5f-479c-ac00-f91d2977a6e0', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('1bdba112-3a7e-41fa-a2c7-487b076a1d90', '174f1774-5513-49c3-a246-2fde52c89e5c', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('1bdba112-3a7e-41fa-a2c7-487b076a1d90', 'b945e11a-444a-4620-a6eb-eed21081d67f', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '8eb1b14a-c639-4010-a09c-702b56b35d26', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '71b4e532-bca4-43d1-abbe-f5fd762ae677', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '3ead2e5f-d53e-43e1-ad2f-3bdbee485d71', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '465d8833-64f5-4a5c-a280-4b752172485b', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '1eba999b-3911-4006-ad0d-1a24c2bf82cc', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '70750f62-0486-4e74-ae84-2acbfa3fb69d', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', '2d298896-57c3-4442-a486-b79e170ebfba', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('e518f344-1ff8-44b8-a508-6942f30a9450', '284f8698-647d-42af-a8c8-4ae9fde10db0', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('e518f344-1ff8-44b8-a508-6942f30a9450', '2b33d7e1-5ea9-44fc-a5e8-d3959dd73272', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('e518f344-1ff8-44b8-a508-6942f30a9450', 'ff0212c2-dfea-4bfb-a05a-e12aa98cea33', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('e518f344-1ff8-44b8-a508-6942f30a9450', '6ddf0396-8eb9-4b1f-ae8e-eab5383cc11e', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('e518f344-1ff8-44b8-a508-6942f30a9450', '61f757ce-4c43-49d9-abb9-8512bf634f48', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('e518f344-1ff8-44b8-a508-6942f30a9450', '3263681b-8988-43ca-a698-ae0efc977e27', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('e518f344-1ff8-44b8-a508-6942f30a9450', 'de100889-6fbc-4db2-a66e-db9007e9cbd0', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('fcf0a0ad-3d80-449f-a556-54317733fb96', '284f8698-647d-42af-a8c8-4ae9fde10db0', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('fcf0a0ad-3d80-449f-a556-54317733fb96', 'ee4610ef-5444-4c42-ab10-b64c7a12e9c4', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('fcf0a0ad-3d80-449f-a556-54317733fb96', '6ddf0396-8eb9-4b1f-ae8e-eab5383cc11e', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('fcf0a0ad-3d80-449f-a556-54317733fb96', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('fcf0a0ad-3d80-449f-a556-54317733fb96', '9338cf84-e1be-4199-a025-43c3366fc7e4', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('fcf0a0ad-3d80-449f-a556-54317733fb96', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('fcf0a0ad-3d80-449f-a556-54317733fb96', '138e852a-3f2b-41f3-a9e8-58ee7e3ee415', 'member', '2026-10-07T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-07T11:00:00.000Z'),
+  ('02558ae1-63e1-438d-a902-af4ab2bc5ae7', '8eb1b14a-c639-4010-a09c-702b56b35d26', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('02558ae1-63e1-438d-a902-af4ab2bc5ae7', '77945d38-183f-4e88-acee-1f78d34be5b4', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('02558ae1-63e1-438d-a902-af4ab2bc5ae7', 'd2ff97f6-e943-44ab-a8cd-bae0eb064bc1', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('02558ae1-63e1-438d-a902-af4ab2bc5ae7', 'b06e4df1-447a-4173-a096-84c5c7c1366d', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('02558ae1-63e1-438d-a902-af4ab2bc5ae7', '6d257d5f-781c-4740-aa1d-012c05db1a42', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('02558ae1-63e1-438d-a902-af4ab2bc5ae7', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'pending', '2026-10-13T11:00:00.000Z', null, null),
+  ('02558ae1-63e1-438d-a902-af4ab2bc5ae7', '737db1ce-b87f-49b6-a06d-d4b6b6c0a5d4', 'pending', '2026-10-13T11:00:00.000Z', null, null),
+  ('d99e6226-8305-41ff-a627-e4d2a6aed62d', '8eb1b14a-c639-4010-a09c-702b56b35d26', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('d99e6226-8305-41ff-a627-e4d2a6aed62d', '284f8698-647d-42af-a8c8-4ae9fde10db0', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('d99e6226-8305-41ff-a627-e4d2a6aed62d', '8f14bd8a-55c4-4844-a979-b0c21cc35d3d', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('d99e6226-8305-41ff-a627-e4d2a6aed62d', 'f92415d7-2cd1-43c6-a71a-13507bf5b1ee', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z'),
+  ('d99e6226-8305-41ff-a627-e4d2a6aed62d', '9338cf84-e1be-4199-a025-43c3366fc7e4', 'member', '2026-10-06T11:00:00.000Z', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-06T11:00:00.000Z');
+
+update public.messages set hidden_at = '2026-10-13T21:14:00.000Z', hidden_reason = 'Mot-clé' where id = 'd396cf16-c6f1-4a08-a471-4832ad934a01';
+insert into public.message_originals (message_id, body) values
+  ('d396cf16-c6f1-4a08-a471-4832ad934a01', 'Opportunité unique : investissement garanti 30 % par mois, places limitées, écrivez-moi en privé.');
+
+insert into public.moderation_keywords (id, keyword, action, created_by, created_at) values
+  ('fc78bd07-cffb-4169-a9ac-620ecf50ebd8', 'investissement garanti', 'hide', '77945d38-183f-4e88-acee-1f78d34be5b4', '2026-09-12T09:00:00.000Z'),
+  ('0dd8ab19-32f0-4676-a640-732168521421', 'arnaque', 'hide', '77945d38-183f-4e88-acee-1f78d34be5b4', '2026-09-12T09:00:00.000Z'),
+  ('ebadb450-b8b1-41ec-a95e-86046300bfdc', 'pyramide', 'hide', '77945d38-183f-4e88-acee-1f78d34be5b4', '2026-09-12T09:00:00.000Z'),
+  ('9d208476-5423-443c-a4b8-2db3664b2002', 'crypto', 'flag', '77945d38-183f-4e88-acee-1f78d34be5b4', '2026-09-14T09:00:00.000Z'),
+  ('7d749df3-ca8c-440e-a0b9-c136c5ee88c2', 'MLM', 'flag', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-09-14T09:00:00.000Z'),
+  ('989add61-9b2e-404d-a971-d156cc569af4', 'argent facile', 'hide', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-02T09:00:00.000Z');
+
+alter table public.message_reports disable trigger message_reports_notify;
+insert into public.message_reports (id, message_id, reporter_id, source, reason, keyword, message_body, message_author_id, channel, status, resolution, resolved_by, resolved_at, created_at) values
+  ('a75b95ae-5802-4625-ab4e-8fded69a3855', 'd396cf16-c6f1-4a08-a471-4832ad934a01', null, 'keyword', 'Masqué automatiquement : « investissement garanti »', 'investissement garanti', 'Opportunité unique : investissement garanti 30 % par mois, places limitées, écrivez-moi en privé.', 'ef60a9c1-cf93-4561-a137-07ff3310fb22', 'general', 'open', null, null, null, '2026-10-13T21:14:00.000Z'),
+  ('a6259e4a-b3b6-4314-a1ec-bfe9dd2fd3c2', '42aeebfb-2a1f-4f5c-a175-7b45d6ce3ed4', 'fbf23f28-cfe6-4b56-a0f2-4c1fa0b7ba79', 'member', 'Publicité non sollicitée', null, 'Je vends mes compléments minceur, -50 % pour les membres du club, écrivez-moi vite !', 'c4cefeba-0b6d-43eb-a90a-fe90fc722773', 'general', 'open', null, null, null, '2026-10-14T06:55:00.000Z'),
+  ('4e912714-e15b-47d7-a666-2bd596dc6617', 'f8e87842-8274-414e-a64b-9a7baba3ab93', null, 'keyword', 'Mot-clé à vérifier : « crypto »', 'crypto', 'Quelqu’un s’intéresse à la crypto pour placer sa trésorerie ? J’ai trouvé une plateforme très rentable.', '70750f62-0486-4e74-ae84-2acbfa3fb69d', 'group:3b2a39d8-f97a-4039-ad6e-b212aa7c7a79', 'open', null, null, null, '2026-10-13T13:20:00.000Z'),
+  ('c7b1e18d-cb4e-4063-aecb-2782c03ec833', 'f2e49253-cf08-45ef-ae1d-9215145fc2e9', '56df82bc-9906-4e4b-a9cb-56c4aecf6866', 'member', 'Je pensais que c’était hors sujet', null, '« Thinking, Fast and Slow », de Kahneman. Je peux prêter mon exemplaire.', '77945d38-183f-4e88-acee-1f78d34be5b4', 'general', 'resolved', 'dismissed', '8eb1b14a-c639-4010-a09c-702b56b35d26', '2026-10-14T09:00:00.000Z', '2026-10-14T08:58:00.000Z');
+
+alter table public.message_reports enable trigger message_reports_notify;
 
 select setval('public.card_number_seq', 700, false);
 commit;

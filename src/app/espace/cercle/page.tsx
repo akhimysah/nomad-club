@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Cercle, type CercleTab } from "@/components/member/Cercle";
 import { Screen } from "@/components/ui/Screen";
-import { requireMember } from "@/lib/auth";
+import { requireMember, viewerCan } from "@/lib/auth";
 import { loadCercle } from "@/lib/cercle";
 
 export const metadata: Metadata = { title: "Cercle" };
@@ -12,11 +12,11 @@ type Props = { searchParams: Promise<{ onglet?: string }> };
 export default async function CerclePage({ searchParams }: Props) {
   const v = await requireMember();
   const { onglet } = await searchParams;
-  const tab: CercleTab = onglet === "annuaire" || onglet === "messages" ? onglet : "salon";
+  const tab: CercleTab = onglet === "annuaire" || onglet === "messages" || onglet === "groupes" ? onglet : "salon";
   const data = (await loadCercle(v.profile, null))!;
   return (
     <Screen group="member" index={2} className="mscreen chat on">
-      <Cercle tab={tab} demo={v.mode === "demo"} {...data} />
+      <Cercle tab={tab} demo={v.mode === "demo"} canModerate={viewerCan(v, "messages.moderate")} {...data} />
     </Screen>
   );
 }

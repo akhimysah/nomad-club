@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ActionButton } from "@/components/founders/ActionButton";
 import { ChoosePlaceButton, EditEventButton, type EditableEvent } from "@/components/founders/FounderHost";
 import { FHead, FillBar, Legend } from "@/components/founders/parts";
+import { RemindButton } from "@/components/communaute/RemindButton";
 import { EventImage } from "@/components/ui/EventImage";
 import { Screen } from "@/components/ui/Screen";
 import { ScrollToHighlight } from "@/components/ui/ScrollToHighlight";
@@ -79,6 +80,7 @@ export default async function EventsPage({ searchParams }: Props) {
                 <div style={{ fontSize: 14, color: "var(--muted)" }}>{e.premiumFree ? "Offert aux Premium" : `Public ${e.pricePublic} $ · adhérentes ${e.priceMember} $`}</div>
                 <div className="ev-edit">
                   <EditEventButton e={editable(e)} />
+                  {st.taken > 0 && <RemindButton eventId={e.id} /> /* Lot 1 */}
                 </div>
               </article>
             );

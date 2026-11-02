@@ -1,12 +1,11 @@
 /**
  * Source des actualités du widget « Actualités du club ».
  *
- * Les actualités appartiennent au Lot 1 (communauté), développé en parallèle : ce module n'en dépend pas.
- * À la fusion, remplacer le corps de `listDashboardNews` par l'appel au dépôt du Lot 1
- * (par ex. `getRepo().listPosts({ limit })`) et convertir le résultat en `DashboardNews`.
- * D'ici là : exemples en mode démo, liste vide en mode réel (le widget affiche alors un message d'attente).
+ * Branchée sur les actualités publiées du Lot 1 (communauté). Les exemples ci-dessous ne servent
+ * qu'en démo, si aucune publication n'existe encore.
  */
 import { isRealMode } from "../../env";
+import { getRepo } from "../../data";
 
 export type DashboardNews = {
   id: string;
@@ -61,7 +60,26 @@ const SAMPLES: DashboardNews[] = [
   },
 ];
 
-export async function listDashboardNews(limit = 3): Promise<DashboardNews[]> {
+const excerpt = (body: string) => {
+  const t = body.replace(/\s+/g, " ").trim();
+  return t.length > 160 ? t.slice(0, 157).trimEnd() + "…" : t;
+};
+
+export async function listDashboardNews(limit = 3, viewerId: string | null = null): Promise<DashboardNews[]> {
+  const posts = await getRepo().listNews({ viewerId, limit });
+  if (posts.length > 0) {
+    return posts.slice(0, limit).map((p) => ({
+      id: p.id,
+      title: p.title,
+      excerpt: excerpt(p.body),
+      publishedAt: p.publishedAt ?? p.createdAt,
+      author: p.authorName,
+      pinned: p.pinned,
+      image: p.image,
+      link: `/espace/actualites#post-${p.id}`,
+      sample: false,
+    }));
+  }
   if (isRealMode()) return [];
   return SAMPLES.slice(0, limit);
 }

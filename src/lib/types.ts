@@ -172,12 +172,14 @@ export type Memory = {
 
 export type Message = {
   id: string;
-  /** « general » ou « dm:<idA>:<idB> » (ids triés). */
+  /** « general », « dm:<idA>:<idB> » (ids triés) ou « group:<id> » (groupe thématique, Lot 1). */
   channel: string;
   authorId: string;
   body: string;
   createdAt: string;
   readAt: string | null;
+  /** Lot 1 : masqué par la modération (le texte d'origine n'est plus lisible que par les modératrices). */
+  hiddenAt?: string | null;
 };
 
 export type ReminderReason = "renewal" | "expired" | "unpaid" | "invite";
@@ -279,14 +281,29 @@ export type AuditAction =
   | CrmAuditAction
   // --- Lot 4 ---
   | EngagementAuditAction
-  | import("./modules/securite/types").SecuriteAuditAction; // --- Lot 6 ---
+  | import("./modules/securite/types").SecuriteAuditAction // --- Lot 6 ---
+  // --- Lot 1 ---
+  | "news.create"
+  | "news.update"
+  | "news.publish"
+  | "news.delete"
+  | "group.create"
+  | "group.update"
+  | "group.decide"
+  | "moderation.hide"
+  | "moderation.restore"
+  | "moderation.warn"
+  | "moderation.dismiss"
+  | "keyword.add"
+  | "keyword.remove"
+  | "event.remind";
 
 /** Journal des opérations importantes (qui, quoi, sur quoi, détails). */
 export type AuditEntry = {
   id: string;
   actorId: string | null;
   action: AuditAction;
-  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | CrmTargetType /* Lot 5 */ | EngagementAuditTarget /* Lot 4 */;
+  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | CrmTargetType /* Lot 5 */ | EngagementAuditTarget /* Lot 4 */ | /* Lot 1 */ "news" | "group" | "message" | "report" | "keyword";
   targetId: string | null;
   /** Phrase lisible (« Virement de Lou Garnier validé · 670 $ »). */
   summary: string;
@@ -303,7 +320,14 @@ export type NotificationType =
   // --- Lot 5 ---
   | "crm_task_due"
   // --- Lot 4 ---
-  | EngagementNotificationType;
+  | EngagementNotificationType
+  // --- Lot 1 ---
+  | "news_published"
+  | "event_reminder"
+  | "group_request"
+  | "group_joined"
+  | "moderation_report"
+  | "moderation_warning";
 
 export type AppNotification = {
   id: string;

@@ -7,6 +7,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Snapshot } from "../domain/founders";
 import { fullName } from "../format";
+import { communauteSupabaseRepo } from "../modules/communaute/supabase";
 import { inCircle, isAdmin, isGrantableRole } from "../permissions";
 import { supabaseEngagementRepo } from "../modules/engagement/supabase"; // --- Lot 4 ---
 import { supabaseAdmin, supabaseServer } from "../supabase/server";
@@ -222,7 +223,7 @@ function toPayment(r: Row): Payment {
 }
 
 function toMessage(r: Row): Message {
-  return { id: str(r.id), channel: str(r.channel), authorId: str(r.author_id), body: str(r.body), createdAt: str(r.created_at), readAt: strN(r.read_at) };
+  return { id: str(r.id), channel: str(r.channel), authorId: str(r.author_id), body: str(r.body), createdAt: str(r.created_at), readAt: strN(r.read_at), hiddenAt: strN(r.hidden_at) /* Lot 1 */ };
 }
 
 function toReminder(r: Row): Reminder {
@@ -682,5 +683,8 @@ export const supabaseRepo: Repo = {
         .upsert({ profile_id: profileId, type, [PREF_COLUMN[channel]]: enabled, updated_at: new Date().toISOString() }, { onConflict: "profile_id,type" }),
     );
   },
+
+  // --- Lot 1 --- communauté (src/lib/modules/communaute/supabase.ts)
+  ...communauteSupabaseRepo,
 };
 

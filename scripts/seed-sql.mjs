@@ -23,7 +23,8 @@ const q = (v) => {
 };
 const arr = (a) => (a.length ? `array[${a.map(q).join(", ")}]::text[]` : "'{}'::text[]");
 const json = (v) => `${q(JSON.stringify(v))}::jsonb`;
-const dm = (channel) => (channel === "general" ? "general" : "dm:" + channel.slice(3).split(":").map(uuid).sort().join(":"));
+const dm = (channel) =>
+  channel === "general" ? "general" : channel.startsWith("group:") ? "group:" + uuid(channel.slice(6)) /* Lot 1 */ : "dm:" + channel.slice(3).split(":").map(uuid).sort().join(":");
 
 const lines = [];
 const out = (x) => lines.push(x);
@@ -189,6 +190,8 @@ insert(
 }
 // --- Lot 4 --- (engagement)
 (await import("./seed-sql/engagement.mjs")).engagementSeedLines(s, uuid).forEach(out);
+// --- Lot 1 ---
+(await import("./seed-sql/communaute.mjs")).communauteSeedSql(s, { uuid, q, arr, out, insert });
 
 out("select setval('public.card_number_seq', 700, false);");
 out("commit;");

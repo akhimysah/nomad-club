@@ -122,7 +122,9 @@ export type NotificationInput = {
 export type MyOrganization = { organization: Organization; role: OrganizationMemberRole };
 export type OrganizationMemberView = OrganizationMember & { profile: Profile | null };
 
-export interface Repo extends PartenairesRepo /* --- Lot 3 --- */, CrmRepo /* Lot 5 */, EngagementRepo /* --- Lot 4 --- */, SecuriteRepo /* --- Lot 6 --- */ {
+import type { CommunauteRepo } from "../modules/communaute/repo"; // --- Lot 1 ---
+
+export interface Repo extends CommunauteRepo /* Lot 1 */, PartenairesRepo /* --- Lot 3 --- */, CrmRepo /* Lot 5 */, EngagementRepo /* --- Lot 4 --- */, SecuriteRepo /* --- Lot 6 --- */ {
   /* profils */
   getProfile(id: string): Promise<Profile | null>;
   /** Annuaire : adhérentes et fondatrices. */

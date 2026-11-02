@@ -61,6 +61,15 @@ export const CAPABILITIES = [
   "audit.export",
   "privacy.process_deletions",
   "security.manage",
+  // --- Lot 1 --- communauté
+  "news.react",
+  "news.manage",
+  "groups.join",
+  "groups.manage",
+  "messages.report",
+  "keywords.manage",
+  "events.remind",
+  "directory.edit_own",
 ] as const;
 
 export type Capability = (typeof CAPABILITIES)[number];
@@ -73,11 +82,15 @@ const LOT4_MEMBER: Capability[] = ["dashboard.customize", "shop.buy", "referral.
 
 const MEMBER: Capability[] = ["space.member", "events.book", "members.view_directory", "messages.post", "carnet.view", "offers.view", ...LOT3_MEMBER, ...LOT4_MEMBER];
 
+// --- Lot 1 --- communauté : réactions, groupes, signalements, fiche d'annuaire ; modératrices : groupes et mots-clés.
+const LOT1_MEMBER: Capability[] = ["news.react", "groups.join", "messages.report", "directory.edit_own"];
+const LOT1_MODERATOR: Capability[] = ["groups.manage", "keywords.manage"];
+
 /** Matrice rôle → capacités. Les capacités se cumulent quand une personne a plusieurs rôles. */
 export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
   guest: ["events.book"],
-  member: MEMBER,
-  moderator: [...MEMBER, "messages.moderate"],
+  member: [...MEMBER, ...LOT1_MEMBER],
+  moderator: [...MEMBER, ...LOT1_MEMBER, "messages.moderate", ...LOT1_MODERATOR],
   partner: ["events.book", "space.partner", "offers.manage_own", "organizations.manage_own", "offers.validate", ...LOT3_ORG],
   pro: ["events.book", "space.pro", "listing.manage_own", "organizations.manage_own", "subscription.manage_own", ...LOT3_ORG],
   admin: CAPABILITIES,

@@ -222,6 +222,8 @@ ok(await as(INES, (tx) => count(tx, "select count(*) from public.founder_actions
 
 // --- Lot 5 ---
 await (await import("./test-sql/crm.mjs")).default({ db, as, rejects, ok, one, count, uuid });
+// --- Lot 1 ---
+await (await import("./test-sql/communaute.mjs")).testCommunaute({ db, as, rejects, one, count, ok, uuid });
 
 console.log("\nReprise du rôle unique (base existante)");
 {
