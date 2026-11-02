@@ -637,6 +637,64 @@ await step("invitation : une seconde utilisation est refusée", async () => {
 });
 
 // ---------------------------------------------------------------------------
+console.log("\nPremière administratrice (npm run admin:create)");
+{
+  const { createAdmin } = await import("./lib/admin-create-core.mjs");
+  const { createClient } = await import("@supabase/supabase-js");
+  const { createTestDb } = await import("./lib/pglite-db.mjs");
+  const { createPostgrest, SERVICE_KEY: SK } = await import("./lib/postgrest-pglite.mjs");
+  const fresh = await createTestDb({ seed: false, quiet: true });
+  const pg2 = await createPostgrest(fresh);
+  const client = createClient("http://fresh.localhost", SK, { auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: pg2.fetch } });
+  const quiet = () => {};
+  await step("base vide : compte créé (confirmé), profil, rôle admin, journal", async () => {
+    const r = await createAdmin({ supabase: client, email: "Julia@Exemple.com", firstName: "Julia", log: quiet });
+    const roles = (await fresh.query("select role from public.user_roles where profile_id = $1", [r.userId])).rows.map((x) => x.role);
+    const prof = (await fresh.query("select first_name, email from public.profiles where id = $1", [r.userId])).rows[0];
+    const log = (await fresh.query("select count(*)::int as n from public.audit_log where action = 'role.grant' and target_id = $1", [r.userId])).rows[0].n;
+    const terms = (await fresh.query("select terms_accepted_at from public.member_onboarding where profile_id = $1", [r.userId])).rows[0];
+    return r.created && roles.join() === "admin" && prof.first_name === "Julia" && prof.email === "julia@exemple.com" && log === 1 && terms.terms_accepted_at === null;
+  });
+  await step("relancé : rien ne change (idempotent)", async () => (await createAdmin({ supabase: client, email: "julia@exemple.com", log: quiet })).alreadyAdmin);
+  await step("une admin existe : une autre adresse est refusée sans --force", async () => {
+    try {
+      await createAdmin({ supabase: client, email: "nora@exemple.com", log: quiet });
+      return false;
+    } catch (e) {
+      return /--force/.test(e.message);
+    }
+  });
+  await step("--force : seconde administratrice", async () => !(await createAdmin({ supabase: client, email: "nora@exemple.com", force: true, log: quiet })).alreadyAdmin);
+  await step("adresse invalide refusée", async () => {
+    try {
+      await createAdmin({ supabase: client, email: "pas-une-adresse", log: quiet });
+      return false;
+    } catch {
+      return true;
+    }
+  });
+  await fresh.close();
+}
+
+// ---------------------------------------------------------------------------
+console.log("\nVariables d'environnement (npm run check:env)");
+{
+  const { checkEnv } = await import("./lib/check-env-core.mjs");
+  const { loadEnvFiles } = await import("./lib/load-env.mjs");
+  const { root } = await import("./lib/pglite-db.mjs");
+  const fixture = loadEnvFiles([`${root}/scripts/fixtures/env.exemple-production`]).vars;
+  const example = loadEnvFiles([`${root}/.env.example`]).vars;
+  ok(checkEnv(fixture, { production: true }).errors.length === 0, "exemple de production complet : aucune erreur");
+  ok(checkEnv(example, { production: true }).errors.length >= 5, ".env.example vide : erreurs (Supabase, site, cron, démo)");
+  const swapped = checkEnv({ ...fixture, NEXT_PUBLIC_SUPABASE_ANON_KEY: fixture.SUPABASE_SERVICE_ROLE_KEY, SUPABASE_SERVICE_ROLE_KEY: fixture.NEXT_PUBLIC_SUPABASE_ANON_KEY }, { production: true });
+  ok(swapped.errors.some((e) => e.includes("inversées")), "clés anon / service inversées : détecté");
+  ok(checkEnv({ ...fixture, NEXT_PUBLIC_SERVICE_KEY: "x" }).errors.some((e) => e.includes("NEXT_PUBLIC_")), "clé secrète exposée en NEXT_PUBLIC_ : refusée");
+  ok(checkEnv({ ...fixture, NEXT_PUBLIC_SITE_URL: "http://localhost:3000" }, { production: true }).errors.length > 0, "site en http://localhost refusé en production");
+  ok(checkEnv({ ...fixture, STRIPE_WEBHOOK_SECRET: "" }).errors.some((e) => e.includes("STRIPE_WEBHOOK_SECRET")), "Stripe sans secret de webhook : erreur");
+  ok(checkEnv({ ...fixture, SENTRY_DSN: "pas-un-dsn" }).errors.some((e) => e.includes("SENTRY_DSN")), "DSN Sentry mal formé : erreur");
+}
+
+// ---------------------------------------------------------------------------
 console.log("\nCouche de compatibilité");
 ok(env.unsupported.length === 0, "aucune construction PostgREST non gérée", env.unsupported.slice(0, 5).join(" | "));
 void pg;
