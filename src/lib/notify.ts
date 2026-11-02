@@ -16,7 +16,12 @@ export const NOTIFICATION_LABEL: Record<NotificationType, { label: string; hint:
   event_published: { label: "Nouveaux rendez-vous", hint: "Un rendez-vous vient d’être publié." },
   payment_validated: { label: "Paiements", hint: "Ton virement est validé par les fondatrices." },
   role_changed: { label: "Accès", hint: "Un nouvel espace s’ouvre sur ton compte." },
+  // --- Lot 5 ---
+  crm_task_due: { label: "Tâches du CRM", hint: "Rappel des tâches du jour ou en retard, tâche assignée par l’autre fondatrice." },
 };
+
+/** Types réservés à l'équipe (masqués des préférences des membres). */
+export const STAFF_NOTIFICATION_TYPES: NotificationType[] = ["crm_task_due"];
 
 export const NOTIFICATION_TYPES = Object.keys(NOTIFICATION_LABEL) as NotificationType[];
 

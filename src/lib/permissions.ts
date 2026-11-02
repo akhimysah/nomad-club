@@ -38,6 +38,9 @@ export const CAPABILITIES = [
   // pilotage
   "crm.access",
   "audit.view",
+  // --- Lot 5 ---
+  /** Exporter des contacts (données personnelles) en CSV. Administratrices uniquement. */
+  "crm.export",
 ] as const;
 
 export type Capability = (typeof CAPABILITIES)[number];

@@ -37,6 +37,8 @@ const CAP_LABEL: Record<Capability, string> = {
   "organizations.manage_all": "Gérer tous les établissements",
   "crm.access": "CRM",
   "audit.view": "Journal des opérations",
+  // --- Lot 5 ---
+  "crm.export": "Exporter les contacts du CRM",
 };
 
 type Props = { searchParams: Promise<{ q?: string; tous?: string }> };

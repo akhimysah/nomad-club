@@ -10,6 +10,8 @@ import { newTicketCode } from "../domain/tickets";
 import { fullName } from "../format";
 import { inCircle, isAdmin } from "../permissions";
 import { createSeed, type SeedData } from "../seed";
+// --- Lot 5 ---
+import { crmDemoRepo } from "../modules/crm/demo-repo";
 import type { AppNotification, Booking, BookingView, ClubEvent, DmThread, MessageView, NotificationPref, Payment, Profile } from "../types";
 import { dmChannel, otherInChannel, type BookResult, type CancelResult, type Repo } from "./repo";
 
@@ -52,6 +54,9 @@ function applyValidatedMembership(d: SeedData, pay: Payment) {
 }
 
 export const demoRepo: Repo = {
+  // --- Lot 5 : CRM (délégué au module) ---
+  ...crmDemoRepo,
+
   async getProfile(id) {
     const p = db().profiles.find((x) => x.id === id);
     return p ? clone(p) : null;

@@ -151,6 +151,41 @@ insert(
   s.notificationPrefs.map((p) => [q(uuid(p.profileId)), q(p.type), q(p.inApp), q(p.email), q(p.push)]),
 );
 
+// --- Lot 5 : CRM (0007_crm.sql) ---
+{
+  const { createCrmSeed } = await import(join(root, "src/lib/modules/crm/seed.ts"));
+  const crm = createCrmSeed(s);
+  // les étapes ont déjà des UUID fixes (insérées par la migration)
+  const sid = (id) => (/^[0-9a-f-]{36}$/.test(id) ? id : uuid(id));
+  out("-- CRM : les fiches des comptes existent déjà (déclencheur crm_sync_profile) : on les complète.");
+  insert(
+    "crm_contacts",
+    ["id", "kind", "profile_id", "organization_id", "first_name", "last_name", "company", "job", "email", "phone", "instagram", "city", "source", "status", "tags", "notes", "marketing_consent", "consent_at", "owner_id", "created_by", "created_at", "updated_at"],
+    crm.contacts.map((c) => [q(uuid(c.id)), q(c.kind), q(uuid(c.profileId)), q(uuid(c.organizationId)), q(c.firstName), q(c.lastName), q(c.company), q(c.job), q(c.email), q(c.phone), q(c.instagram), q(c.city), q(c.source), q(c.status), arr(c.tags), q(c.notes), q(c.marketingConsent), q(c.consentAt), q(uuid(c.ownerId)), q(uuid(c.createdBy)), q(c.createdAt), q(c.updatedAt)]),
+    "on conflict (profile_id) do update set id = excluded.id, organization_id = excluded.organization_id, source = excluded.source, tags = excluded.tags, notes = excluded.notes, marketing_consent = excluded.marketing_consent, consent_at = excluded.consent_at, owner_id = excluded.owner_id, city = excluded.city, instagram = excluded.instagram",
+  );
+  insert(
+    "crm_deals",
+    ["id", "contact_id", "stage_id", "title", "value", "lost_reason", "owner_id", "position", "expected_close", "closed_at", "created_at", "updated_at"],
+    crm.deals.map((d) => [q(uuid(d.id)), q(uuid(d.contactId)), q(sid(d.stageId)), q(d.title), d.value, q(d.lostReason), q(uuid(d.ownerId)), d.position, q(d.expectedClose), q(d.closedAt), q(d.createdAt), q(d.updatedAt)]),
+  );
+  insert(
+    "crm_activities",
+    ["id", "contact_id", "type", "body", "occurred_at", "author_id", "created_at"],
+    crm.activities.map((a) => [q(uuid(a.id)), q(uuid(a.contactId)), q(a.type), q(a.body), q(a.occurredAt), q(uuid(a.authorId)), q(a.createdAt)]),
+  );
+  insert(
+    "crm_tasks",
+    ["id", "contact_id", "title", "due_on", "owner_id", "done_at", "reminded_at", "created_by", "created_at"],
+    crm.tasks.map((t) => [q(uuid(t.id)), q(uuid(t.contactId)), q(t.title), q(t.dueOn), q(uuid(t.ownerId)), q(t.doneAt), q(t.remindedAt), q(uuid(t.createdBy)), q(t.createdAt)]),
+  );
+  insert(
+    "crm_segments",
+    ["id", "name", "description", "filters", "created_by", "created_at", "updated_at"],
+    crm.segments.map((g) => [q(uuid(g.id)), q(g.name), q(g.description), json(g.filters), q(uuid(g.createdBy)), q(g.createdAt), q(g.updatedAt)]),
+  );
+}
+
 out("select setval('public.card_number_seq', 700, false);");
 out("commit;");
 
