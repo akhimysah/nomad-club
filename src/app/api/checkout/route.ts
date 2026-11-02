@@ -95,6 +95,11 @@ export async function POST(req: NextRequest) {
   }
   if (input.kind === "join") await claimReferral(profile.id, input.referralCode); // --- Lot 4 ---
   if (input.kind === "upgrade" && profile.plan === "premium") return fail("Tu es déjà Premium.");
+  // --- Lancement --- adhésion sur validation : une candidature acceptée est demandée avant la première adhésion
+  if (input.kind === "join") {
+    const gate = await (await import("@/lib/modules/lancement/server")).membershipGate(viewer.profile);
+    if (gate) return fail(gate, 403);
+  }
   const plan = input.kind === "upgrade" ? "premium" : input.kind === "renew" ? (profile.plan === "premium" ? "premium" : "member") : (input.plan ?? "member");
   const pay = await startMembershipPayment({
     profile,

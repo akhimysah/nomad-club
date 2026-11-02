@@ -2,7 +2,7 @@
  * Source des retombées commerciales (deals déclarés par les membres, Espace Business du Lot 4).
  *
  * Le CRM ne dépend pas du code du Lot 4 : il lit une source enregistrée ici. Tant qu'aucune source
- * n'est branchée, il affiche des exemples en démo et un emplacement vide en mode réel.
+ * n'est branchée, il affiche des exemples en démo et, en mode réel, les deals confirmés de l'Espace Business.
  * Pour brancher le module Business (une fois fusionné), depuis son propre code serveur :
  *
  *   import { registerDealOutcomeSource } from "@/lib/modules/crm/business-source";
@@ -52,6 +52,23 @@ export async function loadDealOutcomes(today: string): Promise<DealOutcomeSource
       return { available: false, sample: false, rows: [] };
     }
   }
-  if (isRealMode()) return { available: false, sample: false, rows: [] };
+  // --- Lancement --- mode réel : deals confirmés de l'Espace Business (Lot 4), lus sous la RLS de l'admin
+  if (isRealMode()) {
+    try {
+      return { available: true, sample: false, rows: await confirmedDeals() };
+    } catch (e) {
+      console.error("[crm] retombées des deals indisponibles :", e instanceof Error ? e.message : e);
+      return { available: false, sample: false, rows: [] };
+    }
+  }
   return { available: true, sample: true, rows: samples(today) };
+}
+
+const CATEGORY_LABEL: Record<string, string> = { prestation: "Prestation", vente: "Vente", partenariat: "Partenariat", recommandation: "Recommandation", autre: "Autre" };
+
+async function confirmedDeals(): Promise<DealOutcome[]> {
+  const { getRepo } = await import("../../data");
+  return (await getRepo().listDeals())
+    .filter((d) => d.status === "confirmed")
+    .map((d) => ({ id: d.id, month: (d.respondedAt ?? d.dealDate).slice(0, 7), amount: d.amount ?? 0, sector: CATEGORY_LABEL[d.category] ?? d.category, profileIds: [d.declaredBy, d.partnerId] }));
 }

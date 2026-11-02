@@ -18,6 +18,7 @@ import type { AppNotification, Booking, BookingView, ClubEvent, DmThread, Messag
 import { demoSecuriteRepo } from "../modules/securite/demo-repo"; // --- Lot 6 ---
 import { demoContratsRepo } from "../modules/contrats/demo-repo"; // --- Vague 2 · Contrats ---
 import { paiementsDemoRepo } from "../modules/paiements/demo"; // --- Vague 2 · paiements ---
+import { lancementDemoRepo } from "../modules/lancement/demo"; // --- Lancement ---
 import { dmChannel, otherInChannel, type BookResult, type CancelResult, type Repo } from "./repo";
 // --- Lot 3 ---
 import { partenairesDemo } from "../modules/partenaires/demo";
@@ -74,6 +75,8 @@ export const demoRepo: Repo = {
   ...demoContratsRepo,
   // --- Vague 2 · paiements --- (échéanciers, grand livre, événements ; même mémoire que la démo)
   ...paiementsDemoRepo(db, (e) => demoRepo.logAudit(e)),
+  // --- Lancement --- inscription, onboarding, candidatures, invitations
+  ...lancementDemoRepo,
 
   async getProfile(id) {
     const p = db().profiles.find((x) => x.id === id);

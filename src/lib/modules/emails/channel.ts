@@ -34,6 +34,9 @@ export const SENT_BY_MODULE_NOTIFICATION_TYPES: readonly string[] = [
   // --- Vague 2 · Contrats ---
   "contract_ready",
   "contract_accepted",
+  // --- Lancement ---
+  "application_accepted",
+  "application_refused",
 ];
 
 export type ChannelRow = { recipientId: string; type: string; title: string; body: string; link: string | null };

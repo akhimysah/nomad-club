@@ -1,0 +1,77 @@
+/* Vague 2 — Inscription et lancement : inscription, onboarding, candidatures, invitations,
+   pages d'erreur et de statut. Jetons de la maquette noir et blanc (globals.css). */
+
+.lc-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.lc-card { max-width: 620px; margin: 0 auto; }
+.lc-card .sh-sub { margin-bottom: 22px; }
+.lc-legend { font: 600 14.5px var(--sans); color: var(--tx2); margin: 0 0 10px; padding: 0; }
+.lc-fieldset { border: 0; margin: 0 0 18px; padding: 0; min-width: 0; }
+
+/* choix « compte gratuit / adhésion » */
+.lc-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.lc-choice { position: relative; display: block; cursor: pointer; }
+.lc-choice input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.lc-choice span { display: block; height: 100%; padding: 16px 18px; border-radius: 18px; background: var(--fill); box-shadow: inset 0 0 0 1px var(--line2); transition: box-shadow .25s, background .25s; }
+.lc-choice b { display: block; font: 600 16px var(--sans); color: var(--tx); margin-bottom: 4px; }
+.lc-choice small { display: block; font-size: 14px; line-height: 1.45; color: var(--tx2); }
+.lc-choice input:checked + span { background: var(--fill2); box-shadow: inset 0 0 0 2px var(--accent); }
+.lc-choice input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* case à cocher (CGU, consentement) */
+.lc-check { display: flex; gap: 12px; align-items: flex-start; margin: 4px 0 20px; font-size: 15px; line-height: 1.5; color: var(--tx2); cursor: pointer; }
+.lc-check input { flex: none; width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--accent); cursor: pointer; }
+.lc-check a { color: var(--tx); text-decoration: underline; text-underline-offset: 3px; }
+.field .lc-hint { display: block; font-size: 13.5px; color: var(--muted); margin-top: 6px; }
+.field.err .lc-hint { color: var(--rose); }
+
+/* étapes de l'onboarding */
+.lc-steps { display: flex; gap: 6px; list-style: none; margin: 0 0 22px; padding: 0; counter-reset: lcstep; }
+.lc-steps li { flex: 1; min-width: 0; }
+.lc-steps a, .lc-steps span { display: block; padding-top: 10px; border-top: 3px solid var(--line2); font: 600 13px var(--sans); color: var(--muted); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lc-steps .done a, .lc-steps .done span { border-color: color-mix(in srgb, var(--accent) 55%, transparent); color: var(--tx2); }
+.lc-steps .on a, .lc-steps .on span { border-color: var(--accent); color: var(--tx); }
+.lc-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 22px; }
+.lc-actions .lc-skip { margin-left: auto; }
+.lc-link-btn { appearance: none; background: none; border: 0; padding: 8px 4px; font: 600 14.5px var(--sans); color: var(--tx2); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.lc-link-btn:hover { color: var(--tx); }
+.lc-photo { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.lc-photo img, .lc-photo .lc-initials { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; background: var(--fill2); display: grid; place-items: center; font: 500 26px var(--serif); color: var(--tx2); }
+
+/* candidatures (fondatrices) */
+.lc-apps { display: grid; gap: 14px; }
+.lc-app { padding: 18px 20px; border-radius: 20px; background: var(--s1); box-shadow: inset 0 0 0 1px var(--line); }
+.lc-app h3 { font: 500 22px/1.2 var(--serif); margin: 0 0 4px; }
+.lc-app .lc-meta { font-size: 14px; color: var(--muted); margin: 0 0 10px; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.lc-app blockquote { margin: 0 0 14px; padding: 12px 14px; border-radius: 14px; background: var(--fill); font-size: 15px; line-height: 1.55; color: var(--tx2); white-space: pre-line; }
+.lc-app textarea { width: 100%; min-height: 72px; border-radius: 14px; border: 1px solid var(--line2); background: var(--fill); color: var(--tx); font: 500 15px var(--sans); padding: 10px 12px; resize: vertical; }
+.lc-app textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent); }
+.lc-badge { display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; font: 600 12.5px var(--sans); background: var(--fill); box-shadow: inset 0 0 0 1px var(--line2); color: var(--tx2); }
+.lc-badge.pending { background: #191919; color: #f3f3f3; box-shadow: none; }
+.lc-mode { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.lc-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.lc-table th, .lc-table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.lc-table th { font: 600 13px var(--sans); color: var(--muted); }
+.lc-copy { display: flex; gap: 8px; margin-top: 10px; }
+.lc-copy input { flex: 1; min-width: 0; height: 44px; border-radius: 12px; border: 1px solid var(--line2); background: var(--fill); color: var(--tx); font: 500 14px var(--sans); padding: 0 12px; }
+
+/* pages d'erreur, maintenance, configuration manquante, statut */
+.lc-error { min-height: 100dvh; display: grid; place-items: center; padding: 40px 16px; background: var(--bg, #0b0b0b); }
+.lc-error-in { max-width: 520px; text-align: center; }
+.lc-error-in img { height: 84px; width: auto; margin: 0 auto 22px; display: block; }
+.lc-error-in .sh-title { font-size: 34px; margin-bottom: 10px; }
+.lc-error-in .sh-sub { margin-bottom: 24px; }
+.lc-error-in .btn-row { justify-content: center; }
+.lc-error-code { font: 600 13px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.lc-status { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; text-align: left; }
+.lc-status li, .lc-status > div { display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 16px; background: var(--fill); box-shadow: inset 0 0 0 1px var(--line); font-size: 15px; }
+.lc-status b { font-weight: 600; }
+.lc-status dt, .lc-status dd { margin: 0; }
+.lc-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; background: #3ecf8e; }
+.lc-dot.ko { background: #e5484d; }
+.lc-dot.off { background: var(--muted); }
+
+@media (max-width: 560px) {
+  .lc-choices { grid-template-columns: 1fr; }
+  .lc-actions .lc-skip { margin-left: 0; }
+  .lc-steps a, .lc-steps span { font-size: 12px; }
+}

@@ -29,6 +29,10 @@ export const NOTIFICATION_ICON: Record<NotificationType, IconName> = {
   ...CONTRATS_NOTIFICATION_ICON,
   // --- Vague 2 · paiements ---
   ...PAIEMENTS_NOTIFICATION_ICON,
+  // --- Lancement ---
+  application_received: "inbox",
+  application_accepted: "check",
+  application_refused: "user",
 };
 
 export type NotificationItem = {

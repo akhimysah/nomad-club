@@ -1,4 +1,5 @@
 import { Screen } from "@/components/ui/Screen";
+import { applyHrefFor } from "@/lib/modules/lancement/server"; // --- Lancement ---
 import { AgendaSection, ClubSection, FormulesSection, Hero, MobileTeaser } from "@/components/visit/sections";
 import { getViewer } from "@/lib/auth";
 import { getRepo } from "@/lib/data";
@@ -21,7 +22,7 @@ export default async function HomePage() {
       <div className="desk-only">
         <AgendaSection events={events} mine={mine} hasAccount={!!viewer.profile} />
         <ClubSection memories={memories} />
-        <FormulesSection env={payEnv(viewer)} needLogin={viewer.mode === "real" && !viewer.profile} nextPremium={events.find((e) => e.premiumFree) ?? null} />
+        <FormulesSection env={payEnv(viewer)} needLogin={viewer.mode === "real" && !viewer.profile} nextPremium={events.find((e) => e.premiumFree) ?? null} applyHref={await applyHrefFor(viewer.profile) /* --- Lancement --- */} signupHref={viewer.mode === "real" && !viewer.profile ? "/inscription" : null} />
       </div>
     </>
   );

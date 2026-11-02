@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { PERSONA_OF_SPACE, spaceOfPath } from "@/lib/permissions";
 import { withReferralCookie } from "@/lib/modules/engagement/referral-cookie"; // --- Lot 4 ---
 import { updateSession } from "@/lib/supabase/middleware";
+import { lancementGate } from "@/lib/modules/lancement/gate"; // --- Lancement ---
 
 const ROLE_COOKIE = "nc_demo_role";
 
@@ -14,6 +15,9 @@ const ROLE_COOKIE = "nc_demo_role";
  *   (src/lib/permissions.ts) à partir des rôles de la personne.
  */
 export async function middleware(request: NextRequest) {
+  // --- Lancement --- maintenance (MAINTENANCE_MODE=true) ou configuration manquante (NEXT_PUBLIC_DEMO=false sans Supabase)
+  const blocked = lancementGate(request);
+  if (blocked) return blocked;
   // --- Lot 4 --- : ?parrain=CODE est mémorisé dans un cookie pour l'inscription
   return withReferralCookie(request, await accessGuard(request));
 }

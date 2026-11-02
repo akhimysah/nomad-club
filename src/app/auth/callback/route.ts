@@ -21,7 +21,10 @@ export async function GET(request: NextRequest) {
       if (data.user) await (await import("@/lib/modules/emails/triggers")).sendWelcomeIfNew(data.user);
       // --- Lot 6 --- connexion journalisée pour les administratrices (puis double authentification)
       const { afterSignIn } = await import("@/lib/modules/securite/sign-in");
-      return NextResponse.redirect(new URL(await afterSignIn(supabase, dest), url));
+      let next = await afterSignIn(supabase, dest);
+      // --- Lancement --- code de parrainage de l'inscription + onboarding à la première connexion
+      if (data.user && !next.startsWith("/connexion/")) next = await (await import("@/lib/modules/lancement/server")).afterMagicLink(supabase, data.user, next);
+      return NextResponse.redirect(new URL(next, url));
     }
   }
   return NextResponse.redirect(new URL("/connexion?erreur=lien", url));

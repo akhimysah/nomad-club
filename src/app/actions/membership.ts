@@ -49,6 +49,11 @@ export async function startMembership(input: MembershipInput): Promise<Membershi
     }
     profile = await repo.createGuestProfile({ firstName: parsed.data.firstName, lastName: "", whatsapp: parsed.data.whatsapp, email: null });
   }
+  // --- Lancement --- adhésion sur validation : une candidature acceptée est demandée avant la première adhésion
+  if (input.action === "join") {
+    const gate = await (await import("@/lib/modules/lancement/server")).membershipGate(viewer.profile);
+    if (gate) return { ok: false, error: gate };
+  }
   // --- Lot 4 --- : adhésion parrainée (avant le rôle membre, qui déclenche la récompense de la marraine)
   if (input.action === "join") await claimReferral(profile.id, input.referralCode);
   if (input.action === "upgrade" && profile.plan === "premium") return { ok: false, error: "Tu es déjà Premium." };

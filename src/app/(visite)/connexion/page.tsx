@@ -69,6 +69,12 @@ export default async function LoginPage({ searchParams }: Props) {
                       Adhérer au club
                     </Link>
                   )}
+                  {/* --- Lancement --- compte gratuit : sa fiche, ses réglages, l'appli */}
+                  {!viewerCan(viewer, "space.member") && (
+                    <Link className="btn btn-ghost" href="/bienvenue?etape=profile">
+                      Ma fiche et mes réglages
+                    </Link>
+                  )}
                   <form action={signOut}>
                     <button className="btn btn-ghost" type="submit">
                       Me déconnecter
@@ -86,6 +92,10 @@ export default async function LoginPage({ searchParams }: Props) {
                   </div>
                 )}
                 <LoginForm next={next} parrain={await pendingReferralCode() /* --- Lot 4 --- */} />
+                {/* --- Lancement --- */}
+                <p className="fine">
+                  Pas encore de compte ? <Link href="/inscription">Créer mon compte</Link>
+                </p>
               </>
             )}
           </div>

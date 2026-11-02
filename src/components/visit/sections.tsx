@@ -85,7 +85,26 @@ export function MobileTeaser({ featured, mine }: { featured: EventView | null; m
   );
 }
 
-export function AgendaSection({ events, mine, hasAccount }: { events: EventView[]; mine: Map<string, Mine>; hasAccount: boolean }) {
+/**
+ * --- Lancement (accessibilité) --- en-tête de section : quand la section est la page entière
+ * (/rendez-vous, /club, /formules), le surtitre devient le h1 (le titre reste un h2, les cartes des h3).
+ */
+function SecHead({ page, eyebrow, title }: { page?: boolean; eyebrow: string; title: string }) {
+  return (
+    <>
+      {page ? (
+        <h1 className="eyebrow" style={{ margin: 0 }}>
+          {eyebrow}
+        </h1>
+      ) : (
+        <div className="eyebrow">{eyebrow}</div>
+      )}
+      <h2 className="h-sec">{title}</h2>
+    </>
+  );
+}
+
+export function AgendaSection({ events, mine, hasAccount, page = false }: { events: EventView[]; mine: Map<string, Mine>; hasAccount: boolean; page?: boolean }) {
   const featured = events.find((e) => e.featured) ?? events[0];
   const rest = events.filter((e) => e !== featured);
   return (
@@ -93,8 +112,7 @@ export function AgendaSection({ events, mine, hasAccount }: { events: EventView[
       <div className="wrap">
         <div className="sec-head rv">
           <div>
-            <div className="eyebrow">Agenda</div>
-            <h2 className="h-sec">Prochains rendez-vous</h2>
+            <SecHead page={page} eyebrow="Agenda" title="Prochains rendez-vous" />
           </div>
           <p>Ouverts à toutes au tarif public avec un compte gratuit. Les adhérentes paient moins. Ceux marqués Premium sont offerts aux Premium.</p>
         </div>
@@ -132,7 +150,7 @@ export function AgendaSection({ events, mine, hasAccount }: { events: EventView[
   );
 }
 
-export function ClubSection({ memories }: { memories: Memory[] }) {
+export function ClubSection({ memories, page = false }: { memories: Memory[]; page?: boolean }) {
   const words = QUOTE.text.split(" ");
   return (
     <>
@@ -140,8 +158,7 @@ export function ClubSection({ memories }: { memories: Memory[] }) {
         <div className="wrap">
           <div className="sec-head rv">
             <div>
-              <div className="eyebrow">Déjà vécu au club</div>
-              <h2 className="h-sec">Les derniers rendez-vous, avec celles qui y étaient</h2>
+              <SecHead page={page} eyebrow="Déjà vécu au club" title="Les derniers rendez-vous, avec celles qui y étaient" />
             </div>
             <p>Des tables, des terrains, des jardins. Et chaque fois, de nouvelles têtes qui deviennent des amies.</p>
           </div>
@@ -220,14 +237,39 @@ export function ClubSection({ memories }: { memories: Memory[] }) {
   );
 }
 
-export function FormulesSection({ env, needLogin, nextPremium }: { env: PayEnv; needLogin: boolean; nextPremium: EventView | null }) {
+export function FormulesSection({
+  env,
+  needLogin,
+  nextPremium,
+  applyHref = null,
+  signupHref = null,
+  page = false,
+}: {
+  env: PayEnv;
+  needLogin: boolean;
+  nextPremium: EventView | null;
+  /** --- Lancement --- adhésion sur validation : lien de candidature à la place du paiement */
+  applyHref?: string | null;
+  /** --- Lancement --- mode réel : création du compte gratuit */
+  signupHref?: string | null;
+  page?: boolean;
+}) {
+  const join = (plan: "member" | "premium", label: string) =>
+    applyHref ? (
+      <Link className="btn btn-gold btn-block" href={applyHref}>
+        Demander l’adhésion
+      </Link>
+    ) : (
+      <JoinButton plan={plan} amount={PRICES[plan]} env={env} needLogin={needLogin}>
+        {label}
+      </JoinButton>
+    );
   return (
     <section className="vsec" id="v-formules">
       <div className="wrap">
         <div className="sec-head rv">
           <div>
-            <div className="eyebrow">Formules</div>
-            <h2 className="h-sec">Compte gratuit ou adhésion</h2>
+            <SecHead page={page} eyebrow="Formules" title="Compte gratuit ou adhésion" />
           </div>
           <p>Prix par an, en dollars US. Commence gratuitement, adhère quand tu veux.</p>
         </div>
@@ -252,7 +294,7 @@ export function FormulesSection({ env, needLogin, nextPremium }: { env: PayEnv; 
                 Ton billet sur WhatsApp.
               </li>
             </ul>
-            <FreeAccountButton toastText="Ton compte se crée à ta première réservation." />
+            <FreeAccountButton toastText="Ton compte se crée à ta première réservation." href={signupHref} />
           </article>
           <article className="plan rv">
             <h3>Membre</h3>
@@ -282,9 +324,7 @@ export function FormulesSection({ env, needLogin, nextPremium }: { env: PayEnv; 
             <p className="muted" style={{ fontSize: 14, margin: "-12px 0 20px" }}>
               Les rendez-vous Premium ne sont pas inclus.
             </p>
-            <JoinButton plan="member" amount={PRICES.member} env={env} needLogin={needLogin}>
-              Adhérer · {money(PRICES.member)}
-            </JoinButton>
+            {join("member", `Adhérer · ${money(PRICES.member)}`)}
           </article>
           <article className="plan premium rv">
             <span className="chip solid tag">
@@ -315,9 +355,7 @@ export function FormulesSection({ env, needLogin, nextPremium }: { env: PayEnv; 
                 Priorité sur les dîners à places limitées.
               </li>
             </ul>
-            <JoinButton plan="premium" amount={PRICES.premium} env={env} needLogin={needLogin}>
-              Passer Premium · {money(PRICES.premium)}
-            </JoinButton>
+            {join("premium", `Passer Premium · ${money(PRICES.premium)}`)}
           </article>
         </div>
       </div>
@@ -341,7 +379,7 @@ export function VFoot({ demo }: { demo: boolean }) {
         </p>
         {/* --- Lot 6 --- */}
         <p className="v-legal">
-          <Link href="/confidentialite">Confidentialité</Link> · <Link href="/mentions-legales">Mentions légales</Link> · <Link href="/mes-donnees">Mes données</Link>
+          <Link href="/cgu">Conditions d’utilisation</Link> · <Link href="/confidentialite">Confidentialité</Link> · <Link href="/mentions-legales">Mentions légales</Link> · <Link href="/mes-donnees">Mes données</Link>
         </p>
       </div>
     </footer>

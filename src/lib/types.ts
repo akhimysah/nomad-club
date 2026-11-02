@@ -283,6 +283,7 @@ export type AuditAction =
   | EngagementAuditAction
   | import("./modules/securite/types").SecuriteAuditAction // --- Lot 6 ---
   | import("./modules/emails/types").EmailsAuditAction // --- E-mails ---
+  | import("./modules/lancement/types").LancementAuditAction // --- Lancement ---
   // --- Lot 1 ---
   | "news.create"
   | "news.update"
@@ -307,7 +308,7 @@ export type AuditEntry = {
   id: string;
   actorId: string | null;
   action: AuditAction;
-  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | CrmTargetType /* Lot 5 */ | EngagementAuditTarget /* Lot 4 */ | /* Lot 1 */ "news" | "group" | "message" | "report" | "keyword" | /* E-mails */ "email" | import("./modules/contrats/types").ContratsAuditTarget /* Vague 2 · Contrats */;
+  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | CrmTargetType /* Lot 5 */ | EngagementAuditTarget /* Lot 4 */ | /* Lot 1 */ "news" | "group" | "message" | "report" | "keyword" | /* E-mails */ "email" | import("./modules/contrats/types").ContratsAuditTarget /* Vague 2 · Contrats */ | import("./modules/lancement/types").LancementAuditTarget /* Lancement */;
   targetId: string | null;
   /** Phrase lisible (« Virement de Lou Garnier validé · 670 $ »). */
   summary: string;
@@ -334,7 +335,9 @@ export type NotificationType =
   | "moderation_warning"
   | import("./modules/contrats/types").ContratsNotificationType // --- Vague 2 · Contrats ---
   // --- Vague 2 · paiements ---
-  | import("./modules/paiements/types").PaiementsNotificationType;
+  | import("./modules/paiements/types").PaiementsNotificationType
+  // --- Lancement ---
+  | import("./modules/lancement/types").LancementNotificationType;
 
 export type AppNotification = {
   id: string;

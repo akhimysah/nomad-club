@@ -39,6 +39,7 @@ import { partenairesSupabase } from "../modules/partenaires/supabase";
 import { supabaseSecuriteRepo } from "../modules/securite/supabase-repo"; // --- Lot 6 ---
 import { supabaseContratsRepo } from "../modules/contrats/supabase-repo"; // --- Vague 2 · Contrats ---
 import { paiementsSupabaseRepo } from "../modules/paiements/supabase-repo"; // --- Vague 2 · paiements ---
+import { lancementSupabaseRepo } from "../modules/lancement/supabase"; // --- Lancement ---
 import { otherInChannel, type BookResult, type CancelResult, type EventInput, type NotificationInput, type Repo } from "./repo";
 
 /* ---------- lignes de la base (snake_case) ---------- */
@@ -321,6 +322,8 @@ export const supabaseRepo: Repo = {
   ...supabaseContratsRepo,
   // --- Vague 2 · paiements ---
   ...paiementsSupabaseRepo,
+  // --- Lancement --- inscription, onboarding, candidatures, invitations
+  ...lancementSupabaseRepo,
 
   async getProfile(id) {
     const c = await db();
@@ -566,7 +569,7 @@ export const supabaseRepo: Repo = {
   async listMessages(channel, limit = 200) {
     const c = await db();
     const rows = check(
-      await c.from("messages").select(`*, author:profiles(${PROFILE})`).eq("channel", channel).order("created_at", { ascending: false }).limit(limit),
+      await c.from("messages").select(`*, author:profiles!messages_author_id_fkey(${PROFILE})`).eq("channel", channel).order("created_at", { ascending: false }).limit(limit),
     ) as Row[];
     return rows.reverse().map((r): MessageView => ({ ...toMessage(r), author: r.author ? toProfile(r.author as Row) : null }));
   },

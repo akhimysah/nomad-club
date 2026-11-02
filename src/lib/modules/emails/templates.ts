@@ -610,6 +610,69 @@ const contractPending = (id: "contract_ready" | "contract_reminder", reminder: b
 const contractReady = contractPending("contract_ready", false);
 const contractReminder = contractPending("contract_reminder", true);
 
+// --- Lancement --- invitation à un rôle et réponse à une candidature
+const roleInvitation = define({
+  id: "role_invitation",
+  label: "Invitation à un rôle",
+  description: "Lien d’invitation à usage unique (modératrice, partenaire, professionnelle du carnet).",
+  essential: true,
+  prefType: null,
+  schema: z.object({ link: s("/"), roleLabel: s("membre"), inviterName: s("L’équipe du Nomad Club"), organization: s(), note: s(), expiresAt: s() }),
+  sample: { link: "/invitation/exemple", roleLabel: "partenaire", inviterName: "Julia", organization: "Bloom House", note: "Ravie de t’accueillir parmi nos partenaires !", expiresAt: "2026-11-16T10:00:00.000Z" },
+  render: (d, ctx) => {
+    const rows: Array<[string, string]> = [["Rôle", d.roleLabel]];
+    if (d.organization) rows.push(["Établissement", d.organization]);
+    if (d.expiresAt) rows.push(["Valable jusqu’au", new Date(d.expiresAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "Africa/Casablanca" })]);
+    const blocks: RenderedParts["blocks"] = [
+      { t: "h1", text: `${d.inviterName} t’invite sur l’appli du Nomad Club` },
+      { t: "p", text: `Tu es invitée en tant que ${d.roleLabel}. Ce lien est personnel et ne fonctionne qu’une fois.` },
+    ];
+    if (d.note) blocks.push({ t: "p", text: `« ${d.note} »` });
+    blocks.push({ t: "details", rows }, { t: "button", label: "Accepter l’invitation", url: absUrl(ctx, d.link, "/") });
+    return {
+      subject: `${d.inviterName} t’invite sur l’appli du Nomad Club`,
+      preheader: `Invitation en tant que ${d.roleLabel} : un clic pour l’accepter.`,
+      blocks,
+      reason: "Tu reçois cet e-mail parce qu’une fondatrice du Nomad Club t’a invitée.",
+    };
+  },
+});
+
+const applicationDecision = (id: "application_accepted" | "application_refused", accepted: boolean) =>
+  define({
+    id,
+    label: accepted ? "Candidature acceptée" : "Candidature refusée",
+    description: accepted ? "La demande d’adhésion est acceptée : choisir sa formule." : "Réponse négative à une demande d’adhésion.",
+    essential: true,
+    prefType: null,
+    schema: z.object({ firstName: s(), message: s(), link: s(accepted ? "/formules" : "/candidature") }),
+    sample: accepted
+      ? { firstName: "Lou", message: "Ton parcours nous a beaucoup touchées, bienvenue !", link: "/formules" }
+      : { firstName: "Camille", message: "Le cercle est complet pour cette saison : nous gardons ta demande pour la rentrée.", link: "/candidature" },
+    render: (d, ctx) => {
+      const blocks: RenderedParts["blocks"] = [
+        { t: "p", text: hello(d.firstName) },
+        { t: "h1", text: accepted ? "Bienvenue dans le cercle" : "Merci pour ta candidature" },
+        {
+          t: "p",
+          text: accepted
+            ? "Julia et Nora ont accepté ta demande d’adhésion. Il ne te reste plus qu’à choisir ta formule pour rejoindre le Nomad Club."
+            : "Julia et Nora ont lu ta demande avec attention. Elles ne peuvent pas y donner suite pour le moment.",
+        },
+      ];
+      if (d.message) blocks.push({ t: "p", text: `« ${d.message} »` });
+      blocks.push({ t: "button", label: accepted ? "Choisir ma formule" : "Voir ma candidature", url: absUrl(ctx, d.link, accepted ? "/formules" : "/candidature") });
+      return {
+        subject: accepted ? "Ta candidature au Nomad Club est acceptée" : "Réponse à ta candidature au Nomad Club",
+        preheader: accepted ? "Choisis ta formule pour rejoindre le cercle." : "La réponse des fondatrices à ta demande d’adhésion.",
+        blocks,
+        reason: "Tu reçois cet e-mail parce que tu as demandé à adhérer au Nomad Club.",
+      };
+    },
+  });
+const applicationAccepted = applicationDecision("application_accepted", true);
+const applicationRefused = applicationDecision("application_refused", false);
+
 export const TEMPLATES: Record<TemplateId, EmailTemplate> = {
   welcome,
   booking_confirmed: bookingConfirmed,
@@ -622,6 +685,9 @@ export const TEMPLATES: Record<TemplateId, EmailTemplate> = {
   contract_accepted: contractAccepted,
   contract_ready: contractReady,
   contract_reminder: contractReminder,
+  role_invitation: roleInvitation,
+  application_accepted: applicationAccepted,
+  application_refused: applicationRefused,
   team_invite: teamInvite,
   group_joined: groupJoined,
   moderation_warning: moderationWarning,

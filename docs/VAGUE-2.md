@@ -7,7 +7,7 @@ Base : `main` après fusion des lots 0, 1, 3, 4, 5 et 6 (264 tests SQL verts). M
 | 2a Paiements | `v2-paiements` | `0009_paiements.sql` | `src/lib/modules/paiements/` |
 | 2b Contrats | `v2-contrats` | `0010_contrats.sql` | `src/lib/modules/contrats/` |
 | E-mails | `v2-emails` | `0011_emails.sql` (si besoin) | `src/lib/modules/emails/` |
-| Inscription et lancement | `v2-lancement` | `0012_lancement.sql` (si besoin) | `src/lib/modules/lancement/` |
+| Inscription et lancement | `v2-lancement` | `0012_lancement.sql` | `src/lib/modules/lancement/` (voir `docs/lancement/`) |
 
 Chaque migration ne dépend que de 0001 à 0008.
 

@@ -327,7 +327,7 @@ export const communauteSupabaseRepo: CommunauteRepo = {
   },
   async listGroupMembers(groupId) {
     const c = await db();
-    const rows = check(await c.from("chat_group_members").select(`status, created_at, profile:profiles(${PROFILE})`).eq("group_id", groupId)) as Row[];
+    const rows = check(await c.from("chat_group_members").select(`status, created_at, profile:profiles!chat_group_members_profile_id_fkey(${PROFILE})`).eq("group_id", groupId)) as Row[];
     return rows
       .filter((r) => r.profile)
       .map((r): GroupMemberView => ({ profile: toProfile(r.profile as Row), status: r.status as GroupMemberStatus, createdAt: str(r.created_at) }))
@@ -336,7 +336,7 @@ export const communauteSupabaseRepo: CommunauteRepo = {
   async listGroupRequests() {
     const c = await db();
     const rows = check(
-      await c.from("chat_group_members").select("profile_id, created_at, group:chat_groups(*), profile:profiles(first_name, last_name, job)").eq("status", "pending").order("created_at"),
+      await c.from("chat_group_members").select("profile_id, created_at, group:chat_groups(*), profile:profiles!chat_group_members_profile_id_fkey(first_name, last_name, job)").eq("status", "pending").order("created_at"),
     ) as Row[];
     return rows
       .filter((r) => r.group && r.profile)

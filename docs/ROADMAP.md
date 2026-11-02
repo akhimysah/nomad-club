@@ -106,6 +106,17 @@ Chaque lot est livrable seul, testable en mode démo puis en mode réel.
 - [x] Canal e-mail de `notify()` : préférences « e-mail » respectées, essentiels (billet, reçu, accès) toujours envoyés. Déclencheurs : bienvenue, suppression programmée / effectuée, export de données, invitation d'équipe, relances des fondatrices, rappels de renouvellement J-30 / J-7 / J-1 (`/api/cron/emails`).
 - [x] Journal `email_log` (RLS admin + 2FA, effacé avec le compte, purge 180 jours), page `/fondatrices/emails` (filtres, renvoyer, état de la configuration) et aperçu de chaque modèle `/fondatrices/emails/apercu/[modele]` ; `npm run test:emails`.
 - [ ] À faire en production : domaine vérifié chez Resend (SPF, DKIM, DMARC), `RESEND_API_KEY`, `EMAIL_FROM`, SMTP de Supabase Auth sur Resend + modèle du lien magique (`docs/emails.md`), relecture des textes par la cliente. Paiements / contrats : appeler `sendEmail` (`payment_receipt`, `payment_failed`, `contract_accepted`).
+### Vague 2 — Inscription et lancement (branche `v2-lancement`, migration `0012_lancement.sql`, module `src/lib/modules/lancement/`)
+- [x] Inscription réelle : fiche (prénom, nom, e-mail, WhatsApp, pays, source, parrainage), CGU et confidentialité acceptées et horodatées (version), choix « compte gratuit » ou « demander l'adhésion », lien magique.
+- [x] Onboarding après la première connexion : fiche et photo, confidentialité, notifications, installation de l'appli ; sautable, repris depuis « Moi ».
+- [x] Adhésion **sur validation** (candidature, réponse des fondatrices avec message, notification, journal, note CRM) ou **directe**, réglable par les fondatrices ; garde serveur sur le paiement.
+- [x] Invitations à usage unique qui attribuent un rôle (modératrice, partenaire, pro), révocables, journalisées.
+- [x] `npm run admin:create` (première administratrice) et `npm run check:env` (variables du mode réel).
+- [x] Revue complète du mode réel (`docs/lancement/revue-mode-reel.md`) : 125 vérifications du vrai code sous RLS, 79 pages en production sans erreur, 2 bugs bloquants corrigés.
+- [x] Pages d'erreur (404, 500, maintenance, configuration manquante), `/statut`, surveillance Sentry facultative, `NEXT_PUBLIC_DEMO=false`.
+- [x] Référencement : métadonnées, image de partage, `robots.txt`, `sitemap.xml`, espaces privés en `noindex`.
+- [x] Accessibilité (`docs/lancement/accessibilite.md`) : contrôle des écrans du parcours, titres corrigés sur `/rendez-vous`, `/club`, `/formules`.
+- [ ] À faire en mode réel : suivre `docs/lancement/checklist.md` (Supabase, variables, domaine, première admin, répétition générale), essai au lecteur d'écran, textes juridiques validés.
 
 ## Décisions à prendre avec la cliente
 
@@ -115,3 +126,5 @@ Chaque lot est livrable seul, testable en mode démo puis en mode réel.
 4. **Hébergement** : Vercel + Supabase (prévu), ou le VPS Hostinger déjà utilisé pour le carnet ?
 5. **Charte graphique** : noir et blanc actuel, ou l'une des pistes Riad Sauge / Majorelle / Nuit Rose ?
 6. **E-mails** : adresse d'envoi (ex. bonjour@nomadclub…) et nom de domaine, compte Resend au nom du club (voir `docs/emails.md`).
+6. **E-mails** : adresse d'envoi (ex. bonjour@nomadclub…) et nom de domaine.
+7. **Adhésion au lancement** : sur validation (candidature, réglage par défaut) ou directe ? Modifiable à tout moment dans Fondatrices → Candidatures.
