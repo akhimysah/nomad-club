@@ -18,6 +18,7 @@ Contenu et données d'exemple : `design/contenu-et-donnees.md`.
 
 - **Mode démo** (par défaut, aucune clé) : données en mémoire côté serveur, initialisées depuis `src/lib/seed.ts` (toutes les données d'exemple du brief : rendez-vous, souvenirs, carnet, membres, salon, virements, relances, brouillons, encaissements, échéances, organisations, journal, notifications). Un sélecteur d'espace comme dans la maquette, à cinq entrées : Compte gratuit (visiteuse), Membre (Inès), Partenaire (Kenza, Bloom House), Pro (Loubna, ostéopathe), Fondatrices (Julia, admin). Le personnage est stocké en cookie `nc_demo_role` (`guest|member|partner|pro|admin` ; l'ancien `founder` est lu comme `admin`). Paiement simulé. Bandeau « Aperçu · données d'exemple ».
 - **Mode réel** (si `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` sont définies) : Supabase pour tout, connexion par lien magique e-mail (et plus tard OTP WhatsApp), rôles lus dans la table `user_roles`. Une personne ne voit que les espaces que ses rôles ouvrent ; si elle en a plusieurs, un sélecteur « Mes espaces » apparaît dans la barre latérale (ordinateur) et dans l'en-tête (téléphone). Stripe actif si `STRIPE_SECRET_KEY` est définie, sinon paiement « virement déclaré » à valider par les fondatrices.
+- **Démo interdite** (vague 2, lancement) : `NEXT_PUBLIC_DEMO=false` refuse le mode démo. Sans Supabase, le middleware (`src/lib/modules/lancement/gate.ts`) répond par `/configuration-manquante` (503) et `getRepo()` lève une erreur : jamais de sélecteur ni de données d'exemple en production. `MAINTENANCE_MODE=true` affiche `/maintenance` (503) partout sauf `/statut`, `/api/statut` et `/api/cron/*`.
 - Toute la logique métier passe par une interface unique `src/lib/data/repo.ts` (type `Repo`), avec deux implémentations : `demo-repo.ts` et `supabase-repo.ts`. `src/lib/data/index.ts` choisit selon l'env. Les pages et server actions n'appellent jamais Supabase directement.
 
 ## Rôles et permissions (Lot 0)
@@ -134,6 +135,24 @@ Module `src/lib/modules/securite/` : `types.ts`, `repo.ts` (`SecuriteRepo`, bran
 - Tests sans serveur : `npm run test:securite` (`scripts/test-securite.mts` : redirections, 2FA, en-têtes, CSV, push).
 - **Applis natives** : elles pourront s'authentifier avec Supabase Auth (même lien magique / OTP, même 2FA) et lire les données directement sous RLS ; l'export RGPD est exposé en `GET /api/moi/export` (session par cookie aujourd'hui ; à ouvrir au jeton `Authorization: Bearer` le jour où une appli native existe).
 
+### 0012_lancement.sql (vague 2, inscription et lancement)
+
+- `lancement_settings` (une ligne, lisible sans compte) : `membership_mode` (`validation` | `direct`), `terms_version`.
+- `member_onboarding` (une ligne par compte) : source (`heard_from`), parcours (`free` | `apply`), code de parrainage saisi, CGU (version, date, IP), étapes faites, terminé / sauté. Les comptes antérieurs sont marqués « faits ».
+- `handle_new_user` redéfini : le profil est rempli depuis les métadonnées du formulaire d'inscription (prénom, nom, WhatsApp, pays ; nettoyées et bornées, sans effet sur les droits) et la ligne d'onboarding est créée.
+- Fonctions : `my_onboarding`, `accept_terms`, `onboarding_progress`, `submit_membership_application`, `withdraw_membership_application`, `decide_membership_application` (admin ; notification, journal, note CRM), `can_join_membership`, `create_role_invitation` (jeton aléatoire, seule l'empreinte SHA-256 est stockée, 14 jours), `role_invitation_preview`, `accept_role_invitation` (adresse vérifiée, usage unique, rôle attribué et journalisé), `revoke_role_invitation`.
+- Tables `membership_applications` (une seule candidature en attente par personne) et `role_invitations` (`moderator` | `partner` | `pro`, établissement facultatif).
+- Tests : section « Lancement » de `npm run test:sql`.
+
+## Inscription et lancement (vague 2, `src/lib/modules/lancement/`)
+
+- `types.ts`, `domain.ts` (schémas zod, messages, étapes de l'onboarding), `repo.ts` (`LancementRepo`, branché par `extends` dans `Repo`), `demo.ts`, `supabase.ts`, `server.ts` (garde de la première adhésion `membershipGate`, `applyHrefFor`, `afterMagicLink`, e-mails d'invitation et de réponse via `sendEmail`), `gate.ts` (maintenance / configuration manquante), `monitoring.ts` (Sentry par son API HTTP, sans SDK ; e-mails, jetons et numéros masqués), `status.ts` (`/statut`), `seo.ts` (pages publiques, préfixes privés).
+- Actions : `src/app/actions/lancement.ts` (inscription par lien magique avec métadonnées, CGU, onboarding, fiche de base, candidature, décision, mode d'adhésion, invitations).
+- Branchements : `joinAction` et `/api/checkout` appellent `membershipGate` pour la première adhésion ; `/auth/callback` appelle `afterMagicLink` (code de parrainage saisi, redirection vers `/bienvenue` à la première connexion) ; les boutons « Adhérer » deviennent « Demander l'adhésion » en mode *sur validation*.
+- Erreurs serveur : `src/instrumentation.ts` (`onRequestError`) ; erreurs du navigateur : `/api/erreurs` (relais, limité). Pages `error.tsx`, `global-error.tsx`, `not-found.tsx`.
+- Référencement : `robots.ts` (tout fermé en démo), `sitemap.ts` (pages publiques + rendez-vous publiés), `opengraph-image.tsx` / `twitter-image.tsx`, métadonnées dans `layout.tsx`, `X-Robots-Tag: noindex` sur les espaces privés (`next.config.ts`).
+- Scripts : `npm run admin:create` (première administratrice), `npm run check:env` (variables du mode réel), `scripts/faux-supabase.mjs` + `scripts/parcours-reel.mjs` + `scripts/a11y-statique.mjs` (mode réel local). Documentation : `docs/lancement/` (checklist, revue du mode réel, accessibilité).
+
 ## Journal et notifications (code)
 
 - `src/lib/audit.ts` : `audit(entry)` enregistre une opération (échec signalé dans les logs, jamais bloquant). Journalisés : validation de virement, création / modification / publication d'événement, relance, ajout / retrait de rôle ; Lot 3 : fiche établissement, invitation, création / modification / pause d'offre, validation de code, paiement / changement / arrêt d'abonnement pro.
@@ -156,6 +175,7 @@ Pro (`space.pro`) : `/pro` (fiche + « Bientôt » : fiche carnet, abonnement, s
 Les espaces Partenaire et Pro reprennent la version jour de l'espace fondatrices (`OrgSpaceLayout`, `OrgChrome`), sur ordinateur et téléphone. Une admin sans établissement y voit tous ceux du type.
 API : `/api/checkout` (crée la session Stripe), `/api/stripe/webhook`.
 Lot 6 : `/confidentialite`, `/mentions-legales`, `/mes-donnees` (tout compte connecté), `/connexion/double-authentification`, `/hors-ligne` (service worker), `/espace/moi/donnees` (+ `/export`), `/fondatrices/securite` (2FA, file des suppressions, protections), `/fondatrices/journal` (filtres, détail `?entree=`) + `/fondatrices/journal/export` (CSV), `/api/moi/export` (JSON), `/api/cron/securite`.
+Lancement (vague 2) : `/inscription` (`?parcours=adhesion`, `?invitation=`), `/bienvenue` (onboarding : `?etape=profile|privacy|notifications|install`, `?suite=`), `/candidature`, `/invitation/[token]`, `/cgu`, `/fondatrices/candidatures`, invitations dans `/fondatrices/roles`, `/statut` + `/api/statut`, `/maintenance`, `/configuration-manquante`, `/api/erreurs`, `/robots.txt`, `/sitemap.xml`, `/opengraph-image`.
 Garde d'accès dans `src/middleware.ts` (capacité par espace) + vérification côté serveur dans chaque layout et chaque server action (`requireCapability` / `checkCapability`).
 
 ## Actions (server actions, `src/app/actions/*`)

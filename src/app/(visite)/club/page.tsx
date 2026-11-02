@@ -10,7 +10,7 @@ export default async function ClubPage() {
   const memories = await getRepo().listMemories();
   return (
     <Screen group="visit" index={2} className="vscreen on" mobileOnly>
-      <ClubSection memories={memories} />
+      <ClubSection memories={memories} page />
     </Screen>
   );
 }

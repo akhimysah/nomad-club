@@ -108,6 +108,8 @@ Une place payée par carte est retenue 30 minutes pendant le paiement ; si le pa
 - `npm run dev` : développement · `npm run build` : version de production · `npm run lint` : vérification du code.
 - `npm run seed:sql` : régénère `supabase/seed.sql` à partir de `src/lib/seed.ts`.
 - `npm run test:sql` : exécute toutes les migrations et le seed dans un Postgres embarqué (PGlite) et vérifie rôles et sécurité (RLS).
+- `npm run test:reel` : exécute le vrai code du mode réel (repo Supabase, actions) contre ce Postgres embarqué, sous RLS.
+- Mise en production : `docs/lancement/checklist.md` · `npm run check:env` (variables) · `npm run admin:create -- e-mail` (première administratrice).
 - Architecture : `docs/ARCHITECTURE.md`. Toutes les données passent par l'interface `src/lib/data/repo.ts`
   (implémentations `demo-repo.ts` et `supabase-repo.ts`, choix automatique dans `src/lib/data/index.ts`).
 - Pages : `src/app/(visite)` (compte gratuit), `src/app/espace` (membre), `src/app/partenaire`, `src/app/pro`, `src/app/fondatrices` (admin).

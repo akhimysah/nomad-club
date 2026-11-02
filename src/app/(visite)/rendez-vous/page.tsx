@@ -12,7 +12,7 @@ export default async function AgendaPage() {
   const { events, mine } = await upcomingFor(viewer);
   return (
     <Screen group="visit" index={1} className="vscreen on" mobileOnly>
-      <AgendaSection events={events} mine={mine} hasAccount={!!viewer.profile} />
+      <AgendaSection events={events} mine={mine} hasAccount={!!viewer.profile} page />
     </Screen>
   );
 }
