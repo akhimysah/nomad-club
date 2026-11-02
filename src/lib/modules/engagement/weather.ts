@@ -1,6 +1,6 @@
 /**
  * Météo à Marrakech : API Open-Meteo (gratuite, sans clé), appelée côté serveur.
- * Cache de 30 minutes (cache de fetch de Next) + dernière réponse valide gardée en mémoire comme repli.
+ * Cache de 30 minutes en mémoire du serveur ; si l'API est indisponible, dernière réponse valide (ou message de repli).
  */
 
 export const MARRAKECH = { lat: 31.6295, lng: -7.9811 } as const;
@@ -28,7 +28,9 @@ const URL_ =
   "&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset" +
   "&timezone=Africa%2FCasablanca&forecast_days=4";
 
-const g = globalThis as typeof globalThis & { __nomadWeather?: Weather };
+const TTL = 30 * 60_000;
+/** Dernière réponse valide (cache de 30 min, puis repli si l'API ne répond plus). Les erreurs ne sont jamais mises en cache. */
+const g = globalThis as typeof globalThis & { __nomadWeather?: { data: Weather; at: number }; __nomadWeatherFail?: number };
 
 type OpenMeteo = {
   current?: { time: string; temperature_2m: number; apparent_temperature: number; relative_humidity_2m: number; weather_code: number; wind_speed_10m: number; is_day: number };
@@ -54,16 +56,22 @@ export function parseOpenMeteo(j: OpenMeteo): Weather | null {
 }
 
 export async function getWeather(): Promise<WeatherResult> {
+  const hit = g.__nomadWeather;
+  if (hit && Date.now() - hit.at < TTL) return { ok: true, data: hit.data, stale: false };
+  // après un échec, on attend une minute avant de réessayer (pas de rafale d'appels)
+  if (g.__nomadWeatherFail && Date.now() - g.__nomadWeatherFail < 60_000) return hit ? { ok: true, data: hit.data, stale: true } : { ok: false };
   try {
-    const res = await fetch(URL_, { next: { revalidate: 1800 }, signal: AbortSignal.timeout(4000) });
+    const res = await fetch(URL_, { cache: "no-store", signal: AbortSignal.timeout(4000) });
     if (!res.ok) throw new Error(`Open-Meteo ${res.status}`);
     const data = parseOpenMeteo((await res.json()) as OpenMeteo);
     if (!data) throw new Error("Open-Meteo : réponse inattendue");
-    g.__nomadWeather = data;
+    g.__nomadWeather = { data, at: Date.now() };
+    g.__nomadWeatherFail = undefined;
     return { ok: true, data, stale: false };
   } catch (e) {
     console.warn("[météo]", e instanceof Error ? e.message : e);
-    return g.__nomadWeather ? { ok: true, data: g.__nomadWeather, stale: true } : { ok: false };
+    g.__nomadWeatherFail = Date.now();
+    return hit ? { ok: true, data: hit.data, stale: true } : { ok: false };
   }
 }
 

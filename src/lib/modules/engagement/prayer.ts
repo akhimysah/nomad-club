@@ -1,6 +1,6 @@
 /**
  * Heures de prière à Marrakech : API Aladhan (gratuite, sans clé), méthode 21 « Maroc »
- * (ministère des Habous : Fajr 19°, Isha 17°). Cache d'une journée (l'adresse contient la date).
+ * (ministère des Habous : Fajr 19°, Isha 17°). Cache en mémoire par date (une journée).
  * Repli si l'API ne répond pas : calcul astronomique local avec les mêmes angles (approché à quelques minutes).
  */
 import { TZ } from "../../clock";
@@ -30,11 +30,26 @@ const HIJRI_FR: Record<string, string> = {
   "Dhū al-Ḥijjah": "Dhou al-hijja",
 };
 
+const g = globalThis as typeof globalThis & { __nomadPrayer?: Map<string, PrayerTimes> };
+
+/** Heures du jour : cache par date (une journée), seules les réponses de l'API sont gardées. */
 export async function getPrayerTimes(ymd: string): Promise<PrayerTimes> {
+  const cache = (g.__nomadPrayer ??= new Map());
+  const hit = cache.get(ymd);
+  if (hit) return hit;
+  const fresh = await fetchPrayerTimes(ymd);
+  if (fresh.source === "aladhan") {
+    if (cache.size > 10) cache.clear();
+    cache.set(ymd, fresh);
+  }
+  return fresh;
+}
+
+async function fetchPrayerTimes(ymd: string): Promise<PrayerTimes> {
   const [y, m, d] = ymd.split("-");
   const url = `https://api.aladhan.com/v1/timings/${d}-${m}-${y}?latitude=${MARRAKECH.lat}&longitude=${MARRAKECH.lng}&method=${PRAYER_METHOD}&timezonestring=UTC`;
   try {
-    const res = await fetch(url, { next: { revalidate: 86400 }, signal: AbortSignal.timeout(4000) });
+    const res = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(4000) });
     if (!res.ok) throw new Error(`Aladhan ${res.status}`);
     const j = (await res.json()) as Aladhan;
     const t = j.data?.timings;
