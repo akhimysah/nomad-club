@@ -43,6 +43,8 @@ export const metadata: Metadata = {
   robots: isRealMode() ? { index: true, follow: true } : { index: false, follow: false },
   appleWebApp: { capable: true, title: "Nomad Club", statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },
+  // Le site est déjà en français : la traduction auto de Chrome réécrit la page et fait planter React.
+  other: { google: "notranslate" },
 };
 
 export const viewport: Viewport = {
@@ -56,7 +58,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const real = isRealMode();
   const showSwitcher = !real && demoAllowed(); // --- Lancement --- jamais de sélecteur démo si NEXT_PUBLIC_DEMO=false
   return (
-    <html lang="fr" className={`${playfair.variable} ${albert.variable}${showSwitcher ? "" : " no-switch"}`} suppressHydrationWarning>
+    <html lang="fr" translate="no" className={`${playfair.variable} ${albert.variable}${showSwitcher ? "" : " no-switch"}`} suppressHydrationWarning>
       <head>
         {/* Écran de lancement : seulement dans l'appli installée, une fois par ouverture */}
         <script

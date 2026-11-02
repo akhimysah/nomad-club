@@ -8,7 +8,6 @@ import { monitoringEnabled, reportError } from "@/lib/modules/lancement/monitori
 const hits = new Map<string, { n: number; until: number }>();
 
 export async function POST(req: NextRequest) {
-  if (!monitoringEnabled()) return new NextResponse(null, { status: 204 });
   const ip = (req.headers.get("x-forwarded-for") ?? "local").split(",")[0].trim();
   const now = Date.now();
   const h = hits.get(ip);
@@ -24,6 +23,11 @@ export async function POST(req: NextRequest) {
   const err = new Error(String(body.message ?? "Erreur dans le navigateur").slice(0, 500));
   err.name = String(body.name ?? "ClientError").slice(0, 60);
   err.stack = undefined;
+  // Sans Sentry : une ligne dans les journaux du serveur (journalctl -u nomad-club).
+  if (!monitoringEnabled()) {
+    console.error(`[erreur navigateur] ${typeof body.path === "string" ? body.path.slice(0, 200) : "?"} · ${err.name} : ${err.message}${typeof body.digest === "string" ? ` (digest ${body.digest.slice(0, 40)})` : ""}`);
+    return new NextResponse(null, { status: 204 });
+  }
   await reportError(err, { source: "client", path: typeof body.path === "string" ? body.path.slice(0, 200) : undefined, digest: typeof body.digest === "string" ? body.digest.slice(0, 40) : undefined });
   return new NextResponse(null, { status: 204 });
 }

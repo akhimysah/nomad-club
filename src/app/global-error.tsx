@@ -16,7 +16,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
     }).catch(() => {});
   }, [error]);
   return (
-    <html lang="fr">
+    <html lang="fr" translate="no">
       <body>
         <section className="lc-error" aria-label="Erreur">
           <div className="lc-error-in">
