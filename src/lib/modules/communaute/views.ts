@@ -50,3 +50,19 @@ export async function loadReports(status: "open" | "resolved" | "all", viewerId:
     };
   });
 }
+
+export type GroupRequestItem = { groupId: string; groupName: string; profileId: string; name: string; job: string | null; time: string };
+
+/** File de modération prête à afficher (à traiter, déjà traités, mots-clés, demandes de groupe). */
+export async function loadModeration(viewerId: string) {
+  const repo = getRepo();
+  const now = nowMs();
+  const [open, done, keywords, requests] = await Promise.all([loadReports("open", viewerId), loadReports("resolved", viewerId), repo.listKeywords(), repo.listGroupRequests()]);
+  const item = (r: ReportView) => ({ ...r, time: messageTime(r.createdAt, now), resolvedLabel: r.resolvedAt ? messageTime(r.resolvedAt, now) : null });
+  return {
+    open: open.map(item),
+    resolved: done.slice(0, 12).map(item),
+    keywords,
+    requests: requests.map((q): GroupRequestItem => ({ groupId: q.group.id, groupName: q.group.name, profileId: q.profileId, name: q.name, job: q.job, time: messageTime(q.createdAt, now) })),
+  };
+}

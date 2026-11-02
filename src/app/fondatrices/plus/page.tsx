@@ -11,6 +11,7 @@ export const metadata: Metadata = { title: "Plus" };
 export const dynamic = "force-dynamic";
 
 const HINT: Record<string, string> = {
+  "/fondatrices/communaute": "Actualités du club, groupes thématiques et modération.", // --- Lot 1 ---
   "/fondatrices/crm": "Tous les contacts : adhérentes, comptes gratuits, partenaires, pros.",
   "/fondatrices/roles": "Donner ou retirer un rôle, voir qui peut faire quoi.",
   "/fondatrices/journal": "Les opérations importantes : qui, quoi, quand.",
