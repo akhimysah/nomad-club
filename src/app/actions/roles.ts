@@ -5,7 +5,7 @@ import { audit } from "@/lib/audit";
 import { checkCapability } from "@/lib/auth";
 import { getRepo } from "@/lib/data";
 import { fullName } from "@/lib/format";
-import { roleGranted } from "@/lib/notify";
+import { roleGranted, roleRevoked } from "@/lib/notify";
 import { isGrantableRole, ROLE_LABEL } from "@/lib/permissions";
 import type { GrantableRole } from "@/lib/types";
 
@@ -37,6 +37,7 @@ export async function changeRoleAction(profileId: string, role: string, grant: b
       details: { role, before: target.roles, after: updated.roles },
     });
     if (grant) await roleGranted(updated.id, role);
+    else await roleRevoked(updated.id, role); // --- Lot 6 ---
     revalidatePath("/", "layout");
     return { ok: true, message: summary, roles: updated.roles };
   } catch (e) {

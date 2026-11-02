@@ -13,6 +13,8 @@ export const FOUNDER_NAV: FounderNavItem[] = [
   { href: "/fondatrices/roles", icon: "lock", label: "Rôles et accès", tab: "Rôles", title: "Rôles", mobile: false },
   { href: "/fondatrices/journal", icon: "clock", label: "Journal", tab: "Journal", title: "Journal", mobile: false },
   { href: "/fondatrices/notifications", icon: "bell", label: "Notifications", tab: "Notifs", title: "Notifications", mobile: false },
+  // --- Lot 6 ---
+  { href: "/fondatrices/securite", icon: "lock", label: "Sécurité et données", tab: "Sécurité", title: "Sécurité", mobile: false },
 ];
 
 export const FOUNDER_PLUS: FounderNavItem = { href: "/fondatrices/plus", icon: "plus", label: "Plus", tab: "Plus", title: "Plus", mobile: true };

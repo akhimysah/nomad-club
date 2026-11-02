@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Albert_Sans, Playfair_Display } from "next/font/google";
 import { CheckoutHost } from "@/components/events/CheckoutHost";
 import { IconSprite } from "@/components/IconSprite";
+import { PwaRegister } from "@/components/securite/PwaRegister";
 import { Switcher } from "@/components/shell/Switcher";
 import { FlyCatcher } from "@/components/ui/fly";
 import { ToastProvider } from "@/components/ui/Toasts";
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <main id="spaces">{children}</main>
           </CheckoutHost>
         </ToastProvider>
+        <PwaRegister /> {/* --- Lot 6 --- */}
       </body>
     </html>
   );

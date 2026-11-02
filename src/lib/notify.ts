@@ -38,7 +38,9 @@ export async function notify(rows: NotificationInput[]): Promise<number> {
  * Les préférences `email` / `push` de notification_prefs seront lues ici.
  */
 async function deliverExternally(rows: NotificationInput[]): Promise<void> {
-  void rows;
+  // --- Lot 6 --- notifications push Web (désactivées sans clés VAPID ; préférence « push » respectée)
+  const { deliverPush } = await import("./modules/securite/push");
+  await deliverPush(rows);
 }
 
 const eventLink = (e: Pick<ClubEvent, "slug">, member: boolean) => (member ? `/espace/agenda/${e.slug}` : `/rendez-vous/${e.slug}`);
@@ -104,6 +106,19 @@ export function roleGranted(profileId: string, role: GrantableRole) {
       title: `Nouvel accès : ${ROLE_LABEL[role]}`,
       body: "Les fondatrices ont ouvert un nouvel accès sur ton compte.",
       link: SPACE_LINK[role] ?? null,
+    },
+  ]);
+}
+
+// --- Lot 6 --- un accès retiré est aussi signalé (sécurité des comptes)
+export function roleRevoked(profileId: string, role: GrantableRole) {
+  return notify([
+    {
+      recipientId: profileId,
+      type: "role_changed",
+      title: `Accès retiré : ${ROLE_LABEL[role]}`,
+      body: "Les fondatrices ont retiré cet accès de ton compte. Si tu ne comprends pas pourquoi, écris-leur.",
+      link: null,
     },
   ]);
 }

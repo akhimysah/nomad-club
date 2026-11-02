@@ -11,6 +11,7 @@ import { fullName } from "../format";
 import { inCircle, isAdmin } from "../permissions";
 import { createSeed, type SeedData } from "../seed";
 import type { AppNotification, Booking, BookingView, ClubEvent, DmThread, MessageView, NotificationPref, Payment, Profile } from "../types";
+import { demoSecuriteRepo } from "../modules/securite/demo-repo"; // --- Lot 6 ---
 import { dmChannel, otherInChannel, type BookResult, type CancelResult, type Repo } from "./repo";
 
 type DemoGlobal = typeof globalThis & { __nomadDemoDb?: SeedData };
@@ -52,6 +53,9 @@ function applyValidatedMembership(d: SeedData, pay: Payment) {
 }
 
 export const demoRepo: Repo = {
+  // --- Lot 6 ---
+  ...demoSecuriteRepo,
+
   async getProfile(id) {
     const p = db().profiles.find((x) => x.id === id);
     return p ? clone(p) : null;

@@ -10,6 +10,7 @@ import { eventGroupLabel } from "@/lib/domain/events";
 import { dayNumber } from "@/lib/format";
 import { messageSchema } from "@/lib/validation";
 import { inCircle } from "@/lib/permissions";
+import { rateLimitMessage } from "@/lib/modules/securite/rate-limit";
 
 async function memberOrNull() {
   return checkCapability("messages.post");
@@ -29,6 +30,8 @@ export async function sendMessage(target: ChatTarget, body: string): Promise<{ o
   if (!v) return { ok: false, error: "Réservé aux adhérentes." };
   const parsed = messageSchema.safeParse(body);
   if (!parsed.success) return { ok: false, error: "Ton message est vide." };
+  const limited = await rateLimitMessage("message", `user:${v.profile.id}`); // --- Lot 6 ---
+  if (limited) return { ok: false, error: limited };
   const channel = await channelFor(target, v.profile.id);
   if (!channel) return { ok: false, error: "Conversation introuvable." };
   const m = await getRepo().postMessage(channel, v.profile.id, parsed.data);

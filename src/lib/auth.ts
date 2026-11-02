@@ -31,7 +31,9 @@ export const getViewer = cache(async (): Promise<Viewer> => {
   }
   const { getSessionProfile } = await import("./supabase/session");
   const profile = await getSessionProfile();
-  return { roles: effectiveRoles(profile), profile, guestTickets, mode: "real" };
+  // --- Lot 6 --- sans double authentification (AAL2), une administratrice n'a pas ses droits d'admin
+  const { enforceAdminMfa } = await import("./modules/securite/mfa");
+  return { roles: await enforceAdminMfa(effectiveRoles(profile)), profile, guestTickets, mode: "real" };
 });
 
 /** La personne qui regarde a-t-elle cette capacité ? */

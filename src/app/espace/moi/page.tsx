@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { signOut } from "@/app/actions/auth";
 import { MembershipButton, OfferButton, TicketButton } from "@/components/member/Buttons";
+import Link from "next/link";
+import { InstallHelp } from "@/components/securite/InstallHelp";
 import { EventImage } from "@/components/ui/EventImage";
 import { Icon } from "@/components/ui/Icon";
 import { MemberCard } from "@/components/ui/MemberCard";
@@ -135,6 +137,22 @@ export default async function MoiPage() {
                   </TicketButton>
                 ),
               )}
+            </section>
+            {/* --- Lot 6 --- */}
+            <section className="card">
+              <Link href="/espace/moi/donnees" className="offer">
+                <span className="ph" style={{ width: 60, height: 60, borderRadius: 16, flex: "none", display: "grid", placeItems: "center" }}>
+                  <Icon name="lock" />
+                </span>
+                <span>
+                  <b>Mes données et confidentialité</b>
+                  <span>Consentements, téléchargement, appareils, suppression du compte</span>
+                </span>
+                <Icon name="chev-r" />
+              </Link>
+              <div style={{ marginTop: 12 }}>
+                <InstallHelp />
+              </div>
             </section>
             {!demo && (
               <form action={signOut}>

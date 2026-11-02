@@ -32,6 +32,7 @@ import type {
   Profile,
   ProgramStep,
 } from "../types";
+import type { SecuriteRepo } from "../modules/securite/repo"; // --- Lot 6 ---
 
 export type EventInput = {
   title: string;
@@ -116,7 +117,7 @@ export type NotificationInput = {
 export type MyOrganization = { organization: Organization; role: OrganizationMemberRole };
 export type OrganizationMemberView = OrganizationMember & { profile: Profile | null };
 
-export interface Repo {
+export interface Repo extends SecuriteRepo {
   /* profils */
   getProfile(id: string): Promise<Profile | null>;
   /** Annuaire : adhérentes et fondatrices. */

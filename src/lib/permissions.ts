@@ -38,6 +38,10 @@ export const CAPABILITIES = [
   // pilotage
   "crm.access",
   "audit.view",
+  // --- Lot 6 --- sécurité et conformité (administratrices ; gérer ses propres données exige seulement d'être connectée)
+  "audit.export",
+  "privacy.process_deletions",
+  "security.manage",
 ] as const;
 
 export type Capability = (typeof CAPABILITIES)[number];

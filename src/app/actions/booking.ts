@@ -9,6 +9,7 @@ import { getRepo } from "@/lib/data";
 import { priceFor } from "@/lib/domain/events";
 import { paymentMode } from "@/lib/env";
 import { bookingConfirmed, waitlistSpot } from "@/lib/notify";
+import { rateLimit } from "@/lib/modules/securite/rate-limit";
 import { inCircle } from "@/lib/permissions";
 import { guestSchema } from "@/lib/validation";
 import { ticketData } from "@/lib/views";
@@ -39,6 +40,10 @@ function revalidateAll() {
  */
 export async function reserve(input: ReserveInput): Promise<ReserveResult> {
   const viewer = await getViewer();
+  // --- Lot 6 --- entrée validée et limitation de fréquence (réservation sans compte surtout)
+  if (typeof input?.eventId !== "string" || input.eventId.length > 64) return { ok: false, error: "Ce rendez-vous n’est plus ouvert aux réservations." };
+  const limit = await rateLimit("booking", viewer.profile ? `user:${viewer.profile.id}` : undefined);
+  if (!limit.ok) return { ok: false, error: limit.message };
   const repo = getRepo();
   const ev = await repo.getEventById(input.eventId);
   if (!ev || ev.status !== "published" || ymdOf(ev.startsAt) < today()) return { ok: false, error: "Ce rendez-vous n’est plus ouvert aux réservations." };

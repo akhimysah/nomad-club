@@ -29,6 +29,7 @@ import type {
   Profile,
   Reminder,
 } from "../types";
+import { supabaseSecuriteRepo } from "../modules/securite/supabase-repo"; // --- Lot 6 ---
 import { otherInChannel, type BookResult, type CancelResult, type EventInput, type NotificationInput, type Repo } from "./repo";
 
 /* ---------- lignes de la base (snake_case) ---------- */
@@ -299,6 +300,9 @@ function ticketToView(j: Row | null): BookingView | null {
 }
 
 export const supabaseRepo: Repo = {
+  // --- Lot 6 ---
+  ...supabaseSecuriteRepo,
+
   async getProfile(id) {
     const c = await db();
     const r = check(await c.from("profiles").select(PROFILE).eq("id", id).maybeSingle()) as Row | null;

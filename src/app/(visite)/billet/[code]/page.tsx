@@ -20,6 +20,9 @@ export default async function TicketPage({ params, searchParams }: Props) {
   const { paye } = await searchParams;
   const c = decodeURIComponent(code).toUpperCase();
   if (!isTicketCode(c)) notFound();
+  // --- Lot 6 --- contre l'énumération des codes de billet
+  const { rateLimit } = await import("@/lib/modules/securite/rate-limit");
+  if (!(await rateLimit("ticketLookup")).ok) notFound();
   const b = await getRepo().getBookingByCode(c);
   if (!b || b.status === "cancelled") notFound();
   const demo = !isRealMode();
