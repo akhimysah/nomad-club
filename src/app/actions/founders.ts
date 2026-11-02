@@ -12,6 +12,7 @@ import { eventPublished, paymentValidated } from "@/lib/notify";
 import type { Capability } from "@/lib/permissions";
 import type { Payment } from "@/lib/types";
 import { eventFormSchema, type EventForm } from "@/lib/validation";
+import { recordTransferValidated } from "@/lib/modules/paiements/service"; // --- Vague 2 · paiements ---
 
 export type FounderResult = { ok: true; message: string } | { ok: false; error: string };
 
@@ -30,6 +31,9 @@ async function logValidation(actorId: string, pay: Payment) {
     details: { amount: pay.amount, kind: pay.kind, plan: pay.plan, bookingId: pay.bookingId },
   });
   await paymentValidated(pay);
+  // --- Vague 2 · paiements --- : le virement validé entre au grand livre (reçu téléchargeable, pilotage)
+  const label = pay.kind === "booking" ? "Billet (virement)" : pay.membershipAction === "upgrade" ? "Passage à Premium (virement)" : `${pay.membershipAction === "renew" ? "Renouvellement" : "Adhésion"} ${pay.plan === "premium" ? "Premium" : "Membre"} · 1 an (virement)`;
+  await recordTransferValidated(pay, label);
 }
 
 function refresh() {

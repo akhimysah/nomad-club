@@ -65,7 +65,7 @@ export async function runDailyPayments(): Promise<DailySummary> {
         await repo.paySetMemberAccess(plan.profileId, false);
         sum.suspended++;
         await repo.payAudit({ actorId: null, action: "membership.suspend", targetType: "profile", targetId: plan.profileId, summary: `Accès membre suspendu : échéance impayée depuis plus de ${grace} jours`, details: { plan: plan.id } });
-        await tell(plan.profileId, { type: "membership_suspended", title: "Ton accès est suspendu", body: `Une échéance de ton adhésion reste impayée depuis plus de ${grace} jours. Règle-la pour retrouver ton espace membre.`, link: "/espace/paiements" }, PAYMENT_EMAILS.suspended, { graceDays: grace, url: "/espace/paiements" });
+        await tell(plan.profileId, { type: "membership_suspended", title: "Ton accès est suspendu", body: `Une échéance de ton adhésion reste impayée depuis plus de ${grace} jours. Règle-la pour retrouver ton espace membre.`, link: "/mes-paiements" }, PAYMENT_EMAILS.suspended, { graceDays: grace, url: "/mes-paiements" });
       } else if (plan.status === "suspended") {
         await repo.paySetMemberAccess(plan.profileId, true);
         sum.reinstated++;
@@ -79,9 +79,9 @@ export async function runDailyPayments(): Promise<DailySummary> {
       const until = graceEndsOn(plan.installments, day, grace);
       await tell(
         plan.profileId,
-        { type: "payment_reminder", title: `Échéance en retard · ${formatMoney(i.amount)}`, body: `${label}, prévue le ${dots(i.dueDate)}.${st === "late" && until ? ` Ton accès est maintenu jusqu’au ${dots(until)}.` : ""}`, link: "/espace/paiements" },
+        { type: "payment_reminder", title: `Échéance en retard · ${formatMoney(i.amount)}`, body: `${label}, prévue le ${dots(i.dueDate)}.${st === "late" && until ? ` Ton accès est maintenu jusqu’au ${dots(until)}.` : ""}`, link: "/mes-paiements" },
         PAYMENT_EMAILS.reminder,
-        { label, amount: i.amount, amountText: formatMoney(i.amount), dueDate: i.dueDate, graceEndsOn: until, suspended: st === "suspended", url: "/espace/paiements" },
+        { label, amount: i.amount, amountText: formatMoney(i.amount), dueDate: i.dueDate, graceEndsOn: until, suspended: st === "suspended", url: "/mes-paiements" },
       );
       await repo.payUpdateInstallment(i.id, { lastReminderAt: nowIso() });
       sum.overdueReminders++;

@@ -193,6 +193,8 @@ export type NormalizedEvent =
       error: string | null;
       attempt: number;
       nextAttempt: string | null;
+      /** Page de paiement de la facture impayée (Stripe : hosted_invoice_url) pour régulariser soi-même. */
+      hostedUrl: string | null;
     }
   | {
       type: "subscription.updated";

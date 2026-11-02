@@ -11,6 +11,7 @@ import { qrData } from "./qr";
 import { siteUrl } from "./site";
 import type { BookingView, EventView, PaidPlan, Payment, Profile, Viewer } from "./types";
 import { hasRole } from "./permissions";
+import { paymentInstallmentChoices } from "./modules/paiements/views"; // --- Vague 2 · paiements ---
 
 /** Réservations de la personne qui regarde (compte ou billets sans compte). */
 export async function viewerBookings(v: Viewer): Promise<BookingView[]> {
@@ -51,6 +52,7 @@ export function payEnv(v: Viewer): PayEnv {
   return {
     mode: paymentMode(),
     transfer: transferDetails(),
+    installments: paymentInstallmentChoices(), // --- Vague 2 · paiements ---
     me: v.profile ? { firstName: v.profile.firstName, fullName: fullName(v.profile), phone: v.profile.whatsapp } : null,
   };
 }

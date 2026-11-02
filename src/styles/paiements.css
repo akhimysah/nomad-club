@@ -1,0 +1,31 @@
+/* Vague 2 · paiements — « Mes paiements », abonnement pro, pilotage des fondatrices. Jetons de la maquette noir et blanc. */
+.pay-table{width:100%;border-collapse:collapse;font-size:15px}
+.pay-table th{font:600 12px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+.pay-table td{padding:11px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+.pay-table tr:last-child td{border-bottom:0}
+.pay-table .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pay-table .sub{display:block;font-size:13px;color:var(--muted)}
+.pay-scroll{overflow-x:auto;margin:0 -6px}
+.pay-alert{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:18px;box-shadow:inset 0 0 0 1px var(--line2);background:var(--s2);margin-bottom:22px}
+.pay-alert b{display:block;font-size:16px;margin-bottom:4px}
+.pay-alert p{margin:0 0 10px;color:var(--tx2);font-size:15px}
+.pay-alert .btn-row{margin-top:6px}
+.pay-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin:12px 0 4px;padding:0;list-style:none}
+.pay-steps li{border-radius:12px;padding:8px 10px;box-shadow:inset 0 0 0 1px var(--line);font-size:13px;display:flex;flex-direction:column;gap:2px}
+.pay-steps li b{font-size:14px;font-variant-numeric:tabular-nums}
+.pay-steps li.paid{background:var(--s3)}
+.pay-steps li.late{box-shadow:inset 0 0 0 1px var(--tx)}
+.pay-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:22px;align-items:start}
+.pay-col{display:flex;flex-direction:column;gap:22px}
+.pay-refund{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pay-refund input{width:110px;background:var(--s2);color:var(--tx);border:0;border-radius:10px;padding:7px 10px;box-shadow:inset 0 0 0 1px var(--line2);font:inherit;font-size:14px}
+.pay-refund input:last-of-type{width:170px}
+.pay-split{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
+.pay-split button{appearance:none;border:0;cursor:pointer;background:var(--s2);color:var(--tx);border-radius:14px;padding:10px 14px;box-shadow:inset 0 0 0 1px var(--line2);font:inherit;font-size:14px;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:96px}
+.pay-split button b{font-size:15px}
+.pay-split button small{color:var(--muted);font-size:12.5px}
+.pay-split button[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--tx);background:var(--s3)}
+.pay-test{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (max-width:900px){.pay-grid{grid-template-columns:1fr}}
+@media (max-width:560px){.pay-table .opt{display:none}}

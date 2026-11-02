@@ -143,14 +143,14 @@ export async function settleInstallment(
   if (plan.status === "suspended" && status !== "suspended") {
     await d.repo.paySetMemberAccess(plan.profileId, true);
     await d.repo.payAudit({ actorId: null, action: "membership.reinstate", targetType: "profile", targetId: plan.profileId, summary: `Accès membre rétabli après paiement (${label})`, details: { plan: plan.id } });
-    await tellMember(d, plan.profileId, { type: "payment_receipt", title: "Ton accès est rétabli", body: "Merci, ton paiement est bien arrivé : tu retrouves tout ton espace membre.", link: "/espace/paiements" }, { template: PAYMENT_EMAILS.reinstated, data: { label } });
+    await tellMember(d, plan.profileId, { type: "payment_receipt", title: "Ton accès est rétabli", body: "Merci, ton paiement est bien arrivé : tu retrouves tout ton espace membre.", link: "/mes-paiements" }, { template: PAYMENT_EMAILS.reinstated, data: { label } });
   }
   if (fresh) {
     const next = nextUnpaid(fresh_plan.installments);
     await tellMember(
       d, plan.profileId,
-      { type: "payment_receipt", title: `Paiement reçu · ${formatMoney(amount)}`, body: `${label}.${next ? ` Prochaine échéance le ${next.dueDate.split("-").reverse().join(".")} : ${formatMoney(next.amount)}.` : ""}`, link: "/espace/paiements" },
-      { template: PAYMENT_EMAILS.receipt, data: { label, amount, currency: plan.currency, amountText: formatMoney(amount), nextDueDate: next?.dueDate ?? null, nextAmount: next?.amount ?? null, url: "/espace/paiements" } },
+      { type: "payment_receipt", title: `Paiement reçu · ${formatMoney(amount)}`, body: `${label}.${next ? ` Prochaine échéance le ${next.dueDate.split("-").reverse().join(".")} : ${formatMoney(next.amount)}.` : ""}`, link: "/mes-paiements" },
+      { template: PAYMENT_EMAILS.receipt, data: { label, amount, currency: plan.currency, amountText: formatMoney(amount), nextDueDate: next?.dueDate ?? null, nextAmount: next?.amount ?? null, url: "/mes-paiements" } },
     );
   }
   if (!wasActive) {
@@ -188,7 +188,7 @@ async function onCheckoutCompleted(d: ProcessorDeps, provider: ProviderId, e: Ex
         provider, kind: "booking", profileId: c.profileId, organizationId: null, amount, currency: c.currency, description: label,
         providerRef: e.sessionRef, chargeRef: e.paymentRef, relatedType: "booking", relatedId: c.targetId,
       });
-      if (fresh && c.profileId) await tellMember(d, c.profileId, { type: "payment_receipt", title: `Paiement reçu · ${formatMoney(amount)}`, body: `${label}. Ton reçu est dans « Mes paiements ».`, link: "/espace/paiements" }, { template: PAYMENT_EMAILS.receipt, data: { label, amount, currency: c.currency, amountText: formatMoney(amount), url: "/espace/paiements" } });
+      if (fresh && c.profileId) await tellMember(d, c.profileId, { type: "payment_receipt", title: `Paiement reçu · ${formatMoney(amount)}`, body: `${label}. Ton reçu est dans « Mes paiements ».`, link: "/mes-paiements" }, { template: PAYMENT_EMAILS.receipt, data: { label, amount, currency: c.currency, amountText: formatMoney(amount), url: "/mes-paiements" } });
       return "done";
     }
     case "membership": {
@@ -259,7 +259,7 @@ async function onInvoiceFailed(d: ProcessorDeps, provider: ProviderId, e: Extrac
   if (plan) {
     const target = nextUnpaid(plan.installments);
     if (!target) return "ignored";
-    const ok = await d.repo.payUpdateInstallment(target.id, { status: "failed", attempts: target.attempts + 1, lastError: e.error ?? "Paiement refusé." }, ["scheduled", "failed", "late"]);
+    const ok = await d.repo.payUpdateInstallment(target.id, { status: "failed", attempts: target.attempts + 1, lastError: e.error ?? "Paiement refusé.", ...(e.hostedUrl ? { invoiceUrl: e.hostedUrl } : {}) }, ["scheduled", "failed", "late"]);
     if (!ok) return "done";
     const fresh = (await d.repo.payGetPlan(plan.id)) ?? plan;
     const status = planStatus(fresh, d.today(), d.graceDays);
@@ -268,8 +268,8 @@ async function onInvoiceFailed(d: ProcessorDeps, provider: ProviderId, e: Extrac
     const label = installmentLabel(plan, target.seq);
     await tellMember(
       d, plan.profileId,
-      { type: "payment_failed", title: "Ton paiement n’est pas passé", body: `${label} · ${formatMoney(target.amount)}. Mets ta carte à jour${grace ? ` avant le ${grace.split("-").reverse().join(".")}` : ""} pour garder ton accès.`, link: "/espace/paiements" },
-      { template: PAYMENT_EMAILS.failed, data: { label, amount: target.amount, amountText: formatMoney(target.amount), graceEndsOn: grace, nextAttempt: e.nextAttempt, url: "/espace/paiements" } },
+      { type: "payment_failed", title: "Ton paiement n’est pas passé", body: `${label} · ${formatMoney(target.amount)}. Mets ta carte à jour${grace ? ` avant le ${grace.split("-").reverse().join(".")}` : ""} pour garder ton accès.`, link: "/mes-paiements" },
+      { template: PAYMENT_EMAILS.failed, data: { label, amount: target.amount, amountText: formatMoney(target.amount), graceEndsOn: grace, nextAttempt: e.nextAttempt, url: "/mes-paiements" } },
     );
     return "done";
   }
@@ -331,7 +331,7 @@ async function onChargeRefunded(d: ProcessorDeps, e: Extract<NormalizedEvent, { 
   await d.repo.payUpdateTransaction(tx.id, { amountRefunded: total, status: total >= tx.amount ? "refunded" : "partially_refunded" });
   const { fresh } = await d.repo.payRecordRefund({ transactionId: tx.id, amount: delta, reason: "Remboursement Stripe", providerRef: e.refundRef, createdBy: null });
   if (fresh && tx.profileId)
-    await tellMember(d, tx.profileId, { type: "refund_issued", title: `Remboursement · ${formatMoney(delta)}`, body: `${tx.description}. Le montant revient sur ta carte sous quelques jours.`, link: "/espace/paiements" }, { template: PAYMENT_EMAILS.refunded, data: { label: tx.description, amount: delta, amountText: formatMoney(delta) } });
+    await tellMember(d, tx.profileId, { type: "refund_issued", title: `Remboursement · ${formatMoney(delta)}`, body: `${tx.description}. Le montant revient sur ta carte sous quelques jours.`, link: "/mes-paiements" }, { template: PAYMENT_EMAILS.refunded, data: { label: tx.description, amount: delta, amountText: formatMoney(delta) } });
   return "done";
 }
 

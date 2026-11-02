@@ -276,7 +276,8 @@ export const supabaseEngagementRepo: EngagementRepo = {
   },
   async recordPurchase(input) {
     // --- Vague 2 · paiements --- : paiement réel confirmé par le webhook (pas de session) → clé service, idempotent.
-    if (input.method === "card" || input.method === "transfer") {
+    // (ressource gratuite : même chemin, le prix nul a été vérifié côté serveur par buyProductAction)
+    if (input.method === "card" || input.method === "transfer" || (input.method === "free" && process.env.SUPABASE_SERVICE_ROLE_KEY)) {
       const w = supabaseAdmin();
       const find = async () =>
         check(await w.from("purchases").select("*").eq("product_id", input.productId).eq("profile_id", input.profileId).eq("status", "paid").maybeSingle()) as Row | null;

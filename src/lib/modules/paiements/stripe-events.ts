@@ -123,6 +123,7 @@ export function normalizeStripeEvent(event: { type: string; data: { object: unkn
           error: str(lastErr.message) ?? null,
           attempt: numOr(o.attempt_count, 1),
           nextAttempt: typeof o.next_payment_attempt === "number" ? new Date(o.next_payment_attempt * 1000).toISOString() : null,
+          hostedUrl: str(o.hosted_invoice_url),
         },
       ];
     }

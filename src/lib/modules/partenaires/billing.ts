@@ -1,44 +1,39 @@
 /**
- * Lot 3 — paiement de l'abonnement mensuel des pros du carnet.
+ * Lot 3 — paiement de l'abonnement mensuel des pros du carnet : seul point d'entrée, `paySubscription()`.
  *
- * PAIEMENT SIMULÉ : c'est le seul point d'entrée pour encaisser un abonnement. Le Lot 2 remplacera
- * `charge()` par le vrai prestataire (Stripe, CMI…) sans toucher aux pages ni aux actions :
- * elles n'appellent que `paySubscription()`.
+ * --- Vague 2 · paiements --- : le paiement simulé est remplacé par le prestataire configuré
+ * (src/lib/modules/paiements) :
+ * - Stripe : abonnement mensuel (Checkout puis Billing) ; les mois suivants sont prélevés automatiquement,
+ *   les statuts actif / en retard / suspendu sont synchronisés par le webhook ; carte et résiliation par le
+ *   portail client Stripe ;
+ * - simulé (démo uniquement) : même parcours, traité par le même code que le webhook ;
+ * - virement : pas d'abonnement automatique (à régler avec les fondatrices).
  */
-import { randomUUID } from "node:crypto";
-import { today } from "../../clock";
 import { getRepo } from "../../data";
-import { nextPeriod, PRO_PLANS } from "./domain";
-import type { ProPlan, ProSubscription } from "./types";
+import type { Profile } from "../../types";
+import { getProvider } from "../paiements/providers";
+import { simulateProInvoice, startProSubscription } from "../paiements/service";
+import { effectiveStatus } from "./domain";
+import { today } from "../../clock";
+import type { ProPlan } from "./types";
 
-export type PayResult = { ok: true; subscription: ProSubscription; reference: string; amount: number } | { ok: false; error: string };
+export type PayResult = { ok: true; kind: "redirect"; url: string } | { ok: true; kind: "paid" } | { ok: false; error: string };
 
-/** Simulation de l'encaissement. `fail` permet de tester le refus de paiement (carte refusée). */
-async function charge(input: { organizationId: string; amount: number; fail?: boolean }): Promise<{ ok: true; reference: string } | { ok: false; reference: string; error: string }> {
-  const reference = `SIM-${input.organizationId.replace(/[^a-z0-9]/gi, "").slice(-4).toUpperCase()}-${randomUUID().slice(0, 6).toUpperCase()}`;
-  if (input.fail) return { ok: false, reference, error: "Paiement refusé par la banque (simulation)." };
-  return { ok: true, reference };
-}
-
-/**
- * Paie le mois suivant de l'abonnement (ou le premier mois) avec la formule donnée :
- * encaisse, enregistre le paiement et remet la fiche en ligne jusqu'à la nouvelle échéance.
- */
-export async function paySubscription(organizationId: string, plan: ProPlan, opts: { fail?: boolean } = {}): Promise<PayResult> {
-  const repo = getRepo();
-  const t = today();
-  const current = await repo.getSubscription(organizationId);
-  const amount = PRO_PLANS[plan].price;
-  const period = nextPeriod(current, t);
-  const res = await charge({ organizationId, amount, fail: opts.fail });
-  try {
-    const subscription = await repo.recordSubscriptionPayment({
-      organizationId, plan, amount, monthlyPrice: amount, status: res.ok ? "paid" : "failed",
-      reference: res.reference, periodStart: period.start, periodEnd: period.end,
-    });
-    if (!res.ok) return { ok: false, error: res.error };
-    return { ok: true, subscription, reference: res.reference, amount };
-  } catch (e) {
-    return { ok: false, error: res.ok ? (e instanceof Error ? e.message : "Paiement impossible.") : res.error };
+/** S'abonner (premier mois) ou, en démo, régler le mois suivant ; `fail` simule un refus de carte (démo). */
+export async function paySubscription(organizationId: string, plan: ProPlan, profile: Profile, opts: { base: string; fail?: boolean }): Promise<PayResult> {
+  const provider = getProvider();
+  const sub = await getRepo().getSubscription(organizationId);
+  if (provider.id === "simulated" && sub) {
+    const r = await simulateProInvoice(organizationId, { fail: opts.fail });
+    if (!r.ok) return { ok: false, error: r.error ?? "Paiement impossible." };
+    return opts.fail ? { ok: false, error: "Paiement refusé par la banque (simulation)." } : { ok: true, kind: "paid" };
   }
+  if (provider.id === "simulated" && opts.fail) return { ok: false, error: "Paiement refusé par la banque (simulation)." };
+  const live = sub && sub.subscriptionRef && sub.provider === provider.id && effectiveStatus(sub, today()) !== "cancelled" && sub.status !== "cancelled";
+  if (live) return { ok: false, error: "Ton abonnement est prélevé automatiquement chaque mois. Pour changer de carte ou régler une échéance, utilise « Gérer ma carte »." };
+  const r = await startProSubscription({ organizationId, plan, profile, base: opts.base });
+  if (!r.ok) return r;
+  if (r.type === "redirect") return { ok: true, kind: "redirect", url: r.url };
+  if (r.type === "done") return { ok: true, kind: "paid" };
+  return { ok: false, error: "Le paiement en ligne n’est pas activé : écris aux fondatrices pour régler ton abonnement." };
 }

@@ -14,7 +14,7 @@ const ref = (prefix: string) => `${prefix}_${randomBytes(6).toString("hex")}`;
 export function simulatedInvoice(input: { subscriptionRef: string; checkoutId: string | null; amount: number; periodStart: string; fail?: boolean }): NormalizedEvent {
   const invoiceRef = ref("sim_in");
   if (input.fail) {
-    return { type: "invoice.failed", checkoutId: input.checkoutId, subscriptionRef: input.subscriptionRef, invoiceRef, amount: input.amount, error: "Carte refusée (simulation).", attempt: 1, nextAttempt: null };
+    return { type: "invoice.failed", checkoutId: input.checkoutId, subscriptionRef: input.subscriptionRef, invoiceRef, amount: input.amount, error: "Carte refusée (simulation).", attempt: 1, nextAttempt: null, hostedUrl: null };
   }
   return {
     type: "invoice.paid",

@@ -289,7 +289,7 @@ export async function refundTransaction(input: { transactionId: string; amount: 
   });
   if (tx.profileId) {
     const fx = appEffects();
-    await fx.notify([{ recipientId: tx.profileId, type: "refund_issued", title: `Remboursement · ${formatMoney(amount)}`, body: `${tx.description}. Le montant revient sur ta carte sous quelques jours.`, link: "/espace/paiements" }]);
+    await fx.notify([{ recipientId: tx.profileId, type: "refund_issued", title: `Remboursement · ${formatMoney(amount)}`, body: `${tx.description}. Le montant revient sur ta carte sous quelques jours.`, link: "/mes-paiements" }]);
   }
   return { ok: true, transaction: { ...tx, amountRefunded: total, status: total >= tx.amount ? "refunded" : "partially_refunded" } };
 }
