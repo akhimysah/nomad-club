@@ -3,6 +3,8 @@
  * Ils reflètent les tables de supabase/migrations/ (0001_init.sql, 0003_socle.sql…) en camelCase.
  * Les dates « jour » sont au format AAAA-MM-JJ, les instants en ISO 8601.
  */
+// --- Lot 5 ---
+import type { CrmAuditAction, CrmTargetType } from "./modules/crm/types.ts";
 
 /**
  * Rôles cumulables (table user_roles). Une personne sans rôle est une visiteuse (« guest »).
@@ -270,14 +272,16 @@ export type AuditAction =
   | "role.revoke"
   | "reminder.send"
   // --- Lot 3 ---
-  | import("./modules/partenaires/types").PartenairesAuditAction;
+  | import("./modules/partenaires/types").PartenairesAuditAction
+  // --- Lot 5 ---
+  | CrmAuditAction;
 
 /** Journal des opérations importantes (qui, quoi, sur quoi, détails). */
 export type AuditEntry = {
   id: string;
   actorId: string | null;
   action: AuditAction;
-  targetType: "payment" | "event" | "profile" | "reminder" | "organization";
+  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | CrmTargetType /* Lot 5 */;
   targetId: string | null;
   /** Phrase lisible (« Virement de Lou Garnier validé · 670 $ »). */
   summary: string;
@@ -285,7 +289,14 @@ export type AuditEntry = {
   createdAt: string;
 };
 
-export type NotificationType = "booking_confirmed" | "waitlist_spot" | "event_published" | "payment_validated" | "role_changed";
+export type NotificationType =
+  | "booking_confirmed"
+  | "waitlist_spot"
+  | "event_published"
+  | "payment_validated"
+  | "role_changed"
+  // --- Lot 5 ---
+  | "crm_task_due";
 
 export type AppNotification = {
   id: string;

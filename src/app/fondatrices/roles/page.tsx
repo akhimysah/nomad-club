@@ -45,6 +45,8 @@ const CAP_LABEL: Record<Capability, string> = {
   "team.invite": "Inviter son équipe",
   "map.view": "Voir la carte",
   "location.share": "Partager sa position (approximative)",
+  // --- Lot 5 ---
+  "crm.export": "Exporter les contacts du CRM",
 };
 
 type Props = { searchParams: Promise<{ q?: string; tous?: string }> };

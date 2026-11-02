@@ -46,6 +46,9 @@ export const CAPABILITIES = [
   "team.invite",
   "map.view",
   "location.share",
+  // --- Lot 5 ---
+  /** Exporter des contacts (données personnelles) en CSV. Administratrices uniquement. */
+  "crm.export",
 ] as const;
 
 export type Capability = (typeof CAPABILITIES)[number];

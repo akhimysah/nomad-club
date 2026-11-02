@@ -18,6 +18,8 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // copies de travail des agents
+      ".claude/**",
       // archives de maquettes déposées à la racine
       "brief/**",
       "styles/**",

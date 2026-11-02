@@ -3,6 +3,8 @@
  * Deux implémentations : demo-repo.ts (mémoire) et supabase-repo.ts (Postgres).
  */
 import type { Snapshot } from "../domain/founders";
+// --- Lot 5 ---
+import type { CrmRepo } from "../modules/crm/repo";
 import type {
   AppNotification,
   AuditAction,
@@ -118,7 +120,7 @@ export type NotificationInput = {
 export type MyOrganization = { organization: Organization; role: OrganizationMemberRole };
 export type OrganizationMemberView = OrganizationMember & { profile: Profile | null };
 
-export interface Repo extends PartenairesRepo /* --- Lot 3 --- */ {
+export interface Repo extends PartenairesRepo /* --- Lot 3 --- */, CrmRepo /* Lot 5 */ {
   /* profils */
   getProfile(id: string): Promise<Profile | null>;
   /** Annuaire : adhérentes et fondatrices. */

@@ -7,6 +7,8 @@ import { getRepo } from "@/lib/data";
 import { dayMonthShort, fullName, hour } from "@/lib/format";
 import type { AuditAction } from "@/lib/types";
 import { PARTENAIRES_AUDIT_LABEL } from "@/lib/modules/partenaires/domain"; // --- Lot 3 ---
+// --- Lot 5 ---
+import { CRM_AUDIT_LABEL } from "@/lib/modules/crm/types";
 
 export const metadata: Metadata = { title: "Journal des opérations" };
 export const dynamic = "force-dynamic";
@@ -20,6 +22,8 @@ const ACTION_LABEL: Record<AuditAction, string> = {
   "role.revoke": "Rôle retiré",
   "reminder.send": "Relance",
   ...PARTENAIRES_AUDIT_LABEL, // --- Lot 3 ---
+  // --- Lot 5 ---
+  ...CRM_AUDIT_LABEL,
 };
 
 /** Journal des opérations importantes (lecture seule). */

@@ -9,6 +9,8 @@ import type { Snapshot } from "../domain/founders";
 import { fullName } from "../format";
 import { inCircle, isAdmin, isGrantableRole } from "../permissions";
 import { supabaseAdmin, supabaseServer } from "../supabase/server";
+// --- Lot 5 ---
+import { crmSupabaseRepo } from "../modules/crm/supabase-repo";
 import type {
   AppNotification,
   AuditEntry,
@@ -304,6 +306,8 @@ function ticketToView(j: Row | null): BookingView | null {
 export const supabaseRepo: Repo = {
   // --- Lot 3 --- partenaires, carnet pro, carte
   ...partenairesSupabase(db, trustedWriter, today),
+  // --- Lot 5 : CRM (délégué au module) ---
+  ...crmSupabaseRepo,
 
   async getProfile(id) {
     const c = await db();
