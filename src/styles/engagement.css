@@ -97,6 +97,8 @@
 .pd-buy{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:18px 0 6px}
 .pd-desc{font-size:16.5px;color:var(--tx2);line-height:1.65;white-space:pre-line}
 .pd-preview{margin:18px 0 0;padding:18px 20px;border-radius:18px;background:var(--fill);box-shadow:inset 0 0 0 1px var(--line);font:italic 400 17px/1.55 var(--serif);color:var(--tx2)}
+.res-row{display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr);gap:22px;align-items:start}
+.res-row .cover{border-radius:18px}
 .file-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:18px;background:var(--fill);box-shadow:inset 0 0 0 1px var(--line);margin-top:10px;color:var(--tx)}
 a.file-row:hover{background:var(--fill2)}
 .file-row .ic{color:var(--accent)}
@@ -161,6 +163,10 @@ a.file-row:hover{background:var(--fill2)}
   .dash .w{order:var(--o,0)}
   .dash-tools{padding-bottom:0}
   .pd-grid,.ref-hero,.eg-two,.biz-hero{grid-template-columns:1fr;gap:18px}
+  .res-row{grid-template-columns:96px minmax(0,1fr);gap:14px}
+  .res-row .cover-txt{display:none}
+  .file-row{padding:12px;gap:10px}
+  .file-row .end{display:none}
   .shop-grid{grid-template-columns:1fr 1fr;gap:12px}
   .shop-body{padding:12px 12px 14px}
   .shop-body b{font-size:17px}
