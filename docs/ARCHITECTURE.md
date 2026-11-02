@@ -58,6 +58,24 @@ Contenu et données d'exemple : `design/contenu-et-donnees.md`.
 - `supabase/seed.sql` : généré par `npm run seed:sql` depuis `src/lib/seed.ts` (mêmes données que la démo, y compris rôles, organisations, journal et notifications).
 - `npm run test:sql` (`scripts/test-sql.mjs`) : banc de test PGlite (Postgres en WebAssembly, sans serveur) qui simule le schéma `auth` de Supabase, exécute toutes les migrations puis le seed, et vérifie rôles, RLS (en simulant des personnes via `request.jwt.claim.sub` + `set role authenticated`), fonctions métier et reprise de l'ancien rôle unique.
 
+### 0006_engagement.sql (Lot 4)
+
+- `engagement_settings` (une ligne : barème des points Business `deal_points_base`, `deal_points_per_thousand`, `deal_points_bonus_cap`, `simulated_payments` coupé par défaut) et `engagement_prefs` (par membre : `widgets` jsonb `[{id, enabled}]` dans l'ordre, `leaderboard_opt_out`).
+- Boutique : `products` (slug, titre, catégorie, prix public / membre, extrait, statut `draft|published|archived`), `product_files` (chemin dans le bucket privé `ressources`, `is_preview`), `purchases` (un seul achat payé par produit et personne). RLS : le cercle voit les produits publiés ; les fichiers ne sont lisibles qu'après achat (ou aperçu) ; mêmes règles sur `storage.objects`. Achat simulé par `purchase_product_simulated(product)` (prix membre recalculé, refusé si le paiement simulé est coupé).
+- Parrainage : `referral_codes` (créé par `my_referral_code()`), `referrals` (une filleule = une marraine, prénom + initiale figés), `referral_rewards` (configurables), `referral_reward_grants`. `claim_referral(code)` rattache une inscription ; le déclencheur `referral_on_member` (ajout du rôle `member`) convertit, attribue les récompenses actives, crédite les points et notifie.
+- Espace Business : `business_deals` (déclarante, partenaire du cercle, nature, type, montant facultatif, statut `pending|confirmed|refused`) et `points_ledger`. Une membre ne déclare qu'en son nom et en attente ; seule la partenaire répond, via `respond_deal()` qui crédite les deux. `business_leaderboard()` exclut les membres retirées du classement.
+- Les contraintes `notifications.type`, `notification_prefs.type` et `audit_log.target_type` sont **étendues** (fusion des valeurs existantes, indépendante de l'ordre des lots) par `nc_extend_check`.
+- Tests : `scripts/test-sql/engagement.mjs` (49 vérifications) ; données : `src/lib/modules/engagement/seed.ts` → `scripts/seed-sql/engagement.mjs`.
+
+## Module engagement (Lot 4, `src/lib/modules/engagement/`)
+
+- `types.ts`, `repo.ts` (`EngagementRepo`, étendu par `Repo`), `demo.ts` (mémoire, mêmes règles que la base), `supabase.ts` (session + RLS, fonctions SQL, URL signées).
+- `widgets.ts` (catalogue, ordre par défaut, validation des préférences), `weather.ts` (Open-Meteo, cache 30 min en mémoire, repli sur la dernière mesure), `prayer.ts` (Aladhan méthode 21, heures UTC converties dans le fuseau de l'appli, cache par jour, calcul astronomique local en repli), `quotes.ts`, `news-source.ts` (point de branchement du Lot 1).
+- `billing.ts` : **seul** endroit du paiement de la boutique (simulé ; à remplacer au Lot 2). `download.ts` + routes `/espace/boutique/telecharger/[fileId]` et `/fondatrices/boutique/fichier/[fileId]` : vérification achat / aperçu / admin puis redirection signée ou PDF généré (`pdf.ts`).
+- `referral-cookie.ts` (middleware : `?parrain=CODE` → cookie `nc_parrain` 30 jours), `referral.ts` (`claimReferral` appelé au retour du lien magique, à la réservation et à l'adhésion).
+- `notifications.ts` (via `notify()`), `labels.ts` (libellés fusionnés dans les tables partagées), `stats.ts` (indicateurs admin), `points.ts` (barème, identique à `deal_points` en SQL).
+- Interface : `src/components/engagement/*`, styles `src/styles/engagement.css` (jetons de la maquette noir et blanc).
+
 ## Journal et notifications (code)
 
 - `src/lib/audit.ts` : `audit(entry)` enregistre une opération (échec signalé dans les logs, jamais bloquant). Journalisés : validation de virement, création / modification / publication d'événement, relance, ajout / retrait de rôle.
@@ -70,6 +88,8 @@ Membre : `/espace`, `/espace/agenda`, `/espace/cercle` (salon + annuaire), `/esp
 Membre : `/espace/notifications` (liste + préférences), cloche avec compteur dans l'en-tête (téléphone) et entrée « Notifications » dans la barre latérale.
 Fondatrices (admin) : `/fondatrices`, `/fondatrices/a-traiter`, `/fondatrices/membres`, `/fondatrices/evenements` (+ création/édition, publication), `/fondatrices/encaissements`, `/fondatrices/crm` (contacts = profils + rôles + établissements, segments ; CRM complet au lot 5), `/fondatrices/roles` (Rôles et accès, matrice des droits), `/fondatrices/journal`, `/fondatrices/notifications`, `/fondatrices/plus` (téléphone : entrées sans onglet).
 Partenaire (`space.partner`) : `/partenaire` (établissement + emplacements « Bientôt » : offres, code / QR, statistiques, contrat), `/partenaire/etablissement`, `/partenaire/notifications`.
+Membre (Lot 4) : `/espace` (accueil à widgets + « Personnaliser »), `/espace/boutique`, `/espace/boutique/[slug]`, `/espace/boutique/mes-ressources`, `/espace/parrainage`, `/espace/business` ; entrées dans la barre latérale et dans « Moi » (téléphone).
+Fondatrices (Lot 4) : `/fondatrices/boutique` (+ `/nouveau`, `/[id]`), `/fondatrices/parrainage`, `/fondatrices/business` (entrées dans « Plus » sur téléphone).
 Pro (`space.pro`) : `/pro` (fiche + « Bientôt » : fiche carnet, abonnement, statistiques, contrat), `/pro/fiche`, `/pro/notifications`.
 Les espaces Partenaire et Pro reprennent la version jour de l'espace fondatrices (`OrgSpaceLayout`, `OrgChrome`), sur ordinateur et téléphone. Une admin sans établissement y voit tous ceux du type.
 API : `/api/checkout` (crée la session Stripe), `/api/stripe/webhook`.
@@ -77,7 +97,7 @@ Garde d'accès dans `src/middleware.ts` (capacité par espace) + vérification c
 
 ## Actions (server actions, `src/app/actions/*`)
 
-Réserver (avec contrôle des places et liste d'attente ; notification de confirmation), annuler (notification à la première de la liste d'attente), adhérer / renouveler / passer Premium, poster au salon, envoyer un message privé, valider un virement (un ou tous ; journal + notification), relancer (une, groupe ; journal), publier un brouillon (lieu obligatoire ; journal + notification aux membres), créer / modifier un événement (journal), ajouter / retirer un rôle (`actions/roles.ts` ; journal + notification), marquer des notifications comme lues et régler ses préférences (`actions/notifications.ts`). Chaque action revalide les pages concernées.
+Réserver (avec contrôle des places et liste d'attente ; notification de confirmation), annuler (notification à la première de la liste d'attente), adhérer / renouveler / passer Premium, poster au salon, envoyer un message privé, valider un virement (un ou tous ; journal + notification), relancer (une, groupe ; journal), publier un brouillon (lieu obligatoire ; journal + notification aux membres), créer / modifier un événement (journal), ajouter / retirer un rôle (`actions/roles.ts` ; journal + notification), marquer des notifications comme lues et régler ses préférences (`actions/notifications.ts`). Lot 4 : `actions/engagement.ts` (préférences de widgets, achat, déclarer / confirmer / retirer un deal, retrait du classement) et `actions/engagement-admin.ts` (produits, fichiers, publication, récompenses, remise, barème, paiement simulé ; tout est journalisé). Chaque action revalide les pages concernées.
 
 ## Plus tard (non bloquant)
 
