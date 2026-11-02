@@ -22,7 +22,7 @@ Contenu et données d'exemple : `design/contenu-et-donnees.md`.
 ## Rôles et permissions (Lot 0)
 
 - Rôles **cumulables** : `member`, `moderator`, `admin`, `partner`, `pro` ; une personne sans rôle est `guest` (compte gratuit). Julia et Nora sont `admin` (l'ancien rôle `founder`). Exemple de cumul : Kenza = `member` + `partner`, Loubna = `member` + `pro`, Yasmine = `member` + `moderator`.
-- `src/lib/permissions.ts` (module pur, importable partout, y compris le middleware) : liste des **capacités nommées** (`space.member`, `space.partner`, `space.pro`, `space.admin`, `events.book`, `events.manage`, `payments.validate`, `reminders.send`, `members.view_directory`, `members.manage`, `roles.manage`, `messages.post`, `messages.moderate`, `carnet.view`, `offers.view`, `offers.manage_own`, `offers.manage_all`, `listing.manage_own`, `organizations.manage_own`, `organizations.manage_all`, `crm.access`, `audit.view`), matrice `ROLE_CAPABILITIES` rôle → capacités, espaces (`SPACE_ACCESS` : préfixe d'adresse + capacité exigée), helpers `hasRole`, `isAdmin`, `inCircle`, `rolesCan`, `spacesFor`.
+- `src/lib/permissions.ts` (module pur, importable partout, y compris le middleware) : liste des **capacités nommées** (`space.member`, `space.partner`, `space.pro`, `space.admin`, `events.book`, `events.manage`, `payments.validate`, `reminders.send`, `members.view_directory`, `members.manage`, `roles.manage`, `messages.post`, `messages.moderate`, `carnet.view`, `offers.view`, `offers.manage_own`, `offers.manage_all`, `listing.manage_own`, `organizations.manage_own`, `organizations.manage_all`, `crm.access`, `audit.view` ; Lot 6 : `audit.export`, `privacy.process_deletions`, `security.manage`), matrice `ROLE_CAPABILITIES` rôle → capacités, espaces (`SPACE_ACCESS` : préfixe d'adresse + capacité exigée), helpers `hasRole`, `isAdmin`, `inCircle`, `rolesCan`, `spacesFor`.
 - Gardes serveur dans `src/lib/auth.ts` : `requireCapability(cap)` (layouts, pages : redirige), `checkCapability(cap)` (server actions : renvoie null), `viewerCan`, `viewerSpaces` ; `requireMember` / `requireFounder` sont des raccourcis.
 - Middleware (`src/middleware.ts` → `src/lib/supabase/middleware.ts`) : en mode réel, lit les rôles dans `user_roles` et vérifie la capacité exigée par l'espace de l'adresse.
 - La page **Rôles et accès** (`/fondatrices/roles`) ajoute / retire des rôles (jamais son propre accès admin, jamais la dernière admin) ; chaque changement est journalisé et la personne reçoit une notification.
@@ -58,6 +58,36 @@ Contenu et données d'exemple : `design/contenu-et-donnees.md`.
 - `supabase/seed.sql` : généré par `npm run seed:sql` depuis `src/lib/seed.ts` (mêmes données que la démo, y compris rôles, organisations, journal et notifications).
 - `npm run test:sql` (`scripts/test-sql.mjs`) : banc de test PGlite (Postgres en WebAssembly, sans serveur) qui simule le schéma `auth` de Supabase, exécute toutes les migrations puis le seed, et vérifie rôles, RLS (en simulant des personnes via `request.jwt.claim.sub` + `set role authenticated`), fonctions métier et reprise de l'ancien rôle unique.
 
+### 0008_securite.sql (Lot 6)
+
+- Durcissements : `revoke execute` sur les fonctions internes et de déclencheurs ; codes de billet à 6 caractères ; `get_ticket` ne renvoie plus `profile_id`.
+- `security_settings` (une ligne : `admin_mfa_enforced`), `session_aal()` (claim `aal` du JWT), `admin_mfa_ok()` ; politiques RLS **restrictives** : quand la base exige la 2FA, une admin en AAL1 ne modifie pas `user_roles`, ne lit pas `audit_log` ni la file de suppression.
+- `consents` (historique horodaté, jamais modifié ; `seq` pour l'ordre), vue `current_consents`, `consent_default(kind)`, `has_consent(profile, kind)` (pour les autres lots).
+- `deletion_requests` (pending / cancelled / done / rejected, `scheduled_for` = +30 jours) ; fonctions `request_account_deletion`, `cancel_account_deletion` (journalisées), `anonymize_account(profile, request)` (admin en AAL2 si exigé, ou clé service ; refuse un compte admin et soi-même ; efface coordonnées, textes des messages, notifications, préférences, consentements, push, rôles ; conserve paiements et réservations).
+- `push_subscriptions` (endpoint, clés p256dh / auth ; chacune gère les siens).
+- `rate_limits` + `rate_limit_hit(key, limit, window)` et `purge_rate_limits()` (clé service seulement).
+- `my_sessions()` : sessions de la personne connectée (lit `auth.sessions`).
+- Politique `audit_log_self_insert` : une personne journalise ses propres opérations sensibles (export, consentement, connexion, 2FA…) sur sa propre fiche.
+- Tests : section « Lot 6 » de `npm run test:sql` (`scripts/test-sql/securite.mjs`).
+
+## Sécurité et conformité (Lot 6, code)
+
+Module `src/lib/modules/securite/` : `types.ts`, `repo.ts` (`SecuriteRepo`, branché par `extends` dans `Repo`), `demo-repo.ts`, `supabase-repo.ts`, `seed.ts` (démo : consentements d'Inès, demande de suppression de Chloé).
+
+- **Limitation de fréquence** (`rate-limit.ts`) : `rateLimit(name, subject?)`, règles dans `RATE_LIMITS` (booking, magicLinkIp, magicLinkEmail, message, report (pour le Lot 1), checkout, ticketLookup, assistant, dataExport, account, mfa). Magasin Postgres en mode réel avec clé service, mémoire sinon, remplaçable (`setRateLimitStore`). Une panne du magasin laisse passer.
+- **En-têtes HTTP** (`headers.ts`, appliqués par `next.config.ts`) : CSP, `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, COOP, HSTS (production). Origines supplémentaires : `CSP_EXTRA_*`.
+- **Double authentification** (`mfa-core.ts` pur, `mfa.ts`) : exigée en mode réel pour `space.admin` (sauf `ADMIN_MFA_REQUIRED=false`). Le middleware redirige une admin en AAL1 vers `/connexion/double-authentification` ; `getViewer()` retire le rôle `admin` d'une session AAL1 (`enforceAdminMfa`). Après le lien magique, `sign-in.ts` journalise la connexion admin.
+- **Redirections** : `safeRedirectPath()` (`request.ts`) partout où une adresse `suite` est suivie.
+- **RGPD** : `consents.ts` (libellés, valeurs par défaut), `export.ts` (`buildPersonalExport`) + `export-route.ts`. À compléter par chaque lot qui ajoute des données personnelles (export + anonymisation), voir `docs/securite/donnees.md`.
+- **Journal** : `audit-view.ts` (libellés partiels, familles, `parseAuditFilters`, `auditMatches` pour la démo, `auditCsv` avec neutralisation des formules). Nouvelles actions : type `SecuriteAuditAction`.
+- **Push Web** (`push.ts`) : chiffrement RFC 8291 et JWT VAPID avec `node:crypto` (aucune dépendance) ; `deliverPush` est appelé par `deliverExternally` dans `notify.ts`, respecte la préférence `push`, supprime les abonnements expirés. Clés : `node scripts/vapid-keys.mjs`.
+- **PWA** : `public/sw.js` (statiques en cache d'abord ; pages en réseau d'abord avec copie, jamais pour fondatrices / partenaire / pro / API / messages / données ; page `/hors-ligne` ; cache vidé à la déconnexion `?au-revoir`), `PwaRegister` (enregistrement en production, invitation d'installation), `InstallHelp` (bouton natif Android, marche à suivre iPhone), manifeste complet (`id`, `scope`, raccourcis).
+- Capacités ajoutées : `audit.export`, `privacy.process_deletions`, `security.manage` (admin). Styles : `src/styles/securite.css`.
+- Tâche planifiée : `vercel.json` → `/api/cron/securite` (quotidienne, `Authorization: Bearer CRON_SECRET`) : purge des compteurs, nombre de suppressions échues.
+- Sauvegardes : `scripts/backup.sh` (voir `docs/securite/sauvegardes.md`). Audit : `docs/securite/audit.md`.
+- Tests sans serveur : `npm run test:securite` (`scripts/test-securite.mts` : redirections, 2FA, en-têtes, CSV, push).
+- **Applis natives** : elles pourront s'authentifier avec Supabase Auth (même lien magique / OTP, même 2FA) et lire les données directement sous RLS ; l'export RGPD est exposé en `GET /api/moi/export` (session par cookie aujourd'hui ; à ouvrir au jeton `Authorization: Bearer` le jour où une appli native existe).
+
 ## Journal et notifications (code)
 
 - `src/lib/audit.ts` : `audit(entry)` enregistre une opération (échec signalé dans les logs, jamais bloquant). Journalisés : validation de virement, création / modification / publication d'événement, relance, ajout / retrait de rôle.
@@ -73,6 +103,7 @@ Partenaire (`space.partner`) : `/partenaire` (établissement + emplacements « B
 Pro (`space.pro`) : `/pro` (fiche + « Bientôt » : fiche carnet, abonnement, statistiques, contrat), `/pro/fiche`, `/pro/notifications`.
 Les espaces Partenaire et Pro reprennent la version jour de l'espace fondatrices (`OrgSpaceLayout`, `OrgChrome`), sur ordinateur et téléphone. Une admin sans établissement y voit tous ceux du type.
 API : `/api/checkout` (crée la session Stripe), `/api/stripe/webhook`.
+Lot 6 : `/confidentialite`, `/mentions-legales`, `/mes-donnees` (tout compte connecté), `/connexion/double-authentification`, `/hors-ligne` (service worker), `/espace/moi/donnees` (+ `/export`), `/fondatrices/securite` (2FA, file des suppressions, protections), `/fondatrices/journal` (filtres, détail `?entree=`) + `/fondatrices/journal/export` (CSV), `/api/moi/export` (JSON), `/api/cron/securite`.
 Garde d'accès dans `src/middleware.ts` (capacité par espace) + vérification côté serveur dans chaque layout et chaque server action (`requireCapability` / `checkCapability`).
 
 ## Actions (server actions, `src/app/actions/*`)
@@ -81,4 +112,4 @@ Réserver (avec contrôle des places et liste d'attente ; notification de confir
 
 ## Plus tard (non bloquant)
 
-Envoi du billet et des relances sur WhatsApp (Twilio ou WhatsApp Business API, file `reminders`), assistant branché sur Claude, PWA hors ligne, export comptable.
+Envoi du billet et des relances sur WhatsApp (Twilio ou WhatsApp Business API, file `reminders`), assistant branché sur Claude, export comptable, CSP à nonce, purge automatique du journal (1 an) et des réservations invitées (1 an).

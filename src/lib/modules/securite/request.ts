@@ -1,5 +1,4 @@
-/** Lot 6 — petites aides de sécurité côté requête (module pur, sauf clientIp qui lit les en-têtes). */
-import { headers } from "next/headers";
+/** Lot 6 — petites aides de sécurité côté requête (module pur ; clientIp charge next/headers à l'appel). */
 
 /**
  * Adresse de redirection interne sûre (après connexion, lien magique) : chemin relatif uniquement.
@@ -25,5 +24,6 @@ export function ipFromHeaders(h: Headers): string {
 }
 
 export async function clientIp(): Promise<string> {
+  const { headers } = await import("next/headers");
   return ipFromHeaders(await headers());
 }

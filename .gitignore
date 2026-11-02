@@ -56,3 +56,6 @@ next-env.d.ts
 /carnet-site/
 /carnet-site.zip
 /carnet-server/*.db*
+
+# sauvegardes chiffrées (Lot 6)
+/backups/

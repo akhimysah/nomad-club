@@ -20,7 +20,7 @@ Référence : `docs/CAHIER-DES-CHARGES.md`. Architecture de départ : `docs/ARCH
 | Espace Business | Rien | Déclaration de deals, points, retombées |
 | Administration | Espace Fondatrices (à traiter, membres, événements, encaissements) | Rôles fins, modération, contenus, partenaires, journal des opérations |
 | CRM | Chiffres et relances dans l'espace Fondatrices | Contacts / prospects, pipeline, segments, actions de suivi, statistiques de conversion et de renouvellement |
-| Sécurité | RLS Supabase, 5 rôles cumulables + capacités, journal d'audit (Lot 0) | RGPD, sauvegardes, 2FA admin |
+| Sécurité | RLS Supabase, 5 rôles cumulables + capacités, journal d'audit (Lot 0) ; RGPD, 2FA admin, sauvegardes, PWA, push (Lot 6) | Validation juridique des textes, mise en service en mode réel |
 
 ## Découpage en lots
 
@@ -64,10 +64,15 @@ Chaque lot est livrable seul, testable en mode démo puis en mode réel.
 - Segments et actions groupées.
 - Statistiques : conversion, renouvellement, revenus, retombées des deals.
 
-### Lot 6 — Sécurité, conformité, évolution
-- RGPD : consentements, export et suppression des données, durée de conservation.
-- Sauvegardes, sécurité des comptes (2FA admin), journal consultable.
-- PWA complète (installation, notifications push), API prête pour des applis natives.
+### Lot 6 — Sécurité, conformité, évolution (branche `lot-6-securite`)
+- [x] Audit de sécurité écrit (`docs/securite/audit.md`) : 10 constats corrigés (2FA admin, énumération des billets, redirection ouverte, limitation de fréquence, en-têtes HTTP, fonctions internes exposées, assistant, etc.), 6 constats restants documentés.
+- [x] RGPD : consentements horodatés et retirables (carte, communications, annuaire, droit à l'image), export JSON de toutes ses données, demande de suppression avec délai de grâce de 30 jours puis anonymisation par une administratrice (paiements conservés), registre et durées de conservation (`docs/securite/donnees.md`), brouillons de politique de confidentialité et mentions légales (à faire valider par un juriste).
+- [x] Sécurité des comptes : double authentification TOTP (Supabase MFA) exigée pour l'espace fondatrices en mode réel, option « exiger aussi côté base » (RLS restrictives), appareils connectés et « déconnecter partout », limitation de fréquence (réservations, lien magique, messages, paiement, billets, assistant), en-têtes de sécurité (CSP…).
+- [x] Journal consultable : filtres (personne, type, période), recherche, détail d'une entrée, export CSV ; connexions admin, exports et suppressions journalisés.
+- [x] Sauvegardes : `scripts/backup.sh` (pg_dump chiffré, rotation, restauration) + procédure et exercice de reprise (`docs/securite/sauvegardes.md`).
+- [x] PWA : service worker (cache des pages publiques et de l'espace membre, page hors ligne, cache vidé à la déconnexion), manifeste complet, aide à l'installation iPhone / Android, notifications push Web (VAPID, sans dépendance) reliées aux préférences « push ».
+- [~] API pour applis natives : l'export (`/api/moi/export`) et les règles sont prêts ; les applis natives pourront utiliser Supabase directement (RLS) avec le même jeton. Une API REST dédiée reste à concevoir avec le besoin réel.
+- [ ] À faire en mode réel : activer MFA TOTP dans Supabase, générer les clés VAPID, `CRON_SECRET`, planifier `scripts/backup.sh`, faire valider les textes juridiques, brancher le consentement `directory` sur l'annuaire et `geolocation` sur la carte (Lot 3) à la fusion.
 
 ## Décisions à prendre avec la cliente
 
