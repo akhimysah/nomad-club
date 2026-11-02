@@ -12,7 +12,7 @@ Référence : `docs/CAHIER-DES-CHARGES.md`. Architecture de départ : `docs/ARCH
 | Carnet d'adresses | Carnet du club + annuaire de 157 adresses dans l'appli, filtres catégorie et quartier, fiches des pros abonnées (Lot 3) | Paiement réel de l'abonnement pro (Lot 2) |
 | Offres partenaires | Fiches établissements, offres, code personnel + QR, validation au comptoir, statistiques, dashboard partenaire (Lot 3) | Contrat partenaire (Lot 2) |
 | Adhésion | Annuelle Membre / Premium, renouvellement, virement déclaré, Stripe Checkout | Paiement en plusieurs fois, historique complet, échéancier |
-| Contrats | Rien | Génération PDF, acceptation / signature, envoi par e-mail, archivage |
+| Contrats | Vague 2 · 2b : modèles versionnés (adhésion, partenaire, pro), génération PDF + SHA-256, acceptation électronique horodatée, Mes contrats, back-office | Validation juridique des textes, modèles d'e-mails, signature qualifiée éventuelle |
 | Dashboard membre | Accueil à widgets personnalisables (Lot 4) | Branchement des actualités du Lot 1 |
 | Carte interactive | Carte Leaflet / OpenStreetMap : partenaires, pros, membres consentantes en position approximative (Lot 3) | — |
 | Ressources digitales | Boutique, mes ressources, téléchargements sécurisés, gestion admin (Lot 4) | Vrai paiement (Lot 2) |
@@ -43,7 +43,13 @@ Chaque lot est livrable seul, testable en mode démo puis en mode réel.
 ### Lot 2 — Adhésions, paiements, contrats
 - Adhésion annuelle payable en 1, 3 ou 12 fois (échéancier), relances d'échéances.
 - Abonnements mensuels des pros.
-- Contrats : modèles distincts adhérente / partenaire / pro, génération PDF, acceptation électronique horodatée (preuve : IP, date, version du contrat), envoi par e-mail, archivage dans chaque espace. Signature électronique qualifiée possible ensuite via un prestataire (Yousign, Docusign).
+- Contrats (vague 2, chantier 2b, branche `v2-contrats`, migration `0010_contrats.sql`, module `src/lib/modules/contrats/`) :
+  - [x] Modèles versionnés en base (type, version, Markdown avec variables `{{…}}`, mise en vigueur, actif) ; trois textes v1 rédigés en français, **brouillons à faire valider par un juriste** (`docs/contrats/README.md`), variantes Maroc / France signalées, notes internes visibles en back-office seulement.
+  - [x] Génération : un contrat par souscription (`onSubscriptionActivated`), numéro unique `NC-ADH|PAR|PRO-AAAA-XXXXXX`, variables remplies (identité, formule, montant, devise, échéancier, dates), PDF pdf-lib noir et blanc (rendu déterministe), empreinte SHA-256.
+  - [x] Acceptation électronique simple avant le paiement (étape « Contrat » isolée dans `ContractStep` / `useContractGate`, branchée dans l'adhésion / le renouvellement / Premium et l'abonnement pro) ou juste après (Mes contrats) ; preuve immuable (horodatage, IP, navigateur, version, empreinte, phrase cochée) ; interface `SignatureProvider` (Yousign / Docusign plus tard) ; certificat d'acceptation PDF.
+  - [x] `requireContractAcceptance(kind, plan)` pour les écrans de souscription ; `sendEmail("contract_accepted", PDF en pièce jointe)` ; Mes contrats (`/espace/moi/contrats`, `/partenaire/contrats`, `/pro/contrats`) avec routes PDF vérifiant les droits (URL signée en réel, régénération en démo).
+  - [x] Back-office `/fondatrices/contrats` : liste filtrable, détail avec preuve et vérification d'empreinte, relance, annulation / résiliation, génération manuelle, modèles (nouvelle version, activation) ; section Contrats de la fiche CRM ; journal pour chaque génération, acceptation, relance, nouvelle version, activation. Contrats inclus dans l'export RGPD.
+  - [ ] À la fusion : régénérer `supabase/seed.sql` (contrats d'exemple), brancher les émissions définitives du chantier paiements (et retirer les provisoires de `contrats/emit.ts` s'il les remplace), modèles d'e-mails du chantier e-mails, faire valider les textes.
 - Historique : paiements, contrats, échéances, renouvellements.
 
 ### Lot 3 — Partenaires, carnet pro, carte (branche `lot-3-partenaires`)

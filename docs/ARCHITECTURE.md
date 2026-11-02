@@ -134,6 +134,24 @@ Module `src/lib/modules/securite/` : `types.ts`, `repo.ts` (`SecuriteRepo`, bran
 - Tests sans serveur : `npm run test:securite` (`scripts/test-securite.mts` : redirections, 2FA, en-têtes, CSV, push).
 - **Applis natives** : elles pourront s'authentifier avec Supabase Auth (même lien magique / OTP, même 2FA) et lire les données directement sous RLS ; l'export RGPD est exposé en `GET /api/moi/export` (session par cookie aujourd'hui ; à ouvrir au jeton `Authorization: Bearer` le jour où une appli native existe).
 
+## Contrats (vague 2, chantier 2b)
+
+### 0010_contrats.sql
+
+- `contract_templates` (kind `membership|partner|pro`, version, title, body_md, effective_from, is_active, notes) : une seule version active par type (index partiel), `activate_contract_template(id)` (admin). Un modèle utilisé par un contrat ne change plus (déclencheur `protect_contract_template`). Les trois modèles v1 sont insérés par la migration (bloc généré par `node scripts/contrats-templates-sql.mjs --write` depuis `templates.ts`).
+- `contracts` (numéro unique `NC-(ADH|PAR|PRO)-AAAA-XXXXXX`, modèle + version recopiée, signataire, établissement, formule, montant, devise, échéances, échéancier jsonb, dates, variables jsonb, texte rendu, `pdf_sha256`, `pdf_path`, statut `pending|accepted|cancelled`, référence de souscription, source, relances). Déclencheur `protect_contract` : naissance « en attente », « accepté » seulement avec une preuve, contenu figé après acceptation, annulation définitive, suppression interdite d'un contrat accepté.
+- `contract_acceptances` (une par contrat : signataire figée, horodatage, IP, navigateur, version, empreinte, fournisseur, phrase cochée) : **immuable** (déclencheur, y compris pour la clé service). Écriture uniquement par `accept_contract(contrat, empreinte, ip, ua, phrase)` (security definer : la signataire elle-même ou la clé service, contrat en attente, empreinte identique ; journalise `contract.accept`).
+- RLS : modèles actifs lisibles par toute personne connectée, gestion admin ; contrats et preuves lisibles par la signataire, la propriétaire de l'établissement et l'admin (`can_read_contract`) ; écriture des contrats admin / clé service. Bucket privé `contrats` (lecture selon les mêmes droits).
+- Tests : `scripts/test-sql/contrats.mjs` (56 vérifications, dont génération PDF : fichier valide, relu par pdf-lib, empreinte, rendu déterministe).
+
+### Code
+
+- Module `src/lib/modules/contrats/` : `types.ts`, `templates.ts` (textes v1 + liste des variables), `render.ts` (variables, notes `>>`, Markdown simplifié → blocs), `pdf.ts` (pdf-lib : contrat et certificat d'acceptation), `domain.ts` (numéro, échéancier, montants, variables, document + SHA-256), `repo.ts` (`ContratsRepo`, branché par `extends` dans `Repo`), `demo-repo.ts`, `supabase-repo.ts` (clé service pour générer, déposer, journaliser), `service.ts` (génération, `requireContractAcceptance`, `prepareContract`, `acceptContract`, `handleSubscriptionActivated`, relance, modèles, `serveContractPdf`), `signature.ts` (`SignatureProvider` : `simple`, emplacement Yousign), `register.ts` (abonnement à `onSubscriptionActivated`, chargé par `src/instrumentation.ts`), `emit.ts` (émissions provisoires depuis les parcours existants en attendant le chantier paiements), `seed.ts` + `seed-build.ts` (contrats d'exemple, démo et `scripts/seed-sql/contrats.mjs`), `labels.ts`, `views.ts`.
+- `src/lib/payment-hooks.ts` : la liste des abonnés est portée par `globalThis` (partagée entre bundles).
+- Actions `src/app/actions/contrats.ts` ; composants `src/components/contrats/` (`ContractStep` étape isolée, `useContractGate`, `ContractDocument`, `MyContracts`, `OrgContracts`, `ContractsCard`, `CrmContracts`, `admin`) ; styles `src/styles/contrats.css`. Capacité `contracts.manage` (admin).
+- Routes : `/espace/moi/contrats`, `/partenaire/contrats`, `/pro/contrats`, `/fondatrices/contrats` (+ `/[id]`, `/modeles`, `/modeles/[id]`, `/nouveau`) ; PDF `…/contrats/[id]/pdf` (`?certificat=1`) sous chaque espace.
+- Points à trancher : `docs/contrats/README.md`.
+
 ## Journal et notifications (code)
 
 - `src/lib/audit.ts` : `audit(entry)` enregistre une opération (échec signalé dans les logs, jamais bloquant). Journalisés : validation de virement, création / modification / publication d'événement, relance, ajout / retrait de rôle ; Lot 3 : fiche établissement, invitation, création / modification / pause d'offre, validation de code, paiement / changement / arrêt d'abonnement pro.

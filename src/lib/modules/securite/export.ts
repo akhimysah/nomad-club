@@ -11,7 +11,7 @@ export const EXPORT_VERSION = 1;
 
 export async function buildPersonalExport(profile: Profile): Promise<Record<string, unknown>> {
   const repo = getRepo();
-  const [consents, deletions, bookings, payments, notifications, prefs, orgs, extras] = await Promise.all([
+  const [consents, deletions, bookings, payments, notifications, prefs, orgs, extras, contracts] = await Promise.all([
     repo.listConsents(profile.id),
     repo.listMyDeletionRequests(profile.id),
     repo.listBookingsForProfile(profile.id),
@@ -20,6 +20,7 @@ export async function buildPersonalExport(profile: Profile): Promise<Record<stri
     repo.listNotificationPrefs(profile.id),
     repo.listMyOrganizations(profile.id),
     repo.personalDataExtras(profile.id),
+    repo.listMyContracts(profile.id).then((l) => l.filter((c) => c.profileId === profile.id)), // --- Vague 2 · Contrats ---
   ]);
   return {
     export: {
@@ -66,6 +67,21 @@ export async function buildPersonalExport(profile: Profile): Promise<Record<stri
       validatedAt: p.validatedAt,
     })),
     memberships: extras.memberships,
+    // --- Vague 2 · Contrats --- (le texte complet est téléchargeable en PDF dans « Mes contrats »)
+    contracts: contracts.map((c) => ({
+      number: c.number,
+      kind: c.kind,
+      plan: c.plan,
+      amount: c.amount,
+      currency: c.currency,
+      status: c.status,
+      templateVersion: c.templateVersion,
+      startsOn: c.startsOn,
+      endsOn: c.endsOn,
+      createdAt: c.createdAt,
+      pdfSha256: c.pdfSha256,
+      acceptance: c.acceptance ? { acceptedAt: c.acceptance.acceptedAt, ip: c.acceptance.ip, userAgent: c.acceptance.userAgent, statement: c.acceptance.statement } : null,
+    })),
     messages: extras.authoredMessages.map((m) => ({ ...m, channel: m.channel === "general" ? "salon général" : m.channel.startsWith("dm:") ? "message privé" : m.channel })),
     notifications: notifications.map((n) => ({ type: n.type, title: n.title, body: n.body, readAt: n.readAt, createdAt: n.createdAt })),
     notificationPreferences: prefs,
