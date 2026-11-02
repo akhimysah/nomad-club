@@ -60,3 +60,4 @@ next-env.d.ts
 
 # sauvegardes chiffrées (Lot 6)
 /backups/
+.vps-files
