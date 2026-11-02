@@ -18,6 +18,7 @@ import {
 import { CATEGORY_KEYS, CATEGORY_LABEL, PRO_PLANS, PRO_PLAN_KEYS } from "@/lib/modules/partenaires/domain";
 import type { Establishment, Offer, ProPlan } from "@/lib/modules/partenaires/types";
 import { Icon } from "../ui/Icon";
+import { useContractGate } from "../contrats/ContractGate"; // --- Vague 2 · Contrats ---
 import { useToast } from "../ui/Toasts";
 
 function Msg({ state }: { state: FormState }) {
@@ -349,11 +350,16 @@ export function SubscriptionActions({ organizationId, current, cancelAtPeriodEnd
     toast(r.message, r.ok ? "check" : "bell");
     router.refresh();
   };
+  // --- Vague 2 · Contrats --- : le contrat de la formule est accepté avant le paiement (déjà accepté : on passe)
+  const { gate, sheet } = useContractGate();
+  const withContract = (plan: ProPlan, fn: () => Promise<{ ok: boolean; message: string }>) => async () =>
+    (await gate({ kind: "pro", plan, organizationId })) ? fn() : { ok: false, message: "Le contrat doit être accepté avant le paiement." };
   return (
     <>
+      {sheet}
       <div className="btn-row" style={{ marginTop: 16 }}>
         {current && (
-          <button className="btn btn-ink btn-sm" type="button" disabled={!!busy} onClick={() => run("pay", () => paySubscriptionAction(organizationId, current))}>
+          <button className="btn btn-ink btn-sm" type="button" disabled={!!busy} onClick={() => run("pay", withContract(current, () => paySubscriptionAction(organizationId, current)))}>
             <Icon name="card" />
             {busy === "pay" ? "Paiement…" : needsPayment ? `Régler l’échéance · ${PRO_PLANS[current].price} $` : `Payer le mois suivant · ${PRO_PLANS[current].price} $`}
           </button>
@@ -387,7 +393,7 @@ export function SubscriptionActions({ organizationId, current, cancelAtPeriodEnd
               {on ? (
                 <span className="chip solid">Ta formule</span>
               ) : (
-                <button className="btn btn-ghost btn-sm" type="button" disabled={!!busy} onClick={() => run("plan-" + k, () => changePlanAction(organizationId, k))}>
+                <button className="btn btn-ghost btn-sm" type="button" disabled={!!busy} onClick={() => run("plan-" + k, withContract(k, () => changePlanAction(organizationId, k)))}>
                   {busy === "plan-" + k ? "Un instant…" : hasSubscription ? "Choisir" : `S’abonner · ${p.price} $`}
                 </button>
               )}

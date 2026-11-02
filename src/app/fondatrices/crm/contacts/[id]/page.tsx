@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ACTIVITY_ICON, StatusChip, Tags } from "@/components/crm/bits";
+import { CrmContracts } from "@/components/contrats/CrmContracts"; // --- Vague 2 · Contrats ---
 import { ActivityComposer, DealBox, DetailsCard, MergeBox, NewTask, TaskList } from "@/components/crm/ContactPanels";
 import { Avatar } from "@/components/ui/Avatar";
 import { Icon } from "@/components/ui/Icon";
@@ -213,10 +214,8 @@ export default async function ContactPage({ params }: Props) {
             <div className="card-h">
               <h2>Contrats</h2>
             </div>
-            <div className="empty">
-              <Icon name="lock" />
-              Aucun contrat. Les contrats adhérente et partenaire (génération, acceptation, PDF) apparaîtront ici avec le module Contrats.
-            </div>
+            {/* --- Vague 2 · Contrats --- */}
+            <CrmContracts profileId={p?.id ?? null} organizationId={c.organizationId} />
           </section>
 
           <section className="card">

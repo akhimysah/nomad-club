@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FHead } from "@/components/founders/parts";
-import { SoonCards } from "@/components/org/SoonCards";
+import { ContractsCard } from "@/components/contrats/ContractsCard"; // --- Vague 2 · Contrats ---
 import { MonthKpis, NoOrg, OrgPicker } from "@/components/partenaires/OrgBlocks";
 import { SubscriptionSummary } from "@/components/partenaires/Subscription";
 import { Icon } from "@/components/ui/Icon";
@@ -93,7 +93,8 @@ export default async function Page({ searchParams }: Props) {
               </div>
               <div className="f-col">
                 <SubscriptionSummary sub={sub} todayYmd={t} href={`/pro/abonnement?org=${e.id}`} />
-                <SoonCards items={[{ icon: "edit", title: "Contrat", text: "Contrat généré, accepté en ligne et archivé ici en PDF.", lot: "lot 2" }]} />
+                {/* --- Vague 2 · Contrats --- */}
+                <ContractsCard kind="pro" organizationId={e.id} profileId={viewer.profile.id} href={`/pro/contrats?org=${e.id}`} title="Contrat" />
               </div>
             </div>
           </>

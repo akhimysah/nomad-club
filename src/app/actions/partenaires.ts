@@ -17,6 +17,7 @@ import type { EstablishmentInput, OfferInput, ValidatedCode } from "@/lib/module
 import { roleGranted } from "@/lib/notify";
 import { rolesCan } from "@/lib/permissions";
 import { qrData, type QrData } from "@/lib/qr";
+import { emitProSubscriptionActivated } from "@/lib/modules/contrats/emit"; // --- Vague 2 · Contrats ---
 import { siteUrl } from "@/lib/site";
 
 export type FormState = { ok: boolean; message: string; errors?: Record<string, string> } | null;
@@ -279,6 +280,8 @@ export async function paySubscriptionAction(organizationId: string, plan: string
     revalidateOrg();
     return { ok: false, message: r.error };
   }
+  // --- Vague 2 · Contrats --- : abonnement payé par l'établissement → contrat relié (ou généré, à accepter)
+  if (acc.role !== "admin") await emitProSubscriptionActivated({ profileId: acc.profile.id, organizationId, plan, amount: r.amount, reference: r.reference });
   await audit({ actorId: acc.profile.id, action: "subscription.pay", targetType: "organization", targetId: organizationId, summary: `Abonnement ${PRO_PLANS[plan].label} payé · ${r.amount} $ (${r.reference})`, details: { plan, reference: r.reference } });
   revalidateOrg();
   return { ok: true, message: `Paiement reçu (${r.reference}). Ta fiche est en ligne jusqu’au ${new Date(r.subscription.currentPeriodEnd + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}.` };

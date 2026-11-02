@@ -18,7 +18,7 @@ const CONF: Record<OrganizationKind, { title: string; space: "partner" | "pro"; 
       { href: "/partenaire/statistiques", icon: "spark", label: "Statistiques" },
       { href: "/partenaire/etablissement", icon: "pin", label: "Établissement" },
       { href: "/partenaire/notifications", icon: "bell", label: "Notifications", tab: false },
-      { href: "/partenaire#contrats", icon: "edit", label: "Contrats", soon: true },
+      { href: "/partenaire/contrats", icon: "edit", label: "Contrats", tab: false }, // --- Vague 2 · Contrats ---
     ],
   },
   pro: {
@@ -31,7 +31,7 @@ const CONF: Record<OrganizationKind, { title: string; space: "partner" | "pro"; 
       { href: "/pro/abonnement", icon: "card", label: "Abonnement" },
       { href: "/pro/statistiques", icon: "spark", label: "Statistiques" },
       { href: "/pro/notifications", icon: "bell", label: "Notifications", tab: false },
-      { href: "/pro#contrat", icon: "edit", label: "Contrat", soon: true },
+      { href: "/pro/contrats", icon: "edit", label: "Contrat", tab: false }, // --- Vague 2 · Contrats ---
     ],
   },
 };

@@ -164,6 +164,7 @@ export default async function MoiPage() {
                 { href: "/espace/boutique", icon: "gift" as const, b: "Boutique", t: "Guides et ressources à prix membre" },
                 { href: "/espace/business", icon: "star" as const, b: "Espace Business", t: "Déclarer un deal, mes points, le classement" },
                 { href: "/espace/parrainage", icon: "heart" as const, b: "Parrainage", t: "Mon code, mes filleules, mes récompenses" },
+                { href: "/espace/moi/contrats", icon: "edit" as const, b: "Mes contrats", t: "Contrat d’adhésion, PDF et certificat d’acceptation" }, // --- Vague 2 · Contrats ---
               ].map((x) => (
                 <Link key={x.href} className="offer" href={x.href}>
                   <span className="o-badge">

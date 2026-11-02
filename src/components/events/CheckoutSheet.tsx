@@ -14,6 +14,7 @@ import { MemberCard } from "../ui/MemberCard";
 import { Seal } from "../ui/Seal";
 import { Sheet } from "../ui/Sheet";
 import { Ticket } from "../ui/Ticket";
+import { ContractStep } from "../contrats/ContractStep"; // --- Vague 2 · Contrats ---
 
 export type CheckoutKind = "ticket" | "wait" | "join" | "renew" | "upgrade";
 
@@ -43,7 +44,7 @@ export type PayEnv = {
   me: { firstName: string; fullName: string; phone: string | null } | null;
 };
 
-type Stage = "who" | "pay" | "busy" | "done";
+type Stage = "who" | "contract" /* Vague 2 · Contrats */ | "pay" | "busy" | "done";
 
 type Done = { kind: "reserve"; r: Extract<ReserveResult, { ok: true }> } | { kind: "membership"; r: Extract<MembershipResult, { ok: true }> };
 
@@ -108,7 +109,10 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
   const c = config;
   const visit = !env.me;
   const free = !c || c.kind === "wait" || c.amount === 0;
-  const total = free ? (visit ? 2 : 1) : visit ? 3 : 2;
+  // --- Vague 2 · Contrats --- : adhésion, renouvellement, Premium d'une personne connectée → étape « Contrat » avant le paiement
+  // (une visiteuse qui adhère accepte son contrat juste après, depuis « Mes contrats »).
+  const withContract = !visit && !free && !!c && (c.kind === "join" || c.kind === "renew" || c.kind === "upgrade");
+  const total = (free ? (visit ? 2 : 1) : visit ? 3 : 2) + (withContract ? 1 : 0);
 
   const run = async (who: { firstName?: string; whatsapp?: string; referralCode?: string }): Promise<Done | null> => {
     if (!c) return null;
@@ -155,7 +159,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
     else if (free) {
       setStage("busy");
       void finish({});
-    } else setStage("pay");
+    } else setStage(withContract ? "contract" : "pay");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, c]);
 
@@ -257,6 +261,20 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
         </p>
       </>
     );
+  } else if (c && shownStage === "contract") {
+    // --- Vague 2 · Contrats --- étape isolée : elle ne connaît du parcours que la formule et l'action
+    body = (
+      <>
+        <Steps n={1} total={total} />
+        <Summary c={c} />
+        <ContractStep
+          request={{ kind: "membership", plan: c.plan ?? "member", action: c.kind === "renew" || c.kind === "upgrade" ? c.kind : "join", installments: 1 }}
+          onAccepted={() => setStage("pay")}
+          onCancel={onClose}
+          continueLabel="Accepter et passer au paiement"
+        />
+      </>
+    );
   } else if (c && shownStage === "pay") {
     const plan = c.plan ?? "member";
     const line =
@@ -267,7 +285,7 @@ export function CheckoutSheet({ config, env, open, onClose }: { config: Checkout
           : c.kind === "upgrade"
             ? "Différence Membre vers Premium"
             : `Formule ${PLAN_NAME[plan]} · 1 an`;
-    const n = visit ? 2 : 1;
+    const n = (visit ? 2 : 1) + (withContract ? 1 : 0);
     body = (
       <>
         <Steps n={n} total={total} />
