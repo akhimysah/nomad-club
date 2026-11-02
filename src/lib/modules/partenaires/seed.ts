@@ -4,6 +4,7 @@
  * Fichier de données pur (imports de types seulement) : il est lu par src/lib/seed.ts et par scripts/seed-sql.mjs.
  */
 import type { Organization, OrganizationMember, PartnerOffer, Profile } from "../../types";
+import { QUARTIERS } from "./quartiers.ts";
 import type { EstablishmentDetails, MemberLocation, Offer, OfferCode, OrgInvite, PartenairesSeed, ProSubscription, SubscriptionPayment } from "./types";
 
 const iso = (ymd: string, time = "10:00") => new Date(`${ymd}T${time}:00+01:00`).toISOString();
@@ -11,22 +12,6 @@ const iso = (ymd: string, time = "10:00") => new Date(`${ymd}T${time}:00+01:00`)
 /** Les 6 mois de statistiques d'exemple (le mois en cours de la démo est octobre 2026). */
 export const SEED_MONTHS = ["2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10"] as const;
 
-/** Quartiers de Marrakech et leur centre (position affichée quand une membre ne partage que son quartier). */
-export const QUARTIERS: ReadonlyArray<{ name: string; lat: number; lng: number }> = [
-  { name: "Guéliz", lat: 31.635, lng: -8.01 },
-  { name: "Hivernage", lat: 31.6225, lng: -8.0155 },
-  { name: "Médina", lat: 31.629, lng: -7.988 },
-  { name: "Kasbah", lat: 31.6195, lng: -7.9885 },
-  { name: "Mellah", lat: 31.6215, lng: -7.983 },
-  { name: "Palmeraie", lat: 31.67, lng: -7.97 },
-  { name: "Targa", lat: 31.648, lng: -8.05 },
-  { name: "Semlalia", lat: 31.645, lng: -8.018 },
-  { name: "Majorelle", lat: 31.6415, lng: -8.003 },
-  { name: "Agdal", lat: 31.605, lng: -7.985 },
-  { name: "Sidi Ghanem", lat: 31.67, lng: -8.03 },
-  { name: "Route de l’Ourika", lat: 31.585, lng: -7.97 },
-  { name: "Al Maaden", lat: 31.6, lng: -7.95 },
-];
 
 function prng(seed: number) {
   let h = seed >>> 0;

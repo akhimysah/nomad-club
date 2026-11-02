@@ -4,7 +4,7 @@
  */
 import { normalize } from "../../format";
 import type { Plan, PlaceCategory } from "../../types";
-import { QUARTIERS } from "./seed";
+import { QUARTIERS } from "./quartiers";
 import type { MonthlyStats, Offer, OfferAudience, PartenairesAuditAction, ProPlan, ProSubscription, SubscriptionStatus } from "./types";
 
 export { QUARTIERS };

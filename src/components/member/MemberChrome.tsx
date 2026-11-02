@@ -18,8 +18,17 @@ const NAV: Array<{ href: string; icon: IconName; label: string; title: string }>
   { href: "/espace/assistant", icon: "spark", label: "Assistant", title: "Assistant" },
 ];
 
+// --- Lot 3 --- Offres et Carte : entrées de la barre latérale ; sur téléphone, elles passent par l'onglet Carnet
+const EXTRA_NAV: Array<{ href: string; icon: IconName; label: string; title: string; prefixes: string[] }> = [
+  { href: "/espace/offres", icon: "gift", label: "Offres", title: "Offres", prefixes: ["/espace/offres", "/espace/fiche"] },
+  { href: "/espace/carte", icon: "pin", label: "Carte", title: "Carte", prefixes: ["/espace/carte"] },
+];
+const extraOf = (pathname: string) => EXTRA_NAV.find((n) => n.prefixes.some((p) => pathname.startsWith(p)));
+
 function activeHref(pathname: string): string {
   if (pathname === "/espace") return "/espace";
+  const extra = extraOf(pathname); // --- Lot 3 ---
+  if (extra) return extra.href;
   if (pathname.startsWith("/espace/moi")) return "/espace/moi";
   if (pathname.startsWith("/espace/notifications")) return "/espace/notifications";
   return NAV.find((n) => n.href !== "/espace" && pathname.startsWith(n.href))?.href ?? "/espace";
@@ -29,7 +38,8 @@ function activeHref(pathname: string): string {
 export function MemberChrome({ name, formule, unread, notifs, spaces }: { name: string; formule: string; unread: number; notifs: number; spaces: Space[] }) {
   const pathname = usePathname();
   const active = activeHref(pathname);
-  const title = active === "/espace/moi" ? "Moi" : active === "/espace/notifications" ? "Notifications" : (NAV.find((n) => n.href === active)?.title ?? "Accueil");
+  const title = active === "/espace/moi" ? "Moi" : active === "/espace/notifications" ? "Notifications" : (NAV.find((n) => n.href === active)?.title ?? EXTRA_NAV.find((n) => n.href === active)?.title ?? "Accueil");
+  const tabActive = EXTRA_NAV.some((n) => n.href === active) ? "/espace/carnet" : active; // --- Lot 3 ---
   return (
     <>
       <aside className="m-side">
@@ -40,6 +50,13 @@ export function MemberChrome({ name, formule, unread, notifs, spaces }: { name: 
               <Icon name={n.icon} />
               {n.label}
               {n.href === "/espace/cercle" && <CountBadge value={unread} className="nbadge" />}
+            </Link>
+          ))}
+          {/* --- Lot 3 --- */}
+          {EXTRA_NAV.map((n) => (
+            <Link key={n.href} href={n.href} className={"side-btn" + (active === n.href ? " on" : "")} aria-current={active === n.href ? "page" : undefined}>
+              <Icon name={n.icon} />
+              {n.label}
             </Link>
           ))}
           <Link href="/espace/notifications" className={"side-btn" + (active === "/espace/notifications" ? " on" : "")} aria-current={active === "/espace/notifications" ? "page" : undefined}>
@@ -62,7 +79,7 @@ export function MemberChrome({ name, formule, unread, notifs, spaces }: { name: 
       <MemberHeadPortal title={title} home={active === "/espace"} name={name} notifs={notifs} spaces={spaces} />
       <nav className="tabbar" aria-label="Navigation de l’appli">
         {NAV.map((n) => (
-          <Link key={n.href} href={n.href} className={"tab" + (active === n.href ? " on" : "")} aria-current={active === n.href ? "page" : undefined}>
+          <Link key={n.href} href={n.href} className={"tab" + (tabActive === n.href ? " on" : "")} aria-current={tabActive === n.href ? "page" : undefined}>
             <Icon name={n.icon} />
             <span className="lbl">{n.label}</span>
             {n.href === "/espace/cercle" && <CountBadge value={unread} className="badge" />}
