@@ -56,3 +56,4 @@ next-env.d.ts
 /carnet-site/
 /carnet-site.zip
 /carnet-server/*.db*
+/.claude/worktrees/
