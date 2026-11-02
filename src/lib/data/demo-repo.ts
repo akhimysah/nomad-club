@@ -12,12 +12,14 @@ import { inCircle, isAdmin } from "../permissions";
 import { createSeed, type SeedData } from "../seed";
 import type { AppNotification, Booking, BookingView, ClubEvent, DmThread, MessageView, NotificationPref, Payment, Profile } from "../types";
 import { dmChannel, otherInChannel, type BookResult, type CancelResult, type Repo } from "./repo";
+// --- Lot 3 ---
+import { partenairesDemo } from "../modules/partenaires/demo";
 
 type DemoGlobal = typeof globalThis & { __nomadDemoDb?: SeedData };
 
 /** Jeu en mémoire d'une version antérieure (gardé par le rechargement à chaud) : on le recrée. */
 function outdated(d: SeedData): boolean {
-  return !Array.isArray(d.notifications) || !Array.isArray(d.profiles[0]?.roles);
+  return !Array.isArray(d.notifications) || !Array.isArray(d.profiles[0]?.roles) || !d.partenaires /* Lot 3 */;
 }
 
 function db(): SeedData {
@@ -52,6 +54,9 @@ function applyValidatedMembership(d: SeedData, pay: Payment) {
 }
 
 export const demoRepo: Repo = {
+  // --- Lot 3 --- partenaires, carnet pro, carte
+  ...partenairesDemo(db),
+
   async getProfile(id) {
     const p = db().profiles.find((x) => x.id === id);
     return p ? clone(p) : null;
@@ -139,7 +144,8 @@ export const demoRepo: Repo = {
     return clone([...db().memories].sort((a, b) => a.sortOrder - b.sortOrder));
   },
   async listPartnerOffers() {
-    return clone(db().partnerOffers);
+    // Lot 3 : les offres complètes (actives) font foi
+    return clone(db().partenaires.offers.filter((o) => o.status === "active"));
   },
 
   async listEvents(opts) {

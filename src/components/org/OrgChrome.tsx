@@ -10,7 +10,8 @@ import { Avatar } from "../ui/Avatar";
 import { Icon } from "../ui/Icon";
 import { CountBadge } from "../ui/TweenNumber";
 
-export type OrgNavItem = { href: string; icon: IconName; label: string; soon?: boolean };
+/** `tab: false` : entrée de la barre latérale seulement (pas d'onglet sur téléphone). */
+export type OrgNavItem = { href: string; icon: IconName; label: string; soon?: boolean; tab?: boolean };
 
 /**
  * Barre latérale (ordinateur), en-tête et barre du bas (téléphone) des espaces Partenaire et Pro.
@@ -88,7 +89,7 @@ export function OrgChrome({
         </span>
       </header>
       <nav className="tabbar" aria-label={title}>
-        {real.map((n) => (
+        {real.filter((n) => n.tab !== false).map((n) => (
           <Link key={n.href} href={n.href} className={"tab" + (active === n.href ? " on" : "")} aria-current={active === n.href ? "page" : undefined}>
             <Icon name={n.icon} />
             <span className="lbl">{n.label}</span>

@@ -32,6 +32,8 @@ import type {
   Profile,
   ProgramStep,
 } from "../types";
+// --- Lot 3 ---
+import type { PartenairesRepo } from "../modules/partenaires/repo";
 
 export type EventInput = {
   title: string;
@@ -116,7 +118,7 @@ export type NotificationInput = {
 export type MyOrganization = { organization: Organization; role: OrganizationMemberRole };
 export type OrganizationMemberView = OrganizationMember & { profile: Profile | null };
 
-export interface Repo {
+export interface Repo extends PartenairesRepo /* --- Lot 3 --- */ {
   /* profils */
   getProfile(id: string): Promise<Profile | null>;
   /** Annuaire : adhérentes et fondatrices. */

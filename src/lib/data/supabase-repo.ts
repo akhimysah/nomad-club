@@ -29,6 +29,9 @@ import type {
   Profile,
   Reminder,
 } from "../types";
+// --- Lot 3 ---
+import { today } from "../clock";
+import { partenairesSupabase } from "../modules/partenaires/supabase";
 import { otherInChannel, type BookResult, type CancelResult, type EventInput, type NotificationInput, type Repo } from "./repo";
 
 /* ---------- lignes de la base (snake_case) ---------- */
@@ -299,6 +302,9 @@ function ticketToView(j: Row | null): BookingView | null {
 }
 
 export const supabaseRepo: Repo = {
+  // --- Lot 3 --- partenaires, carnet pro, carte
+  ...partenairesSupabase(db, trustedWriter, today),
+
   async getProfile(id) {
     const c = await db();
     const r = check(await c.from("profiles").select(PROFILE).eq("id", id).maybeSingle()) as Row | null;

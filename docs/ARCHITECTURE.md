@@ -12,6 +12,7 @@ Contenu et données d'exemple : `design/contenu-et-donnees.md`.
 - Paiement : Stripe Checkout (mode test d'abord) + webhook.
 - Hébergement visé : Vercel.
 - Validation : zod.
+- Carte (Lot 3) : Leaflet 1.9 + react-leaflet 5, tuiles OpenStreetMap (sans clé), chargées seulement côté navigateur (`next/dynamic`, `ssr: false`).
 
 ## Deux modes, choisis par les variables d'environnement
 
@@ -58,9 +59,22 @@ Contenu et données d'exemple : `design/contenu-et-donnees.md`.
 - `supabase/seed.sql` : généré par `npm run seed:sql` depuis `src/lib/seed.ts` (mêmes données que la démo, y compris rôles, organisations, journal et notifications).
 - `npm run test:sql` (`scripts/test-sql.mjs`) : banc de test PGlite (Postgres en WebAssembly, sans serveur) qui simule le schéma `auth` de Supabase, exécute toutes les migrations puis le seed, et vérifie rôles, RLS (en simulant des personnes via `request.jwt.claim.sub` + `set role authenticated`), fonctions métier et reprise de l'ancien rôle unique.
 
+### 0005_partenaires.sql (Lot 3)
+
+- `establishment_details` (photos ≤ 8, horaires, WhatsApp, catégorie du carnet, réduction membres) ; écriture par l'équipe (propriétaire et collaboratrices, nouvelle politique `organizations_staff_update`) et l'admin.
+- `partner_offers` enrichie : `title`, `conditions`, `valid_from` / `valid_until`, `audience` `all|member|premium`, `status` `active|paused`. Les membres ne voient que les offres actives ; l'équipe gère les siennes.
+- `offer_codes` (code `OF-XXXX-XXXX`, horodatage de création et de validation, validée par). Aucune écriture directe : `claim_offer_code(offer)` (membre du cercle, offre active, dans sa période, public Premium vérifié ; un seul code ouvert par membre et par offre) et `validate_offer_code(code)` (équipe de l'établissement ou admin, une seule fois ; renvoie le prénom, jamais les coordonnées).
+- `org_stats_monthly` (vues, clics contact / WhatsApp / itinéraire) alimentée par `track_org_event(org, kind)` (les visites de l'équipe ne comptent pas) ; vue `offer_code_stats` (codes générés / validés par mois, `security_invoker`). Chaque établissement ne voit que ses chiffres.
+- `pro_subscriptions` + `pro_subscription_payments` : lecture par l'équipe ; le cercle voit seulement les abonnements actifs (fiches visibles) ; écriture par le serveur (clé service). `refresh_pro_subscriptions()` passe les échéances dépassées en retard puis suspendues après 15 jours (service uniquement).
+- `organization_invites` + `invite_org_member(org, email)` (propriétaire ou admin) + déclencheur sur `profiles` qui applique les invitations à la création du compte (`join_organization` : rattachement `staff` + rôle de l'espace).
+- `member_locations` : consentement (`sharing`, `consented_at`), précision `area|approx`, affichage `name|anonymous`. Déclencheur : coordonnées arrondies à 0,005° (~550 m), tout est effacé quand le partage s'arrête. Le cercle ne voit que les positions partagées (même l'admin ne voit pas les autres).
+- `audit_log` : l'équipe d'un établissement journalise ses opérations (`target_type = 'organization'`).
+
+Code du module : `src/lib/modules/partenaires/` (`types`, `repo` (interface `PartenairesRepo`), `demo`, `supabase`, `seed`, `quartiers`, `domain` (règles pures : formules, statut effectif, disponibilité d'une offre, arrondi), `server` (droits sur un établissement, établissements visibles), `billing` (paiement simulé)). Actions : `src/app/actions/partenaires.ts`. Styles : `src/styles/partenaires.css`. Tests : `scripts/test-sql/partenaires.mjs`. Données SQL : `scripts/seed-sql/partenaires.mjs`.
+
 ## Journal et notifications (code)
 
-- `src/lib/audit.ts` : `audit(entry)` enregistre une opération (échec signalé dans les logs, jamais bloquant). Journalisés : validation de virement, création / modification / publication d'événement, relance, ajout / retrait de rôle.
+- `src/lib/audit.ts` : `audit(entry)` enregistre une opération (échec signalé dans les logs, jamais bloquant). Journalisés : validation de virement, création / modification / publication d'événement, relance, ajout / retrait de rôle ; Lot 3 : fiche établissement, invitation, création / modification / pause d'offre, validation de code, paiement / changement / arrêt d'abonnement pro.
 - `src/lib/notify.ts` : point d'entrée unique `notify(rows)` puis aides par déclencheur (`bookingConfirmed`, `waitlistSpot`, `eventPublished`, `paymentValidated`, `roleGranted`). Enregistre les notifications in-app ; `deliverExternally` est l'endroit prévu pour l'e-mail et le push (préférences `email` / `push` déjà stockées). En mode réel, les notifications pour une autre personne (ex. place libérée par une membre) passent par la clé service si elle est configurée.
 
 ## Routes
@@ -68,16 +82,17 @@ Contenu et données d'exemple : `design/contenu-et-donnees.md`.
 Visiteuse (public) : `/` (accueil vitrine + appli mobile), `/rendez-vous`, `/rendez-vous/[slug]` (détail + réservation), `/club` (déjà vécu, déroulé d'un lunch, citation), `/formules`, `/connexion`, `/billet/[code]`.
 Membre : `/espace`, `/espace/agenda`, `/espace/cercle` (salon + annuaire), `/espace/cercle/[id]` (messages privés), `/espace/carnet`, `/espace/assistant`, `/espace/moi` (carte, adhésion, renouvellement, Premium, offres).
 Membre : `/espace/notifications` (liste + préférences), cloche avec compteur dans l'en-tête (téléphone) et entrée « Notifications » dans la barre latérale.
+Membre (Lot 3) : `/espace/offres`, `/espace/fiche/[slug]` (fiche établissement, « Utiliser l'offre »), `/espace/fiche/[slug]/aller?vers=telephone|email|site|instagram|whatsapp|itineraire` (compte le clic puis redirige), `/espace/carte` (carte + réglages de position). Onglets Carnet · Offres · Carte en haut des trois pages ; sur téléphone, elles passent par l'onglet Carnet.
 Fondatrices (admin) : `/fondatrices`, `/fondatrices/a-traiter`, `/fondatrices/membres`, `/fondatrices/evenements` (+ création/édition, publication), `/fondatrices/encaissements`, `/fondatrices/crm` (contacts = profils + rôles + établissements, segments ; CRM complet au lot 5), `/fondatrices/roles` (Rôles et accès, matrice des droits), `/fondatrices/journal`, `/fondatrices/notifications`, `/fondatrices/plus` (téléphone : entrées sans onglet).
-Partenaire (`space.partner`) : `/partenaire` (établissement + emplacements « Bientôt » : offres, code / QR, statistiques, contrat), `/partenaire/etablissement`, `/partenaire/notifications`.
-Pro (`space.pro`) : `/pro` (fiche + « Bientôt » : fiche carnet, abonnement, statistiques, contrat), `/pro/fiche`, `/pro/notifications`.
+Partenaire (`space.partner`) : `/partenaire` (chiffres du mois, validation, offres, dernières utilisations), `/partenaire/offres` (+ `/nouvelle`, `/[id]`), `/partenaire/valider` (`?code=` ouvert par le QR de la membre), `/partenaire/statistiques`, `/partenaire/etablissement` (fiche + équipe), `/partenaire/notifications`. `?org=` choisit l'établissement quand on en gère plusieurs.
+Pro (`space.pro`) : `/pro` (visibilité, abonnement, chiffres du mois), `/pro/fiche`, `/pro/abonnement` (formules, paiement simulé, historique), `/pro/statistiques`, `/pro/notifications`.
 Les espaces Partenaire et Pro reprennent la version jour de l'espace fondatrices (`OrgSpaceLayout`, `OrgChrome`), sur ordinateur et téléphone. Une admin sans établissement y voit tous ceux du type.
 API : `/api/checkout` (crée la session Stripe), `/api/stripe/webhook`.
 Garde d'accès dans `src/middleware.ts` (capacité par espace) + vérification côté serveur dans chaque layout et chaque server action (`requireCapability` / `checkCapability`).
 
 ## Actions (server actions, `src/app/actions/*`)
 
-Réserver (avec contrôle des places et liste d'attente ; notification de confirmation), annuler (notification à la première de la liste d'attente), adhérer / renouveler / passer Premium, poster au salon, envoyer un message privé, valider un virement (un ou tous ; journal + notification), relancer (une, groupe ; journal), publier un brouillon (lieu obligatoire ; journal + notification aux membres), créer / modifier un événement (journal), ajouter / retirer un rôle (`actions/roles.ts` ; journal + notification), marquer des notifications comme lues et régler ses préférences (`actions/notifications.ts`). Chaque action revalide les pages concernées.
+Réserver (avec contrôle des places et liste d'attente ; notification de confirmation), annuler (notification à la première de la liste d'attente), adhérer / renouveler / passer Premium, poster au salon, envoyer un message privé, valider un virement (un ou tous ; journal + notification), relancer (une, groupe ; journal), publier un brouillon (lieu obligatoire ; journal + notification aux membres), créer / modifier un événement (journal), ajouter / retirer un rôle (`actions/roles.ts` ; journal + notification), marquer des notifications comme lues et régler ses préférences (`actions/notifications.ts`) ; Lot 3 (`actions/partenaires.ts`) : utiliser une offre, valider un code, créer / modifier / mettre en pause une offre, modifier la fiche, inviter une collaboratrice, payer / changer / arrêter l'abonnement pro, régler / retirer sa position. Chaque action revalide les pages concernées.
 
 ## Plus tard (non bloquant)
 

@@ -37,6 +37,14 @@ const CAP_LABEL: Record<Capability, string> = {
   "organizations.manage_all": "Gérer tous les établissements",
   "crm.access": "CRM",
   "audit.view": "Journal des opérations",
+  // --- Lot 3 ---
+  "offers.use": "Utiliser les offres (code / QR)",
+  "offers.validate": "Valider les codes en caisse",
+  "stats.view_own": "Statistiques de son établissement",
+  "subscription.manage_own": "Gérer son abonnement carnet",
+  "team.invite": "Inviter son équipe",
+  "map.view": "Voir la carte",
+  "location.share": "Partager sa position (approximative)",
 };
 
 type Props = { searchParams: Promise<{ q?: string; tous?: string }> };

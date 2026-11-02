@@ -38,19 +38,31 @@ export const CAPABILITIES = [
   // pilotage
   "crm.access",
   "audit.view",
+  // --- Lot 3 --- partenaires, carnet pro, carte
+  "offers.use",
+  "offers.validate",
+  "stats.view_own",
+  "subscription.manage_own",
+  "team.invite",
+  "map.view",
+  "location.share",
 ] as const;
 
 export type Capability = (typeof CAPABILITIES)[number];
 
-const MEMBER: Capability[] = ["space.member", "events.book", "members.view_directory", "messages.post", "carnet.view", "offers.view"];
+// --- Lot 3 --- utiliser les offres, voir la carte, partager sa position ; côté établissements : valider, statistiques, équipe
+const LOT3_MEMBER: Capability[] = ["offers.use", "map.view", "location.share"];
+const LOT3_ORG: Capability[] = ["stats.view_own", "team.invite"];
+
+const MEMBER: Capability[] = ["space.member", "events.book", "members.view_directory", "messages.post", "carnet.view", "offers.view", ...LOT3_MEMBER];
 
 /** Matrice rôle → capacités. Les capacités se cumulent quand une personne a plusieurs rôles. */
 export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
   guest: ["events.book"],
   member: MEMBER,
   moderator: [...MEMBER, "messages.moderate"],
-  partner: ["events.book", "space.partner", "offers.manage_own", "organizations.manage_own"],
-  pro: ["events.book", "space.pro", "listing.manage_own", "organizations.manage_own"],
+  partner: ["events.book", "space.partner", "offers.manage_own", "organizations.manage_own", "offers.validate", ...LOT3_ORG],
+  pro: ["events.book", "space.pro", "listing.manage_own", "organizations.manage_own", "subscription.manage_own", ...LOT3_ORG],
   admin: CAPABILITIES,
 };
 

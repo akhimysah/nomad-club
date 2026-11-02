@@ -268,7 +268,9 @@ export type AuditAction =
   | "event.publish"
   | "role.grant"
   | "role.revoke"
-  | "reminder.send";
+  | "reminder.send"
+  // --- Lot 3 ---
+  | import("./modules/partenaires/types").PartenairesAuditAction;
 
 /** Journal des opérations importantes (qui, quoi, sur quoi, détails). */
 export type AuditEntry = {
