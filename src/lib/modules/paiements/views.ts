@@ -100,7 +100,7 @@ function legacyRows(payments: Payment[], txs: Transaction[], plans: InstallmentP
 }
 
 /** « Mes paiements » d'une membre. */
-export async function loadMemberPayments(profileId: string) {
+export async function loadMemberPayments(profileId: string, base = "/mes-paiements/recu") {
   const repo = getRepo();
   const [plans, txs, legacy, customer] = await Promise.all([
     repo.payListPlans({ profileId }),
@@ -111,7 +111,6 @@ export async function loadMemberPayments(profileId: string) {
       return p.supports.portal ? repo.payGetCustomer(p.id, { profileId }) : null;
     })().catch(() => null),
   ]);
-  const base = "/mes-paiements/recu";
   const views = plans.filter((p) => p.status !== "cancelled").map((p) => planView(p));
   const rows = [...txs.filter((t) => t.profileId === profileId && !t.organizationId).map((t) => txRow(t, base)), ...legacyRows(legacy, txs, plans, base)].sort((a, b) => (a.date < b.date ? 1 : -1));
   const upcoming = views

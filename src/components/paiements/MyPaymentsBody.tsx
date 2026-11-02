@@ -66,8 +66,8 @@ export function HistoryTable({ rows, empty = "Aucun paiement pour l’instant." 
  * historique avec reçus et factures. Commun à /espace/paiements et /mes-paiements (accessible même
  * quand l'accès membre est suspendu, pour régulariser).
  */
-export async function MyPaymentsBody({ profileId, demo }: { profileId: string; demo: boolean }) {
-  const d = await loadMemberPayments(profileId);
+export async function MyPaymentsBody({ profileId, demo, receiptBase }: { profileId: string; demo: boolean; receiptBase?: string }) {
+  const d = await loadMemberPayments(profileId, receiptBase);
   const late = d.worst;
   const payUrl = late?.installments.find((i) => i.overdue && i.payUrl)?.payUrl ?? null;
   return (

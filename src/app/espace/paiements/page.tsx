@@ -18,7 +18,7 @@ export default async function MemberPaymentsPage() {
             <h1 className="scr-title">Mes paiements</h1>
           </div>
         </div>
-        <MyPaymentsBody profileId={v.profile.id} demo={v.mode === "demo"} />
+        <MyPaymentsBody profileId={v.profile.id} demo={v.mode === "demo"} receiptBase="/espace/paiements/recu" />
       </div>
     </Screen>
   );
