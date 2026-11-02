@@ -11,7 +11,10 @@
     "test:sql": "node --no-warnings scripts/test-sql.mjs",
     "test:securite": "node --experimental-strip-types --no-warnings scripts/test-securite.mts",
     "carnet:site": "node --no-warnings scripts/build-carnet-site.mjs",
-    "carnet:deploy": "npm run carnet:site && rsync -az --delete carnet-site/ root@srv2104549.hstgr.cloud:/opt/carnet/site/ && rsync -az carnet-server/server.mjs root@srv2104549.hstgr.cloud:/opt/carnet/server/ && ssh root@srv2104549.hstgr.cloud systemctl restart carnet"
+    "carnet:deploy": "npm run carnet:site && rsync -az --delete carnet-site/ root@srv2104549.hstgr.cloud:/opt/carnet/site/ && rsync -az carnet-server/server.mjs root@srv2104549.hstgr.cloud:/opt/carnet/server/ && ssh root@srv2104549.hstgr.cloud systemctl restart carnet",
+    "test:reel": "node --experimental-strip-types --no-warnings --import ./scripts/lib/register-ts.mjs scripts/test-mode-reel.mjs",
+    "check:env": "node --no-warnings scripts/check-env.mjs",
+    "admin:create": "node --no-warnings scripts/admin-create.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
