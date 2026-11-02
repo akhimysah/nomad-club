@@ -9,11 +9,11 @@
 import type { SubscriptionActivated } from "../../payment-hooks";
 import type { NotificationInput } from "../../data/repo";
 import type { EmailMessage } from "../../mail-hook";
-import { PAYMENT_EMAILS } from "./emails.ts";
+import { longDate, METHOD_LABEL, PAYMENT_EMAILS } from "./emails.ts";
 import { formatMoney } from "./money.ts";
 import type { PaiementsRepo } from "./repo";
 import { addMonths, graceEndsOn, nextUnpaid, planStatus } from "./schedule.ts";
-import type { Checkout, Contact, InstallmentPlan, NormalizedEvent, ProviderId } from "./types";
+import type { Checkout, Contact, InstallmentPlan, NormalizedEvent, ProviderId, Transaction } from "./types";
 
 export type { Contact };
 export type ProStatusSync = "active" | "past_due" | "suspended" | "cancelled";
@@ -89,6 +89,14 @@ async function findPlan(repo: PaiementsRepo, c: Checkout | null, subscriptionRef
   return null;
 }
 
+/** E-mail « payment_receipt » (données mises en forme, schéma du chantier e-mails). */
+function receiptEmail(t: Transaction, link: string, installment = ""): { template: string; data: Record<string, unknown> } {
+  return {
+    template: PAYMENT_EMAILS.receipt,
+    data: { amount: formatMoney(t.amount, { currency: t.currency }), label: t.description, method: METHOD_LABEL[t.provider] ?? t.provider, paidAt: longDate(t.createdAt), reference: t.receiptNumber, installment, link },
+  };
+}
+
 async function tellMember(d: ProcessorDeps, profileId: string, n: Omit<NotificationInput, "recipientId">, email: { template: string; data: Record<string, unknown> } | null) {
   await d.effects.notify([{ recipientId: profileId, ...n }]);
   if (!email) return;
@@ -131,7 +139,7 @@ export async function settleInstallment(
   if (!updated) return "done";
   const amount = info.amount ?? target.amount;
   const label = installmentLabel(plan, target.seq);
-  const { fresh } = await d.repo.payRecordTransaction({
+  const { fresh, transaction } = await d.repo.payRecordTransaction({
     provider, kind: plan.count > 1 ? "installment" : "membership", profileId: plan.profileId, organizationId: null, amount, currency: plan.currency,
     description: label, providerRef: info.ref, chargeRef: info.chargeRef, invoiceUrl: info.invoiceUrl, invoicePdf: info.invoicePdf,
     relatedType: "installment_plan", relatedId: plan.id,
@@ -143,14 +151,14 @@ export async function settleInstallment(
   if (plan.status === "suspended" && status !== "suspended") {
     await d.repo.paySetMemberAccess(plan.profileId, true);
     await d.repo.payAudit({ actorId: null, action: "membership.reinstate", targetType: "profile", targetId: plan.profileId, summary: `Accès membre rétabli après paiement (${label})`, details: { plan: plan.id } });
-    await tellMember(d, plan.profileId, { type: "payment_receipt", title: "Ton accès est rétabli", body: "Merci, ton paiement est bien arrivé : tu retrouves tout ton espace membre.", link: "/mes-paiements" }, { template: PAYMENT_EMAILS.reinstated, data: { label } });
+    await tellMember(d, plan.profileId, { type: "payment_receipt", title: "Ton accès est rétabli", body: "Merci, ton paiement est bien arrivé : tu retrouves tout ton espace membre.", link: "/mes-paiements" }, null /* relayée par e-mail (notification) */);
   }
   if (fresh) {
     const next = nextUnpaid(fresh_plan.installments);
     await tellMember(
       d, plan.profileId,
       { type: "payment_receipt", title: `Paiement reçu · ${formatMoney(amount)}`, body: `${label}.${next ? ` Prochaine échéance le ${next.dueDate.split("-").reverse().join(".")} : ${formatMoney(next.amount)}.` : ""}`, link: "/mes-paiements" },
-      { template: PAYMENT_EMAILS.receipt, data: { label, amount, currency: plan.currency, amountText: formatMoney(amount), nextDueDate: next?.dueDate ?? null, nextAmount: next?.amount ?? null, url: "/mes-paiements" } },
+      receiptEmail(transaction, "/mes-paiements", plan.count > 1 ? `${target.seq}/${plan.count}` : ""),
     );
   }
   if (!wasActive) {
@@ -184,11 +192,11 @@ async function onCheckoutCompleted(d: ProcessorDeps, provider: ProviderId, e: Ex
       if (!c.targetId) return "ignored";
       await d.effects.markBookingPaid(e.sessionRef, c.targetId);
       const label = c.metadata.label ?? "Billet";
-      const { fresh } = await d.repo.payRecordTransaction({
+      const { fresh, transaction } = await d.repo.payRecordTransaction({
         provider, kind: "booking", profileId: c.profileId, organizationId: null, amount, currency: c.currency, description: label,
         providerRef: e.sessionRef, chargeRef: e.paymentRef, relatedType: "booking", relatedId: c.targetId,
       });
-      if (fresh && c.profileId) await tellMember(d, c.profileId, { type: "payment_receipt", title: `Paiement reçu · ${formatMoney(amount)}`, body: `${label}. Ton reçu est dans « Mes paiements ».`, link: "/mes-paiements" }, { template: PAYMENT_EMAILS.receipt, data: { label, amount, currency: c.currency, amountText: formatMoney(amount), url: "/mes-paiements" } });
+      if (fresh && c.profileId) await tellMember(d, c.profileId, { type: "payment_receipt", title: `Paiement reçu · ${formatMoney(amount)}`, body: `${label}. Ton reçu est dans « Mes paiements ».`, link: "/mes-paiements" }, receiptEmail(transaction, "/mes-paiements"));
       return "done";
     }
     case "membership": {
@@ -206,11 +214,11 @@ async function onCheckoutCompleted(d: ProcessorDeps, provider: ProviderId, e: Ex
       if (!c.targetId || !c.profileId) return "ignored";
       const g = await d.effects.grantPurchase({ productId: c.targetId, profileId: c.profileId, amount, reference: e.sessionRef });
       const label = `Boutique · ${g?.title ?? c.metadata.label ?? "ressource"}`;
-      const { fresh } = await d.repo.payRecordTransaction({
+      const { fresh, transaction } = await d.repo.payRecordTransaction({
         provider, kind: "shop", profileId: c.profileId, organizationId: null, amount, currency: c.currency, description: label,
         providerRef: e.sessionRef, chargeRef: e.paymentRef, relatedType: "product", relatedId: c.targetId,
       });
-      if (fresh) await tellMember(d, c.profileId, { type: "payment_receipt", title: `Paiement reçu · ${formatMoney(amount)}`, body: `${label}. Ta ressource est dans « Mes ressources ».`, link: "/espace/boutique/mes-ressources" }, { template: PAYMENT_EMAILS.receipt, data: { label, amount, currency: c.currency, amountText: formatMoney(amount), url: "/espace/boutique/mes-ressources" } });
+      if (fresh) await tellMember(d, c.profileId, { type: "payment_receipt", title: `Paiement reçu · ${formatMoney(amount)}`, body: `${label}. Ta ressource est dans « Mes ressources ».`, link: "/espace/boutique/mes-ressources" }, receiptEmail(transaction, "/espace/boutique/mes-ressources"));
       return "done";
     }
     case "pro_subscription": {
@@ -237,11 +245,11 @@ async function onInvoicePaid(d: ProcessorDeps, provider: ProviderId, e: Extract<
     organizationId: pro.organizationId, plan: pro.plan, amount: e.amount, reference: e.invoiceRef, periodStart: start, periodEnd: e.periodEnd ?? addMonths(start, 1), status: "paid", provider,
   });
   const label = `Carnet d’adresses · ${r?.planLabel ?? "abonnement"} · mois du ${start.split("-").reverse().join(".")}`;
-  const { fresh } = await d.repo.payRecordTransaction({
+  const { fresh, transaction } = await d.repo.payRecordTransaction({
     provider, kind: "pro_subscription", profileId: c?.profileId ?? null, organizationId: pro.organizationId, amount: e.amount, currency: c?.currency ?? "USD",
     description: label, providerRef: e.invoiceRef, chargeRef: e.chargeRef, invoiceUrl: e.hostedUrl, invoicePdf: e.pdfUrl, relatedType: "organization", relatedId: pro.organizationId,
   });
-  if (fresh) await tellOrg(d, pro.organizationId, { type: "payment_receipt", title: `Paiement reçu · ${formatMoney(e.amount)}`, body: `${label}. Ta fiche reste en ligne.`, link: "/pro/abonnement" }, { template: PAYMENT_EMAILS.receipt, data: { label, amount: e.amount, amountText: formatMoney(e.amount), url: "/pro/abonnement" } });
+  if (fresh) await tellOrg(d, pro.organizationId, { type: "payment_receipt", title: `Paiement reçu · ${formatMoney(e.amount)}`, body: `${label}. Ta fiche reste en ligne.`, link: "/pro/abonnement" }, receiptEmail(transaction, "/pro/abonnement"));
   if (r?.activated) {
     const owner = c?.profileId ?? (await d.effects.orgContacts(pro.organizationId))[0]?.profileId;
     if (owner)
@@ -269,7 +277,7 @@ async function onInvoiceFailed(d: ProcessorDeps, provider: ProviderId, e: Extrac
     await tellMember(
       d, plan.profileId,
       { type: "payment_failed", title: "Ton paiement n’est pas passé", body: `${label} · ${formatMoney(target.amount)}. Mets ta carte à jour${grace ? ` avant le ${grace.split("-").reverse().join(".")}` : ""} pour garder ton accès.`, link: "/mes-paiements" },
-      { template: PAYMENT_EMAILS.failed, data: { label, amount: target.amount, amountText: formatMoney(target.amount), graceEndsOn: grace, nextAttempt: e.nextAttempt, url: "/mes-paiements" } },
+      { template: PAYMENT_EMAILS.failed, data: { label, amount: formatMoney(target.amount), dueDate: longDate(target.dueDate), reason: e.error ?? "Carte refusée par la banque.", payUrl: e.hostedUrl ?? "/mes-paiements" } },
     );
     return "done";
   }
@@ -280,7 +288,7 @@ async function onInvoiceFailed(d: ProcessorDeps, provider: ProviderId, e: Extrac
   await tellOrg(
     d, pro.organizationId,
     { type: "payment_failed", title: "Le paiement de ton abonnement n’est pas passé", body: `${formatMoney(e.amount)}. Mets ta carte à jour depuis « Abonnement » pour garder ta fiche en ligne.`, link: "/pro/abonnement" },
-    { template: PAYMENT_EMAILS.proFailed, data: { amount: e.amount, amountText: formatMoney(e.amount), nextAttempt: e.nextAttempt, url: "/pro/abonnement" } },
+    { template: PAYMENT_EMAILS.failed, data: { label: "ton abonnement au carnet d’adresses", amount: formatMoney(e.amount), dueDate: longDate(d.today()), reason: e.error ?? "Carte refusée par la banque.", payUrl: e.hostedUrl ?? "/pro/abonnement" } },
   );
   return "done";
 }
@@ -314,7 +322,7 @@ async function onSubscriptionChange(d: ProcessorDeps, e: Extract<NormalizedEvent
     await tellOrg(
       d, r.organizationId,
       { type: "payment_failed", title: "Ta fiche est suspendue", body: "Ton abonnement est impayé : ta fiche n’apparaît plus dans le carnet. Mets ta carte à jour pour la remettre en ligne.", link: "/pro/abonnement" },
-      { template: PAYMENT_EMAILS.proSuspended, data: { url: "/pro/abonnement" } },
+      null /* relayée par e-mail (notification) */,
     );
   return "done";
 }
@@ -331,7 +339,7 @@ async function onChargeRefunded(d: ProcessorDeps, e: Extract<NormalizedEvent, { 
   await d.repo.payUpdateTransaction(tx.id, { amountRefunded: total, status: total >= tx.amount ? "refunded" : "partially_refunded" });
   const { fresh } = await d.repo.payRecordRefund({ transactionId: tx.id, amount: delta, reason: "Remboursement Stripe", providerRef: e.refundRef, createdBy: null });
   if (fresh && tx.profileId)
-    await tellMember(d, tx.profileId, { type: "refund_issued", title: `Remboursement · ${formatMoney(delta)}`, body: `${tx.description}. Le montant revient sur ta carte sous quelques jours.`, link: "/mes-paiements" }, { template: PAYMENT_EMAILS.refunded, data: { label: tx.description, amount: delta, amountText: formatMoney(delta) } });
+    await tellMember(d, tx.profileId, { type: "refund_issued", title: `Remboursement · ${formatMoney(delta)}`, body: `${tx.description}. Le montant revient sur ta carte sous quelques jours.`, link: "/mes-paiements" }, null /* relayée par e-mail (notification) */);
   return "done";
 }
 

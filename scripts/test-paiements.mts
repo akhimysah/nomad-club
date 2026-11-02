@@ -277,6 +277,7 @@ const ingest = (t: ReturnType<typeof setup>, signed: { payload: string; header: 
   ok(p.installments[0].status === "paid" && p.installments[0].invoiceRef === "in_ines_1" && p.status === "active", "échéance 1/3 payée, échéancier actif");
   ok(t.count("activateMembership") === 1 && t.count("subscriptionActivated") === 1, "adhésion ouverte et souscription signalée (contrats) une fois");
   ok(t.emails("payment_receipt") === 1, "reçu envoyé par e-mail (modèle payment_receipt)");
+  { const d = (t.calls.find((c) => c.fn === "email")!.args[0] as { data: Record<string, string> }).data; ok(d.amount === "223,34 $" && /^NC-\d{4}-\d{6}$/.test(d.reference) && d.installment === "1/3" && d.paidAt === "2 novembre 2026" && d.firstName === "Inès", "…données mises en forme (montant, n° de reçu, échéance 1/3, date)"); }
   ok((t.calls.find((c) => c.fn === "subscriptionActivated")!.args[0] as { installments: number; kind: string }).installments === 3, "…avec le nombre d'échéances");
   ok(t.state.transactions.length === 1 && t.state.transactions[0].amount === 223.34 && t.state.transactions[0].kind === "installment", "une écriture au grand livre (223,34)");
 
@@ -315,7 +316,7 @@ const ingest = (t: ReturnType<typeof setup>, signed: { payload: string; header: 
   p = (await t.repo.payGetPlan(pl.id))!;
   ok(p.installments[1].status === "paid" && p.status === "active" && p.suspendedAt === null, "échéance régularisée : échéancier de nouveau actif");
   ok((t.host.profiles[0] as { roles: string[] }).roles.includes("member"), "accès membre rétabli automatiquement");
-  ok(t.emails("membership_reinstated") === 1, "e-mail membership_reinstated");
+  ok(t.calls.some((c) => c.fn === "notify" && (c.args[0] as Array<{ title: string }>)[0].title === "Ton accès est rétabli"), "notification « accès rétabli » (relayée par e-mail par le chantier e-mails)");
   ok(t.count("subscriptionActivated") === 1, "pas de nouvelle « souscription » pour une échéance suivante");
 
   await ingest(t, inv("in_ines_3", 22333, "2027-01-02"));
@@ -377,7 +378,7 @@ const ingest = (t: ReturnType<typeof setup>, signed: { payload: string; header: 
   ok(tx.amountRefunded === 9 && tx.status === "partially_refunded" && t.state.refunds.length === 1, "remboursement partiel reçu de Stripe : grand livre à jour");
   await ingest(t, sign("charge.refunded", { id: "ch_shop", object: "charge", payment_intent: "pi_shop", amount_refunded: 900, refunds: { data: [{ id: "re_1" }] } }));
   ok(t.state.refunds.length === 1 && tx.amountRefunded === 9, "…même remboursement renvoyé : rien en double");
-  ok(t.emails("payment_refunded") === 1, "e-mail payment_refunded");
+  ok(t.calls.filter((c) => c.fn === "notify" && (c.args[0] as Array<{ type: string }>)[0].type === "refund_issued").length === 1, "notification de remboursement (une seule)");
 }
 
 // --- abonnement pro mensuel ---
@@ -395,11 +396,11 @@ const ingest = (t: ReturnType<typeof setup>, signed: { payload: string; header: 
   await ingest(t, proInv("in_pro_2", "2026-12-02"));
   ok(t.count("recordProPayment") === 2 && t.count("subscriptionActivated") === 1, "mois suivant : encaissé, pas de nouvelle souscription");
   await ingest(t, sign("invoice.payment_failed", { id: "in_pro_3", object: "invoice", amount_due: 4900, subscription: "sub_pro" }));
-  ok(t.emails("pro_payment_failed") === 1, "pro : carte refusée → e-mail pro_payment_failed à l'équipe");
+  ok(t.emails("payment_failed") === 1, "pro : carte refusée → e-mail payment_failed à l'équipe");
   await ingest(t, sign("customer.subscription.updated", { id: "sub_pro", object: "subscription", status: "past_due", cancel_at_period_end: false, items: { data: [{ current_period_end: unix("2027-01-02") }] } }));
   ok(t.host.partenaires.subscriptions[0].status === "past_due", "statut « en retard » synchronisé par le webhook");
   await ingest(t, sign("customer.subscription.updated", { id: "sub_pro", object: "subscription", status: "unpaid", cancel_at_period_end: false, items: { data: [] } }));
-  ok(t.host.partenaires.subscriptions[0].status === "suspended" && t.emails("pro_subscription_suspended") === 1, "Stripe abandonne les relances → fiche suspendue, e-mail pro_subscription_suspended");
+  ok(t.host.partenaires.subscriptions[0].status === "suspended" && t.calls.some((c) => c.fn === "notify" && (c.args[0] as Array<{ title: string }>)[0].title === "Ta fiche est suspendue"), "Stripe abandonne les relances → fiche suspendue, équipe prévenue");
   await ingest(t, sign("customer.subscription.deleted", { id: "sub_pro", object: "subscription" }));
   ok(t.host.partenaires.subscriptions[0].status === "cancelled", "résiliation (portail) → abonnement arrêté");
 }
