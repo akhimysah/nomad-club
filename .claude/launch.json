@@ -3,24 +3,9 @@
   "configurations": [
     {
       "name": "nomad-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev"
-      ],
+      "runtimeExecutable": "/opt/homebrew/bin/node",
+      "runtimeArgs": ["node_modules/next/dist/bin/next", "dev", "--turbopack"],
       "port": 3000
-    },
-    {
-      "name": "carnet-site",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": [
-        "-m",
-        "http.server",
-        "4180",
-        "--directory",
-        "carnet-site"
-      ],
-      "port": 4180
     }
   ]
 }
