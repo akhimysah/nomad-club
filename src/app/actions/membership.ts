@@ -9,6 +9,7 @@ import { fullName, ymdDots, ymdLong } from "@/lib/format";
 import { claimReferral } from "@/lib/modules/engagement/referral"; // --- Lot 4 ---
 import type { MembershipAction, PaidPlan } from "@/lib/types";
 import { guestSchema } from "@/lib/validation";
+import { emitMembershipActivated } from "@/lib/modules/contrats/emit"; // --- Vague 2 · Contrats ---
 
 export type MembershipInput = { action: MembershipAction; plan: PaidPlan; firstName?: string; whatsapp?: string; referralCode?: string /* --- Lot 4 --- */ };
 
@@ -42,7 +43,7 @@ export async function startMembership(input: MembershipInput): Promise<Membershi
   if (input.action === "upgrade" && profile.plan === "premium") return { ok: false, error: "Tu es déjà Premium." };
   const plan: PaidPlan = input.action === "upgrade" ? "premium" : input.action === "renew" ? (profile.plan === "premium" ? "premium" : "member") : input.plan;
   const declared = mode === "transfer";
-  await repo.recordMembership({
+  const payment = await repo.recordMembership({
     profileId: profile.id,
     payerName: fullName(profile),
     action: input.action,
@@ -51,6 +52,8 @@ export async function startMembership(input: MembershipInput): Promise<Membershi
     method: declared ? "transfer" : "card",
     status: declared ? "declared" : "validated",
   });
+  // --- Vague 2 · Contrats --- : adhésion payée → contrat relié (ou généré, à accepter). À reprendre par le chantier paiements.
+  await emitMembershipActivated(payment);
   const updated = (await repo.getProfile(profile.id)) ?? profile;
   revalidatePath("/", "layout");
   return {

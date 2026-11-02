@@ -251,6 +251,8 @@ await (await import("./test-sql/engagement.mjs")).default({ db, root, as, asStri
 await (await import("./test-sql/securite.mjs")).default({ db, ok, uuid });
 // --- Vague 2 · E-mails ---
 await (await import("./test-sql/emails.mjs")).default({ db, ok, uuid });
+// --- Vague 2 · Contrats ---
+await (await import("./test-sql/contrats.mjs")).default({ db, as, rejects, one, count, ok, uuid });
 
 console.log(`\n${passes} vérification${passes > 1 ? "s" : ""} réussie${passes > 1 ? "s" : ""}, ${failures} échec${failures > 1 ? "s" : ""}.`);
 process.exit(failures ? 1 : 0);

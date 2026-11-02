@@ -70,6 +70,8 @@ export const CAPABILITIES = [
   "keywords.manage",
   "events.remind",
   "directory.edit_own",
+  // --- Vague 2 · Contrats --- (back-office : contrats, modèles, relances ; lire et accepter ses propres contrats exige seulement d'être connectée)
+  "contracts.manage",
 ] as const;
 
 export type Capability = (typeof CAPABILITIES)[number];

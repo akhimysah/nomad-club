@@ -580,6 +580,36 @@ const notification = define({
   }),
 });
 
+// --- Vague 2 · Contrats --- contrat à accepter, et sa relance
+const contractPending = (id: "contract_ready" | "contract_reminder", reminder: boolean) =>
+  define({
+    id,
+    label: reminder ? "Relance de contrat" : "Contrat à accepter",
+    description: reminder ? "Rappel : un contrat attend toujours d’être lu et accepté." : "Un contrat vient d’être préparé : à lire et accepter en ligne.",
+    essential: true,
+    prefType: null,
+    schema: z.object({ firstName: s(), contractTitle: s("Contrat d’adhésion"), reference: s(), contractUrl: s("/espace/moi/contrats") }),
+    sample: { firstName: "Lou", contractTitle: "Contrat d’adhésion (Membre / Premium)", reference: "NC-ADH-2026-4K7Q2M" },
+    render: (d, ctx) => {
+      const rows: Array<[string, string]> = [["Contrat", d.contractTitle]];
+      if (d.reference) rows.push(["Référence", d.reference]);
+      return {
+        subject: reminder ? `Rappel : ton contrat attend ton accord` : `Ton contrat est prêt : ${d.contractTitle}`,
+        preheader: reminder ? "Il ne manque plus que ton accord pour finaliser." : "Lis-le et accepte-le en ligne en deux minutes.",
+        blocks: [
+          { t: "p", text: hello(d.firstName) },
+          { t: "h1", text: reminder ? "Ton contrat t’attend toujours" : "Ton contrat est prêt" },
+          { t: "p", text: reminder ? "Ton contrat n’a pas encore été accepté. Tu peux le relire et l’accepter en ligne depuis ton espace." : "Ton contrat a été préparé. Prends le temps de le lire, puis accepte-le en ligne depuis ton espace : une copie PDF te sera envoyée." },
+          { t: "details", rows },
+          { t: "button", label: "Lire et accepter", url: absUrl(ctx, d.contractUrl, "/espace/moi/contrats") },
+        ],
+        reason: "Tu reçois cet e-mail parce qu’un contrat avec le Nomad Club t’attend.",
+      };
+    },
+  });
+const contractReady = contractPending("contract_ready", false);
+const contractReminder = contractPending("contract_reminder", true);
+
 export const TEMPLATES: Record<TemplateId, EmailTemplate> = {
   welcome,
   booking_confirmed: bookingConfirmed,
@@ -590,6 +620,8 @@ export const TEMPLATES: Record<TemplateId, EmailTemplate> = {
   payment_failed: paymentFailed,
   renewal_reminder: renewalReminder,
   contract_accepted: contractAccepted,
+  contract_ready: contractReady,
+  contract_reminder: contractReminder,
   team_invite: teamInvite,
   group_joined: groupJoined,
   moderation_warning: moderationWarning,

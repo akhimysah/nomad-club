@@ -14,6 +14,8 @@ export const TEMPLATE_IDS = [
   "payment_failed",
   "renewal_reminder",
   "contract_accepted",
+  "contract_ready",
+  "contract_reminder",
   "team_invite",
   "group_joined",
   "moderation_warning",

@@ -18,6 +18,8 @@ export const FOUNDER_NAV: FounderNavItem[] = [
   { href: "/fondatrices/boutique", icon: "book", label: "Boutique", tab: "Boutique", title: "Boutique", mobile: false },
   { href: "/fondatrices/parrainage", icon: "gift", label: "Parrainage", tab: "Parrainage", title: "Parrainage", mobile: false },
   { href: "/fondatrices/business", icon: "star", label: "Espace Business", tab: "Business", title: "Espace Business", mobile: false },
+  // --- Vague 2 · Contrats ---
+  { href: "/fondatrices/contrats", icon: "edit", label: "Contrats", tab: "Contrats", title: "Contrats", mobile: false },
   // --- Lot 6 ---
   { href: "/fondatrices/securite", icon: "lock", label: "Sécurité et données", tab: "Sécurité", title: "Sécurité", mobile: false },
   // --- E-mails ---

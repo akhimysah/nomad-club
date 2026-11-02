@@ -1,0 +1,68 @@
+/* ================= Contrats (vague 2) : lecture d'un contrat, étape « Contrat », mes contrats, back-office ================= */
+/* Jetons de la maquette noir et blanc : fonctionne dans l'espace membre (nuit) et les espaces jour. */
+
+/* document */
+.ct-doc{font:15px/1.62 var(--sans);color:var(--tx2)}
+.ct-doc h1{font:500 clamp(24px,2.6vw,30px)/1.12 var(--serif);color:var(--tx);margin:0 0 6px;letter-spacing:-.01em}
+.ct-doc h2{font:600 17px/1.3 var(--serif);color:var(--tx);margin:22px 0 6px}
+.ct-doc h3{font:600 14px/1.3 var(--sans);color:var(--tx);margin:14px 0 4px}
+.ct-doc p{margin:0 0 9px}
+.ct-doc ul{margin:0 0 10px;padding-left:20px}
+.ct-doc li{margin:0 0 4px}
+.ct-doc b{color:var(--tx);font-weight:650}
+.ct-doc .ct-meta{font-size:13px;color:var(--muted);padding-bottom:12px;border-bottom:1px solid var(--line2);margin-bottom:14px}
+.ct-doc .ct-callout{border-left:2px solid var(--tx);padding:2px 0 2px 12px;font-style:italic}
+.ct-doc hr{border:0;border-top:1px solid var(--line);margin:16px 0}
+.ct-doc mark{background:var(--fill2);color:var(--tx);border-radius:4px;padding:0 3px;box-shadow:inset 0 0 0 1px var(--line2)}
+.ct-note{display:flex;gap:10px;align-items:flex-start;margin:0 0 10px;padding:10px 12px;border-radius:12px;background:var(--fill);box-shadow:inset 0 0 0 1px var(--line2);font-size:13.5px;line-height:1.5;color:var(--tx2)}
+.ct-note .ic{width:16px;height:16px;margin-top:2px}
+.ct-note.draft{background:var(--tx);color:var(--bg);box-shadow:none;font-weight:600}
+.ct-note.draft mark{background:transparent;color:inherit;box-shadow:none}
+
+/* étape « Contrat » */
+.ct-step .ct-scroll{max-height:min(46vh,420px);overflow-y:auto;padding:16px 18px;border-radius:18px;background:var(--fill);box-shadow:inset 0 0 0 1px var(--line);margin:12px 0}
+.ct-step .ct-scroll .ct-doc{font-size:14px}
+.ct-step .ct-scroll .ct-doc h1{font-size:22px}
+.ct-sum{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:14.5px;margin:4px 0 0}
+.ct-sum span{color:var(--muted)}
+.ct-sum b{text-align:right;font-weight:600}
+.ct-check{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;box-shadow:inset 0 0 0 1px var(--line2);cursor:pointer;font-size:14.5px;line-height:1.45;margin:0 0 14px}
+.ct-check input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--tx)}
+.ct-links{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;margin:0 0 12px}
+.ct-links a{text-decoration:underline;text-underline-offset:3px}
+.ct-hash{font:500 11.5px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;color:var(--muted)}
+
+/* listes */
+.ct-list{display:flex;flex-direction:column}
+.ct-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.ct-row:last-child{border-bottom:0}
+.ct-row b{font-weight:600}
+.ct-row .sub{display:block;font-size:13.5px;color:var(--muted);margin-top:2px}
+.ct-row .end{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+
+/* back-office */
+.ct-filters{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:0 0 16px}
+.ct-filters label{display:flex;flex-direction:column;gap:4px;font:600 12px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ct-filters select,.ct-filters input{height:38px;border-radius:12px;border:0;box-shadow:inset 0 0 0 1px var(--line2);background:var(--s1);color:var(--tx);padding:0 12px;font:500 14.5px var(--sans)}
+.ct-tabs{display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--s2);box-shadow:inset 0 0 0 1px var(--line);width:max-content;max-width:100%;overflow-x:auto;margin:0 0 20px}
+.ct-tabs a{height:36px;padding:0 16px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;font:600 14px var(--sans);color:var(--tx2);white-space:nowrap}
+.ct-tabs a.on{background:#191919;color:#f3f3f3}
+.ct-table td,.ct-table th{white-space:nowrap}
+.ct-table td.wrap{white-space:normal}
+.ct-kv{display:grid;grid-template-columns:minmax(120px,190px) minmax(0,1fr);gap:8px 16px;font-size:14.5px}
+.ct-kv dt{color:var(--muted)}
+.ct-kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.ct-editor textarea{width:100%;min-height:440px;border-radius:14px;border:0;box-shadow:inset 0 0 0 1px var(--line2);background:var(--s1);color:var(--tx);padding:14px;font:13.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical}
+.ct-editor input,.ct-editor select{height:40px;border-radius:12px;border:0;box-shadow:inset 0 0 0 1px var(--line2);background:var(--s1);color:var(--tx);padding:0 12px;font:500 14.5px var(--sans);width:100%}
+.ct-editor .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:0 0 12px}
+.ct-editor label>span{display:block;font:600 12px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.ct-vars{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.ct-vars code{font:500 12px ui-monospace,Menlo,monospace;padding:3px 7px;border-radius:8px;background:var(--fill);box-shadow:inset 0 0 0 1px var(--line)}
+.ct-msg{font-size:14px;margin:8px 0 0}
+.ct-msg.err{color:var(--rose)}
+@media (max-width:760px){
+  .ct-kv{grid-template-columns:1fr}
+  .ct-kv dt{margin-top:6px}
+  .ct-row{grid-template-columns:1fr}
+  .ct-row .end{justify-content:flex-start}
+}

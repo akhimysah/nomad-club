@@ -297,14 +297,15 @@ export type AuditAction =
   | "moderation.dismiss"
   | "keyword.add"
   | "keyword.remove"
-  | "event.remind";
+  | "event.remind"
+  | import("./modules/contrats/types").ContratsAuditAction; // --- Vague 2 · Contrats ---
 
 /** Journal des opérations importantes (qui, quoi, sur quoi, détails). */
 export type AuditEntry = {
   id: string;
   actorId: string | null;
   action: AuditAction;
-  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | CrmTargetType /* Lot 5 */ | EngagementAuditTarget /* Lot 4 */ | /* Lot 1 */ "news" | "group" | "message" | "report" | "keyword" | /* E-mails */ "email";
+  targetType: "payment" | "event" | "profile" | "reminder" | "organization" | CrmTargetType /* Lot 5 */ | EngagementAuditTarget /* Lot 4 */ | /* Lot 1 */ "news" | "group" | "message" | "report" | "keyword" | /* E-mails */ "email" | import("./modules/contrats/types").ContratsAuditTarget /* Vague 2 · Contrats */;
   targetId: string | null;
   /** Phrase lisible (« Virement de Lou Garnier validé · 670 $ »). */
   summary: string;
@@ -328,7 +329,8 @@ export type NotificationType =
   | "group_request"
   | "group_joined"
   | "moderation_report"
-  | "moderation_warning";
+  | "moderation_warning"
+  | import("./modules/contrats/types").ContratsNotificationType; // --- Vague 2 · Contrats ---
 
 export type AppNotification = {
   id: string;

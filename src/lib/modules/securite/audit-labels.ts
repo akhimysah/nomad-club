@@ -6,6 +6,7 @@ import { registerAuditLabels } from "./audit-view";
 import { PARTENAIRES_AUDIT_LABEL } from "../partenaires/domain"; // --- Lot 3 ---
 import { ENGAGEMENT_AUDIT_LABEL } from "../engagement/labels"; // --- Lot 4 ---
 import { CRM_AUDIT_LABEL } from "../crm/types"; // --- Lot 5 ---
+import { CONTRATS_AUDIT_LABEL } from "../contrats/labels"; // --- Vague 2 · Contrats ---
 
 // --- Lot 1 ---
 const COMMUNAUTE_AUDIT_LABEL: Record<string, string> = {
@@ -27,4 +28,4 @@ const COMMUNAUTE_AUDIT_LABEL: Record<string, string> = {
   "email.resend": "E-mail renvoyé",
 };
 
-registerAuditLabels({ ...COMMUNAUTE_AUDIT_LABEL, ...PARTENAIRES_AUDIT_LABEL, ...ENGAGEMENT_AUDIT_LABEL, ...CRM_AUDIT_LABEL });
+registerAuditLabels({ ...COMMUNAUTE_AUDIT_LABEL, ...PARTENAIRES_AUDIT_LABEL, ...ENGAGEMENT_AUDIT_LABEL, ...CRM_AUDIT_LABEL, ...CONTRATS_AUDIT_LABEL });

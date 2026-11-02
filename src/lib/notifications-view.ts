@@ -3,6 +3,7 @@ import { getRepo } from "./data";
 import { messageTime } from "./format";
 import { NOTIFICATION_LABEL, NOTIFICATION_TYPES, STAFF_NOTIFICATION_TYPES } from "./notify";
 import { ENGAGEMENT_NOTIFICATION_ICON } from "./modules/engagement/labels"; // --- Lot 4 ---
+import { CONTRATS_NOTIFICATION_ICON } from "./modules/contrats/labels"; // --- Vague 2 · Contrats ---
 import type { NotificationType } from "./types";
 import type { IconName } from "@/components/IconSprite";
 
@@ -23,6 +24,8 @@ export const NOTIFICATION_ICON: Record<NotificationType, IconName> = {
   group_joined: "chat",
   moderation_report: "inbox",
   moderation_warning: "x",
+  // --- Vague 2 · Contrats ---
+  ...CONTRATS_NOTIFICATION_ICON,
 };
 
 export type NotificationItem = {

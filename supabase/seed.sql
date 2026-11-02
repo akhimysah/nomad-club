@@ -2167,5 +2167,651 @@ insert into public.message_reports (id, message_id, reporter_id, source, reason,
 
 alter table public.message_reports enable trigger message_reports_notify;
 
+-- Contrats d'exemple (0010_contrats.sql) : adhésions, partenaires, pro.
+insert into public.contracts (id, number, kind, template_id, template_version, profile_id, organization_id, plan, amount, currency, installments, schedule, starts_on, ends_on, variables, body_md, pdf_sha256, subscription_ref, source, created_at, reminded_at, reminder_count) values
+  ('b320b26c-52d5-4e55-a277-df99d4c6547a', 'NC-ADH-2025-K7Q2MA', 'membership', '0c0a0000-0000-4000-a000-000000000001', 1, '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', null, 'member', 670, 'USD', 3, '[{"n":1,"dueOn":"2025-11-18","amount":223.34},{"n":2,"dueOn":"2025-12-18","amount":223.33},{"n":3,"dueOn":"2026-01-18","amount":223.33}]'::jsonb, '2025-11-18', '2026-11-18', '{"club.nom":"Nomad Club","contrat.numero":"NC-ADH-2025-K7Q2MA","contrat.date":"18 novembre 2025","modele.version":"1","signataire.nom":"Inès Laurent","signataire.email":"ines@exemple.com","signataire.telephone":"+212 6 61 42 18 07","signataire.carte":"NC 0427","etablissement.nom":"[ÉTABLISSEMENT]","etablissement.adresse":"[ADRESSE]","etablissement.categorie":"activité non précisée","formule.nom":"Membre","formule.avantages":"l''application du club, les rendez-vous au tarif membre, les offres partenaires et le carnet d''adresses","montant.total":"670 $","montant.mensuel":"670 $","montant.devise":"USD","echeancier.nombre":"trois fois","echeancier.detail":"- Échéance 1 : 223,34 $ le 18 novembre 2025 (à la souscription).\n- Échéance 2 : 223,33 $ le 18 décembre 2025.\n- Échéance 3 : 223,33 $ le 18 janvier 2026.","dates.debut":"18 novembre 2025","dates.fin":"18 novembre 2026"}'::jsonb, '# Contrat d''adhésion au Nomad Club
+
+Contrat n° NC-ADH-2025-K7Q2MA · établi le 18 novembre 2025 · modèle version 1
+
+## Entre les soussignées
+
+**Le club** : [RAISON SOCIALE], [FORME JURIDIQUE] au capital de [CAPITAL], dont le siège est situé [SIÈGE], immatriculée sous le numéro [ICE / SIREN], représentée par [REPRÉSENTANTE LÉGALE], ci-après « le Club » ou « Nomad Club ».
+
+**La membre** : Inès Laurent, joignable à l''adresse ines@exemple.com et au +212 6 61 42 18 07, carte de membre NC 0427, ci-après « la Membre ».
+
+## Article 1 — Objet
+
+Le présent contrat définit les conditions dans lesquelles la Membre adhère au Nomad Club, cercle de femmes entrepreneuses installées à Marrakech, avec la formule **Membre**.
+
+Pendant toute la durée de l''adhésion, la Membre a accès à l''application du club (espace membre, annuaire, messagerie et groupes, carnet d''adresses, carte, offres partenaires, ressources digitales, Espace Business, parrainage) et aux rendez-vous du club aux conditions de sa formule.
+
+Ce que comprend la formule Membre : l''application du club, les rendez-vous au tarif membre, les offres partenaires et le carnet d''adresses
+
+## Article 2 — Durée
+
+L''adhésion est conclue pour une durée d''un (1) an, du 18 novembre 2025 au 18 novembre 2026. Elle prend effet au premier paiement, ou à la validation du virement par le Club.
+
+## Article 3 — Prix et échéancier
+
+Le prix de l''adhésion est de **670 $** (devise : USD), toutes taxes comprises [TVA : préciser le régime applicable].
+
+Il est payable en trois fois, selon l''échéancier suivant :
+
+- Échéance 1 : 223,34 $ le 18 novembre 2025 (à la souscription).
+- Échéance 2 : 223,33 $ le 18 décembre 2025.
+- Échéance 3 : 223,33 $ le 18 janvier 2026.
+
+Le paiement en plusieurs fois ne modifie pas la durée de l''engagement : les échéances restent dues jusqu''au terme prévu, sauf rétractation (article 6) ou résiliation dans les cas prévus à l''article 5. [FRAIS : aucun frais de paiement fractionné — à confirmer.]
+
+En cas d''échéance impayée, le Club adresse une relance. Si l''échéance n''est pas réglée dans un délai de [15] jours après la relance, le Club peut suspendre l''accès à l''application jusqu''à la régularisation ; la suspension ne prolonge pas la durée de l''adhésion.
+
+## Article 4 — Renouvellement
+
+L''adhésion n''est pas reconduite tacitement. Le Club informe la Membre au moins [30] jours avant l''échéance ; la Membre renouvelle si elle le souhaite, depuis son espace. Chaque renouvellement donne lieu à un nouveau contrat, établi selon le modèle en vigueur à cette date.
+
+## Article 5 — Résiliation
+
+**5.1 Par la Membre.** La Membre peut mettre fin à son adhésion à tout moment, depuis son espace ou par écrit à [E-MAIL DE CONTACT DU CLUB]. Sauf manquement du Club, les sommes déjà versées restent acquises et les échéances restantes [restent dues / sont annulées — à trancher].
+
+**5.2 Par le Club.** En cas de manquement grave aux règles de vie (article 7), le Club peut résilier l''adhésion après une mise en demeure restée sans effet pendant [8] jours. En cas de harcèlement, de propos haineux, de fraude ou de mise en danger d''autres membres, le Club peut suspendre l''accès immédiatement, puis résilier. [REMBOURSEMENT : au prorata de la période restante ou non — à trancher.]
+
+## Article 6 — Droit de rétractation
+
+[MAROC] Conformément à l''article 36 de la loi n° 31-08 édictant des mesures de protection du consommateur, la Membre dispose d''un délai de sept (7) jours à compter de l''acceptation du présent contrat pour se rétracter, sans avoir à se justifier ni à payer de pénalité.
+
+[FRANCE] Conformément aux articles L221-18 et suivants du Code de la consommation, la Membre dispose d''un délai de quatorze (14) jours à compter de l''acceptation du présent contrat pour se rétracter, sans avoir à se justifier ni à payer de pénalité. Si elle demande expressément à accéder aux services avant la fin de ce délai, elle reste redevable, en cas de rétractation, d''un montant proportionnel au service fourni (article L221-25).
+
+La rétractation s''exerce par un message écrit à [E-MAIL DE CONTACT DU CLUB] ou depuis l''application. Le Club rembourse la totalité des sommes versées dans un délai de [14] jours, par le même moyen de paiement.
+
+## Article 7 — Règles de vie et modération
+
+Le club repose sur la bienveillance et la confiance. La Membre s''engage à :
+
+- respecter les autres membres, partenaires et professionnelles, dans l''application comme lors des rendez-vous ;
+- garder confidentiels les échanges du cercle (salon, groupes, messages privés) et les coordonnées de l''annuaire ;
+- ne pas utiliser l''annuaire ni la messagerie pour du démarchage insistant ou de la publicité non sollicitée ;
+- ne publier aucun contenu illicite, haineux, diffamatoire, ou portant atteinte à la vie privée ou aux droits d''autrui.
+
+Le Club et ses modératrices peuvent masquer un message, adresser un avertissement, retirer l''accès à un groupe ou suspendre un compte. La messagerie utilise un filtrage par mots-clés et les signalements des membres. La Membre reste seule responsable des contenus qu''elle publie.
+
+## Article 8 — Données personnelles et géolocalisation
+
+Le responsable du traitement est [RAISON SOCIALE]. Le Club traite les données nécessaires à l''adhésion (identité, coordonnées, profil d''annuaire, adhésion et paiements, réservations, messages, contrats) pour exécuter le présent contrat, respecter ses obligations légales et, avec le consentement de la Membre, lui adresser des communications.
+
+**Géolocalisation.** La position de la Membre n''est affichée sur la carte du club qu''avec son consentement exprès, de façon approximative (quartier ou environ 500 mètres), avec ou sans son nom. Elle peut retirer ce consentement à tout moment : sa position est alors effacée.
+
+L''annuaire, les communications et le droit à l''image (article 9) font l''objet de réglages distincts, modifiables à tout moment dans « Mes données ». Les données sont conservées pendant la durée de l''adhésion puis [3] ans pour la relation avec les anciennes membres ; les contrats et paiements sont conservés pendant la durée légale [10 ans — à confirmer]. La Membre peut accéder à ses données, les rectifier, les télécharger, s''opposer à un traitement ou demander la suppression de son compte depuis « Mes données » ou à [E-MAIL DE CONTACT DONNÉES PERSONNELLES].
+
+[MAROC] Traitement déclaré auprès de la Commission nationale de contrôle de la protection des données à caractère personnel (CNDP), conformément à la loi n° 09-08, sous le numéro [N° DE DÉCLARATION CNDP].
+[FRANCE] Traitement conforme au règlement (UE) 2016/679 (RGPD) ; la Membre peut introduire une réclamation auprès de la CNIL.
+
+Les données sont hébergées par [HÉBERGEURS ET PAYS : Supabase, Vercel…].
+
+## Article 9 — Droit à l''image
+
+Des photos et vidéos peuvent être prises lors des rendez-vous du club. Le Club n''utilise l''image de la Membre (application, site, réseaux sociaux du club) qu''avec son consentement, donné ou retiré à tout moment dans « Mes données ». Sans ce consentement, le Club ne publie pas les images où la Membre est reconnaissable, ou les floute. Aucune image n''est cédée à des tiers à des fins commerciales.
+
+## Article 10 — Parrainage
+
+La Membre dispose d''un code personnel de parrainage. Les récompenses sont attribuées selon les règles affichées dans l''application au moment où la filleule devient membre. Elles n''ont pas de valeur monétaire et ne peuvent être échangées contre de l''argent. Le Club peut faire évoluer ou arrêter le programme pour l''avenir ; un parrainage frauduleux est annulé.
+
+## Article 11 — Espace Business
+
+L''Espace Business permet aux membres de déclarer les affaires conclues entre elles. **Le Club ne prélève aucune commission sur ces affaires et n''y est pas partie** : il ne garantit ni la qualité, ni l''exécution, ni le paiement des prestations, et n''est pas responsable des litiges entre membres. Les points attribués sont symboliques et sans valeur monétaire. La Membre s''engage à ne déclarer que des affaires réelles ; elle peut se retirer du classement à tout moment.
+
+## Article 12 — Offres partenaires et carnet d''adresses
+
+Les offres des partenaires et les fiches des professionnelles du carnet sont proposées sous la seule responsabilité de ces établissements. Le Club les sélectionne avec soin mais ne garantit pas leurs prestations ; leur référencement ne constitue pas une recommandation personnalisée.
+
+## Article 13 — Marque et contenus
+
+La marque Nomad Club, son logo, l''application et les ressources digitales sont protégés. La Membre peut les utiliser pour son usage personnel ; elle ne peut ni les reproduire, ni les revendre, ni se présenter comme représentante du club, ni utiliser la marque sans l''accord écrit du Club.
+
+## Article 14 — Responsabilité
+
+Le Club est tenu d''une obligation de moyens. Il s''efforce d''assurer l''accès à l''application en continu, sans pouvoir le garantir (maintenance, panne, force majeure). Lors des rendez-vous organisés chez des établissements tiers, chaque établissement reste responsable de ses propres prestations. [LIMITATION DE RESPONSABILITÉ : à préciser dans les limites permises par le droit de la consommation.]
+
+## Article 15 — Acceptation électronique et preuve
+
+La Membre accepte le présent contrat en cochant la case « J''ai lu et j''accepte » dans l''application. Le Club conserve, à titre de preuve, la date et l''heure de l''acceptation, l''adresse IP, le navigateur utilisé, la version du modèle et l''empreinte numérique (SHA-256) du document PDF accepté. Les parties reconnaissent à cette acceptation la même valeur qu''une signature manuscrite.
+
+[MAROC] Conformément à la loi n° 53-05 relative à l''échange électronique de données juridiques.
+[FRANCE] Conformément aux articles 1366 et 1367 du Code civil.
+
+Une copie du contrat au format PDF est envoyée par e-mail après l''acceptation et reste disponible à tout moment dans l''espace « Mes contrats ».
+
+## Article 16 — Évolution des conditions
+
+Le Club peut faire évoluer les présentes conditions. Les nouvelles versions s''appliquent aux nouvelles adhésions et aux renouvellements ; un contrat en cours garde la version acceptée, sauf évolution imposée par la loi.
+
+## Article 17 — Droit applicable et litiges
+
+Le présent contrat est régi par le droit [DROIT APPLICABLE : Maroc ou France]. Avant toute action, les parties recherchent une solution amiable : toute réclamation est adressée par écrit à [E-MAIL DE CONTACT DU CLUB], qui y répond sous [15] jours.
+
+[FRANCE] La Membre peut recourir gratuitement au médiateur de la consommation [NOM ET COORDONNÉES DU MÉDIATEUR], conformément à l''article L612-1 du Code de la consommation, ainsi qu''à la plateforme européenne de règlement en ligne des litiges.
+
+À défaut d''accord amiable, le litige est porté devant [TRIBUNAL COMPÉTENT], sous réserve des règles impératives qui permettent à la consommatrice de saisir la juridiction de son domicile.
+
+Fait électroniquement, le 18 novembre 2025.', '7110702dc6925ca8925f5488181b8a901c4aed8e5095a8e07eef0de8b6974952', 'pay-ines-2025', 'seed', '2025-11-18T09:41:00.000Z', null, 0),
+  ('e7df0fee-3967-4821-a6c8-0fe259135336', 'NC-ADH-2025-P3W8ZT', 'membership', '0c0a0000-0000-4000-a000-000000000001', 1, '77945d38-183f-4e88-acee-1f78d34be5b4', null, 'premium', 1250, 'USD', 1, '[{"n":1,"dueOn":"2025-11-02","amount":1250}]'::jsonb, '2025-11-02', '2026-11-02', '{"club.nom":"Nomad Club","contrat.numero":"NC-ADH-2025-P3W8ZT","contrat.date":"2 novembre 2025","modele.version":"1","signataire.nom":"Yasmine Tazi","signataire.email":"non renseigné","signataire.telephone":"non renseigné","signataire.carte":"NC 0112","etablissement.nom":"[ÉTABLISSEMENT]","etablissement.adresse":"[ADRESSE]","etablissement.categorie":"activité non précisée","formule.nom":"Premium","formule.avantages":"tout ce que comprend la formule Membre, les rendez-vous Premium offerts, une invitée par trimestre et la priorité sur les dîners","montant.total":"1 250 $","montant.mensuel":"1 250 $","montant.devise":"USD","echeancier.nombre":"une seule fois (comptant)","echeancier.detail":"- Échéance 1 : 1 250 $ le 2 novembre 2025 (à la souscription).","dates.debut":"2 novembre 2025","dates.fin":"2 novembre 2026"}'::jsonb, '# Contrat d''adhésion au Nomad Club
+
+Contrat n° NC-ADH-2025-P3W8ZT · établi le 2 novembre 2025 · modèle version 1
+
+## Entre les soussignées
+
+**Le club** : [RAISON SOCIALE], [FORME JURIDIQUE] au capital de [CAPITAL], dont le siège est situé [SIÈGE], immatriculée sous le numéro [ICE / SIREN], représentée par [REPRÉSENTANTE LÉGALE], ci-après « le Club » ou « Nomad Club ».
+
+**La membre** : Yasmine Tazi, joignable à l''adresse non renseigné et au non renseigné, carte de membre NC 0112, ci-après « la Membre ».
+
+## Article 1 — Objet
+
+Le présent contrat définit les conditions dans lesquelles la Membre adhère au Nomad Club, cercle de femmes entrepreneuses installées à Marrakech, avec la formule **Premium**.
+
+Pendant toute la durée de l''adhésion, la Membre a accès à l''application du club (espace membre, annuaire, messagerie et groupes, carnet d''adresses, carte, offres partenaires, ressources digitales, Espace Business, parrainage) et aux rendez-vous du club aux conditions de sa formule.
+
+Ce que comprend la formule Premium : tout ce que comprend la formule Membre, les rendez-vous Premium offerts, une invitée par trimestre et la priorité sur les dîners
+
+## Article 2 — Durée
+
+L''adhésion est conclue pour une durée d''un (1) an, du 2 novembre 2025 au 2 novembre 2026. Elle prend effet au premier paiement, ou à la validation du virement par le Club.
+
+## Article 3 — Prix et échéancier
+
+Le prix de l''adhésion est de **1 250 $** (devise : USD), toutes taxes comprises [TVA : préciser le régime applicable].
+
+Il est payable en une seule fois (comptant), selon l''échéancier suivant :
+
+- Échéance 1 : 1 250 $ le 2 novembre 2025 (à la souscription).
+
+Le paiement en plusieurs fois ne modifie pas la durée de l''engagement : les échéances restent dues jusqu''au terme prévu, sauf rétractation (article 6) ou résiliation dans les cas prévus à l''article 5. [FRAIS : aucun frais de paiement fractionné — à confirmer.]
+
+En cas d''échéance impayée, le Club adresse une relance. Si l''échéance n''est pas réglée dans un délai de [15] jours après la relance, le Club peut suspendre l''accès à l''application jusqu''à la régularisation ; la suspension ne prolonge pas la durée de l''adhésion.
+
+## Article 4 — Renouvellement
+
+L''adhésion n''est pas reconduite tacitement. Le Club informe la Membre au moins [30] jours avant l''échéance ; la Membre renouvelle si elle le souhaite, depuis son espace. Chaque renouvellement donne lieu à un nouveau contrat, établi selon le modèle en vigueur à cette date.
+
+## Article 5 — Résiliation
+
+**5.1 Par la Membre.** La Membre peut mettre fin à son adhésion à tout moment, depuis son espace ou par écrit à [E-MAIL DE CONTACT DU CLUB]. Sauf manquement du Club, les sommes déjà versées restent acquises et les échéances restantes [restent dues / sont annulées — à trancher].
+
+**5.2 Par le Club.** En cas de manquement grave aux règles de vie (article 7), le Club peut résilier l''adhésion après une mise en demeure restée sans effet pendant [8] jours. En cas de harcèlement, de propos haineux, de fraude ou de mise en danger d''autres membres, le Club peut suspendre l''accès immédiatement, puis résilier. [REMBOURSEMENT : au prorata de la période restante ou non — à trancher.]
+
+## Article 6 — Droit de rétractation
+
+[MAROC] Conformément à l''article 36 de la loi n° 31-08 édictant des mesures de protection du consommateur, la Membre dispose d''un délai de sept (7) jours à compter de l''acceptation du présent contrat pour se rétracter, sans avoir à se justifier ni à payer de pénalité.
+
+[FRANCE] Conformément aux articles L221-18 et suivants du Code de la consommation, la Membre dispose d''un délai de quatorze (14) jours à compter de l''acceptation du présent contrat pour se rétracter, sans avoir à se justifier ni à payer de pénalité. Si elle demande expressément à accéder aux services avant la fin de ce délai, elle reste redevable, en cas de rétractation, d''un montant proportionnel au service fourni (article L221-25).
+
+La rétractation s''exerce par un message écrit à [E-MAIL DE CONTACT DU CLUB] ou depuis l''application. Le Club rembourse la totalité des sommes versées dans un délai de [14] jours, par le même moyen de paiement.
+
+## Article 7 — Règles de vie et modération
+
+Le club repose sur la bienveillance et la confiance. La Membre s''engage à :
+
+- respecter les autres membres, partenaires et professionnelles, dans l''application comme lors des rendez-vous ;
+- garder confidentiels les échanges du cercle (salon, groupes, messages privés) et les coordonnées de l''annuaire ;
+- ne pas utiliser l''annuaire ni la messagerie pour du démarchage insistant ou de la publicité non sollicitée ;
+- ne publier aucun contenu illicite, haineux, diffamatoire, ou portant atteinte à la vie privée ou aux droits d''autrui.
+
+Le Club et ses modératrices peuvent masquer un message, adresser un avertissement, retirer l''accès à un groupe ou suspendre un compte. La messagerie utilise un filtrage par mots-clés et les signalements des membres. La Membre reste seule responsable des contenus qu''elle publie.
+
+## Article 8 — Données personnelles et géolocalisation
+
+Le responsable du traitement est [RAISON SOCIALE]. Le Club traite les données nécessaires à l''adhésion (identité, coordonnées, profil d''annuaire, adhésion et paiements, réservations, messages, contrats) pour exécuter le présent contrat, respecter ses obligations légales et, avec le consentement de la Membre, lui adresser des communications.
+
+**Géolocalisation.** La position de la Membre n''est affichée sur la carte du club qu''avec son consentement exprès, de façon approximative (quartier ou environ 500 mètres), avec ou sans son nom. Elle peut retirer ce consentement à tout moment : sa position est alors effacée.
+
+L''annuaire, les communications et le droit à l''image (article 9) font l''objet de réglages distincts, modifiables à tout moment dans « Mes données ». Les données sont conservées pendant la durée de l''adhésion puis [3] ans pour la relation avec les anciennes membres ; les contrats et paiements sont conservés pendant la durée légale [10 ans — à confirmer]. La Membre peut accéder à ses données, les rectifier, les télécharger, s''opposer à un traitement ou demander la suppression de son compte depuis « Mes données » ou à [E-MAIL DE CONTACT DONNÉES PERSONNELLES].
+
+[MAROC] Traitement déclaré auprès de la Commission nationale de contrôle de la protection des données à caractère personnel (CNDP), conformément à la loi n° 09-08, sous le numéro [N° DE DÉCLARATION CNDP].
+[FRANCE] Traitement conforme au règlement (UE) 2016/679 (RGPD) ; la Membre peut introduire une réclamation auprès de la CNIL.
+
+Les données sont hébergées par [HÉBERGEURS ET PAYS : Supabase, Vercel…].
+
+## Article 9 — Droit à l''image
+
+Des photos et vidéos peuvent être prises lors des rendez-vous du club. Le Club n''utilise l''image de la Membre (application, site, réseaux sociaux du club) qu''avec son consentement, donné ou retiré à tout moment dans « Mes données ». Sans ce consentement, le Club ne publie pas les images où la Membre est reconnaissable, ou les floute. Aucune image n''est cédée à des tiers à des fins commerciales.
+
+## Article 10 — Parrainage
+
+La Membre dispose d''un code personnel de parrainage. Les récompenses sont attribuées selon les règles affichées dans l''application au moment où la filleule devient membre. Elles n''ont pas de valeur monétaire et ne peuvent être échangées contre de l''argent. Le Club peut faire évoluer ou arrêter le programme pour l''avenir ; un parrainage frauduleux est annulé.
+
+## Article 11 — Espace Business
+
+L''Espace Business permet aux membres de déclarer les affaires conclues entre elles. **Le Club ne prélève aucune commission sur ces affaires et n''y est pas partie** : il ne garantit ni la qualité, ni l''exécution, ni le paiement des prestations, et n''est pas responsable des litiges entre membres. Les points attribués sont symboliques et sans valeur monétaire. La Membre s''engage à ne déclarer que des affaires réelles ; elle peut se retirer du classement à tout moment.
+
+## Article 12 — Offres partenaires et carnet d''adresses
+
+Les offres des partenaires et les fiches des professionnelles du carnet sont proposées sous la seule responsabilité de ces établissements. Le Club les sélectionne avec soin mais ne garantit pas leurs prestations ; leur référencement ne constitue pas une recommandation personnalisée.
+
+## Article 13 — Marque et contenus
+
+La marque Nomad Club, son logo, l''application et les ressources digitales sont protégés. La Membre peut les utiliser pour son usage personnel ; elle ne peut ni les reproduire, ni les revendre, ni se présenter comme représentante du club, ni utiliser la marque sans l''accord écrit du Club.
+
+## Article 14 — Responsabilité
+
+Le Club est tenu d''une obligation de moyens. Il s''efforce d''assurer l''accès à l''application en continu, sans pouvoir le garantir (maintenance, panne, force majeure). Lors des rendez-vous organisés chez des établissements tiers, chaque établissement reste responsable de ses propres prestations. [LIMITATION DE RESPONSABILITÉ : à préciser dans les limites permises par le droit de la consommation.]
+
+## Article 15 — Acceptation électronique et preuve
+
+La Membre accepte le présent contrat en cochant la case « J''ai lu et j''accepte » dans l''application. Le Club conserve, à titre de preuve, la date et l''heure de l''acceptation, l''adresse IP, le navigateur utilisé, la version du modèle et l''empreinte numérique (SHA-256) du document PDF accepté. Les parties reconnaissent à cette acceptation la même valeur qu''une signature manuscrite.
+
+[MAROC] Conformément à la loi n° 53-05 relative à l''échange électronique de données juridiques.
+[FRANCE] Conformément aux articles 1366 et 1367 du Code civil.
+
+Une copie du contrat au format PDF est envoyée par e-mail après l''acceptation et reste disponible à tout moment dans l''espace « Mes contrats ».
+
+## Article 16 — Évolution des conditions
+
+Le Club peut faire évoluer les présentes conditions. Les nouvelles versions s''appliquent aux nouvelles adhésions et aux renouvellements ; un contrat en cours garde la version acceptée, sauf évolution imposée par la loi.
+
+## Article 17 — Droit applicable et litiges
+
+Le présent contrat est régi par le droit [DROIT APPLICABLE : Maroc ou France]. Avant toute action, les parties recherchent une solution amiable : toute réclamation est adressée par écrit à [E-MAIL DE CONTACT DU CLUB], qui y répond sous [15] jours.
+
+[FRANCE] La Membre peut recourir gratuitement au médiateur de la consommation [NOM ET COORDONNÉES DU MÉDIATEUR], conformément à l''article L612-1 du Code de la consommation, ainsi qu''à la plateforme européenne de règlement en ligne des litiges.
+
+À défaut d''accord amiable, le litige est porté devant [TRIBUNAL COMPÉTENT], sous réserve des règles impératives qui permettent à la consommatrice de saisir la juridiction de son domicile.
+
+Fait électroniquement, le 2 novembre 2025.', 'fdc2a024f49e12cff51638dc768bdd4357bc1d2970be06fa9603fdb34e8dc4ea', 'pay-yasmine-2025', 'seed', '2025-11-02T17:05:00.000Z', null, 0),
+  ('c070bbce-e32b-4768-a747-8181b84010e3', 'NC-ADH-2026-L4V9RC', 'membership', '0c0a0000-0000-4000-a000-000000000001', 1, '2b33d7e1-5ea9-44fc-a5e8-d3959dd73272', null, 'member', 670, 'USD', 1, '[{"n":1,"dueOn":"2026-10-11","amount":670}]'::jsonb, '2026-10-11', '2027-10-11', '{"club.nom":"Nomad Club","contrat.numero":"NC-ADH-2026-L4V9RC","contrat.date":"11 octobre 2026","modele.version":"1","signataire.nom":"Lou Garnier","signataire.email":"non renseigné","signataire.telephone":"non renseigné","signataire.carte":"NC 0402","etablissement.nom":"[ÉTABLISSEMENT]","etablissement.adresse":"[ADRESSE]","etablissement.categorie":"activité non précisée","formule.nom":"Membre","formule.avantages":"l''application du club, les rendez-vous au tarif membre, les offres partenaires et le carnet d''adresses","montant.total":"670 $","montant.mensuel":"670 $","montant.devise":"USD","echeancier.nombre":"une seule fois (comptant)","echeancier.detail":"- Échéance 1 : 670 $ le 11 octobre 2026 (à la souscription).","dates.debut":"11 octobre 2026","dates.fin":"11 octobre 2027"}'::jsonb, '# Contrat d''adhésion au Nomad Club
+
+Contrat n° NC-ADH-2026-L4V9RC · établi le 11 octobre 2026 · modèle version 1
+
+## Entre les soussignées
+
+**Le club** : [RAISON SOCIALE], [FORME JURIDIQUE] au capital de [CAPITAL], dont le siège est situé [SIÈGE], immatriculée sous le numéro [ICE / SIREN], représentée par [REPRÉSENTANTE LÉGALE], ci-après « le Club » ou « Nomad Club ».
+
+**La membre** : Lou Garnier, joignable à l''adresse non renseigné et au non renseigné, carte de membre NC 0402, ci-après « la Membre ».
+
+## Article 1 — Objet
+
+Le présent contrat définit les conditions dans lesquelles la Membre adhère au Nomad Club, cercle de femmes entrepreneuses installées à Marrakech, avec la formule **Membre**.
+
+Pendant toute la durée de l''adhésion, la Membre a accès à l''application du club (espace membre, annuaire, messagerie et groupes, carnet d''adresses, carte, offres partenaires, ressources digitales, Espace Business, parrainage) et aux rendez-vous du club aux conditions de sa formule.
+
+Ce que comprend la formule Membre : l''application du club, les rendez-vous au tarif membre, les offres partenaires et le carnet d''adresses
+
+## Article 2 — Durée
+
+L''adhésion est conclue pour une durée d''un (1) an, du 11 octobre 2026 au 11 octobre 2027. Elle prend effet au premier paiement, ou à la validation du virement par le Club.
+
+## Article 3 — Prix et échéancier
+
+Le prix de l''adhésion est de **670 $** (devise : USD), toutes taxes comprises [TVA : préciser le régime applicable].
+
+Il est payable en une seule fois (comptant), selon l''échéancier suivant :
+
+- Échéance 1 : 670 $ le 11 octobre 2026 (à la souscription).
+
+Le paiement en plusieurs fois ne modifie pas la durée de l''engagement : les échéances restent dues jusqu''au terme prévu, sauf rétractation (article 6) ou résiliation dans les cas prévus à l''article 5. [FRAIS : aucun frais de paiement fractionné — à confirmer.]
+
+En cas d''échéance impayée, le Club adresse une relance. Si l''échéance n''est pas réglée dans un délai de [15] jours après la relance, le Club peut suspendre l''accès à l''application jusqu''à la régularisation ; la suspension ne prolonge pas la durée de l''adhésion.
+
+## Article 4 — Renouvellement
+
+L''adhésion n''est pas reconduite tacitement. Le Club informe la Membre au moins [30] jours avant l''échéance ; la Membre renouvelle si elle le souhaite, depuis son espace. Chaque renouvellement donne lieu à un nouveau contrat, établi selon le modèle en vigueur à cette date.
+
+## Article 5 — Résiliation
+
+**5.1 Par la Membre.** La Membre peut mettre fin à son adhésion à tout moment, depuis son espace ou par écrit à [E-MAIL DE CONTACT DU CLUB]. Sauf manquement du Club, les sommes déjà versées restent acquises et les échéances restantes [restent dues / sont annulées — à trancher].
+
+**5.2 Par le Club.** En cas de manquement grave aux règles de vie (article 7), le Club peut résilier l''adhésion après une mise en demeure restée sans effet pendant [8] jours. En cas de harcèlement, de propos haineux, de fraude ou de mise en danger d''autres membres, le Club peut suspendre l''accès immédiatement, puis résilier. [REMBOURSEMENT : au prorata de la période restante ou non — à trancher.]
+
+## Article 6 — Droit de rétractation
+
+[MAROC] Conformément à l''article 36 de la loi n° 31-08 édictant des mesures de protection du consommateur, la Membre dispose d''un délai de sept (7) jours à compter de l''acceptation du présent contrat pour se rétracter, sans avoir à se justifier ni à payer de pénalité.
+
+[FRANCE] Conformément aux articles L221-18 et suivants du Code de la consommation, la Membre dispose d''un délai de quatorze (14) jours à compter de l''acceptation du présent contrat pour se rétracter, sans avoir à se justifier ni à payer de pénalité. Si elle demande expressément à accéder aux services avant la fin de ce délai, elle reste redevable, en cas de rétractation, d''un montant proportionnel au service fourni (article L221-25).
+
+La rétractation s''exerce par un message écrit à [E-MAIL DE CONTACT DU CLUB] ou depuis l''application. Le Club rembourse la totalité des sommes versées dans un délai de [14] jours, par le même moyen de paiement.
+
+## Article 7 — Règles de vie et modération
+
+Le club repose sur la bienveillance et la confiance. La Membre s''engage à :
+
+- respecter les autres membres, partenaires et professionnelles, dans l''application comme lors des rendez-vous ;
+- garder confidentiels les échanges du cercle (salon, groupes, messages privés) et les coordonnées de l''annuaire ;
+- ne pas utiliser l''annuaire ni la messagerie pour du démarchage insistant ou de la publicité non sollicitée ;
+- ne publier aucun contenu illicite, haineux, diffamatoire, ou portant atteinte à la vie privée ou aux droits d''autrui.
+
+Le Club et ses modératrices peuvent masquer un message, adresser un avertissement, retirer l''accès à un groupe ou suspendre un compte. La messagerie utilise un filtrage par mots-clés et les signalements des membres. La Membre reste seule responsable des contenus qu''elle publie.
+
+## Article 8 — Données personnelles et géolocalisation
+
+Le responsable du traitement est [RAISON SOCIALE]. Le Club traite les données nécessaires à l''adhésion (identité, coordonnées, profil d''annuaire, adhésion et paiements, réservations, messages, contrats) pour exécuter le présent contrat, respecter ses obligations légales et, avec le consentement de la Membre, lui adresser des communications.
+
+**Géolocalisation.** La position de la Membre n''est affichée sur la carte du club qu''avec son consentement exprès, de façon approximative (quartier ou environ 500 mètres), avec ou sans son nom. Elle peut retirer ce consentement à tout moment : sa position est alors effacée.
+
+L''annuaire, les communications et le droit à l''image (article 9) font l''objet de réglages distincts, modifiables à tout moment dans « Mes données ». Les données sont conservées pendant la durée de l''adhésion puis [3] ans pour la relation avec les anciennes membres ; les contrats et paiements sont conservés pendant la durée légale [10 ans — à confirmer]. La Membre peut accéder à ses données, les rectifier, les télécharger, s''opposer à un traitement ou demander la suppression de son compte depuis « Mes données » ou à [E-MAIL DE CONTACT DONNÉES PERSONNELLES].
+
+[MAROC] Traitement déclaré auprès de la Commission nationale de contrôle de la protection des données à caractère personnel (CNDP), conformément à la loi n° 09-08, sous le numéro [N° DE DÉCLARATION CNDP].
+[FRANCE] Traitement conforme au règlement (UE) 2016/679 (RGPD) ; la Membre peut introduire une réclamation auprès de la CNIL.
+
+Les données sont hébergées par [HÉBERGEURS ET PAYS : Supabase, Vercel…].
+
+## Article 9 — Droit à l''image
+
+Des photos et vidéos peuvent être prises lors des rendez-vous du club. Le Club n''utilise l''image de la Membre (application, site, réseaux sociaux du club) qu''avec son consentement, donné ou retiré à tout moment dans « Mes données ». Sans ce consentement, le Club ne publie pas les images où la Membre est reconnaissable, ou les floute. Aucune image n''est cédée à des tiers à des fins commerciales.
+
+## Article 10 — Parrainage
+
+La Membre dispose d''un code personnel de parrainage. Les récompenses sont attribuées selon les règles affichées dans l''application au moment où la filleule devient membre. Elles n''ont pas de valeur monétaire et ne peuvent être échangées contre de l''argent. Le Club peut faire évoluer ou arrêter le programme pour l''avenir ; un parrainage frauduleux est annulé.
+
+## Article 11 — Espace Business
+
+L''Espace Business permet aux membres de déclarer les affaires conclues entre elles. **Le Club ne prélève aucune commission sur ces affaires et n''y est pas partie** : il ne garantit ni la qualité, ni l''exécution, ni le paiement des prestations, et n''est pas responsable des litiges entre membres. Les points attribués sont symboliques et sans valeur monétaire. La Membre s''engage à ne déclarer que des affaires réelles ; elle peut se retirer du classement à tout moment.
+
+## Article 12 — Offres partenaires et carnet d''adresses
+
+Les offres des partenaires et les fiches des professionnelles du carnet sont proposées sous la seule responsabilité de ces établissements. Le Club les sélectionne avec soin mais ne garantit pas leurs prestations ; leur référencement ne constitue pas une recommandation personnalisée.
+
+## Article 13 — Marque et contenus
+
+La marque Nomad Club, son logo, l''application et les ressources digitales sont protégés. La Membre peut les utiliser pour son usage personnel ; elle ne peut ni les reproduire, ni les revendre, ni se présenter comme représentante du club, ni utiliser la marque sans l''accord écrit du Club.
+
+## Article 14 — Responsabilité
+
+Le Club est tenu d''une obligation de moyens. Il s''efforce d''assurer l''accès à l''application en continu, sans pouvoir le garantir (maintenance, panne, force majeure). Lors des rendez-vous organisés chez des établissements tiers, chaque établissement reste responsable de ses propres prestations. [LIMITATION DE RESPONSABILITÉ : à préciser dans les limites permises par le droit de la consommation.]
+
+## Article 15 — Acceptation électronique et preuve
+
+La Membre accepte le présent contrat en cochant la case « J''ai lu et j''accepte » dans l''application. Le Club conserve, à titre de preuve, la date et l''heure de l''acceptation, l''adresse IP, le navigateur utilisé, la version du modèle et l''empreinte numérique (SHA-256) du document PDF accepté. Les parties reconnaissent à cette acceptation la même valeur qu''une signature manuscrite.
+
+[MAROC] Conformément à la loi n° 53-05 relative à l''échange électronique de données juridiques.
+[FRANCE] Conformément aux articles 1366 et 1367 du Code civil.
+
+Une copie du contrat au format PDF est envoyée par e-mail après l''acceptation et reste disponible à tout moment dans l''espace « Mes contrats ».
+
+## Article 16 — Évolution des conditions
+
+Le Club peut faire évoluer les présentes conditions. Les nouvelles versions s''appliquent aux nouvelles adhésions et aux renouvellements ; un contrat en cours garde la version acceptée, sauf évolution imposée par la loi.
+
+## Article 17 — Droit applicable et litiges
+
+Le présent contrat est régi par le droit [DROIT APPLICABLE : Maroc ou France]. Avant toute action, les parties recherchent une solution amiable : toute réclamation est adressée par écrit à [E-MAIL DE CONTACT DU CLUB], qui y répond sous [15] jours.
+
+[FRANCE] La Membre peut recourir gratuitement au médiateur de la consommation [NOM ET COORDONNÉES DU MÉDIATEUR], conformément à l''article L612-1 du Code de la consommation, ainsi qu''à la plateforme européenne de règlement en ligne des litiges.
+
+À défaut d''accord amiable, le litige est porté devant [TRIBUNAL COMPÉTENT], sous réserve des règles impératives qui permettent à la consommatrice de saisir la juridiction de son domicile.
+
+Fait électroniquement, le 11 octobre 2026.', '42f35dfed5e52a46e9ff12a2b8074cdda66511474dc6eb46e226890b830e8c56', null, 'seed', '2026-10-11T08:20:00.000Z', null, 0),
+  ('ed9fcbd3-a6d2-4cab-a50b-736133767ca3', 'NC-PAR-2026-B9H3NE', 'partner', '0c0a0000-0000-4000-a000-000000000002', 1, '9338cf84-e1be-4199-a025-43c3366fc7e4', '510a1cff-ee18-4de7-ac4e-34715042d034', 'partenaire', 0, 'USD', 1, '[]'::jsonb, '2026-02-03', '2027-02-03', '{"club.nom":"Nomad Club","contrat.numero":"NC-PAR-2026-B9H3NE","contrat.date":"3 février 2026","modele.version":"1","signataire.nom":"Kenza Lahlou","signataire.email":"kenza@exemple.com","signataire.telephone":"+212 6 67 51 34 77","signataire.carte":"NC 0510","etablissement.nom":"Bloom House","etablissement.adresse":"14 rue de la Liberté, Guéliz","etablissement.categorie":"Bien-être et ateliers","formule.nom":"Partenariat offres membres","formule.avantages":"la publication d''offres réservées aux membres, la validation des codes et les statistiques de l''établissement","montant.total":"0 $","montant.mensuel":"0 $","montant.devise":"USD","echeancier.nombre":"une seule fois (comptant)","echeancier.detail":"- Aucun paiement n''est dû au titre du présent contrat.","dates.debut":"3 février 2026","dates.fin":"3 février 2027"}'::jsonb, '# Contrat de partenariat — offres aux membres
+
+Contrat n° NC-PAR-2026-B9H3NE · établi le 3 février 2026 · modèle version 1
+
+## Entre les soussignés
+
+**Le club** : [RAISON SOCIALE], [FORME JURIDIQUE] au capital de [CAPITAL], dont le siège est situé [SIÈGE], immatriculée sous le numéro [ICE / SIREN], représentée par [REPRÉSENTANTE LÉGALE], ci-après « le Club » ou « Nomad Club ».
+
+**Le partenaire** : l''établissement **Bloom House** (Bien-être et ateliers), situé 14 rue de la Liberté, Guéliz, [FORME JURIDIQUE ET IMMATRICULATION DU PARTENAIRE], représenté par Kenza Lahlou (kenza@exemple.com), ci-après « le Partenaire ».
+
+## Article 1 — Objet
+
+Le Partenaire propose aux membres du Nomad Club des avantages (réductions, attentions, accès privilégiés) publiés dans l''application du club. Le Club les fait connaître à ses membres, met à disposition du Partenaire un espace dédié (offres, validation des codes, statistiques, fiche de l''établissement) et le fait figurer sur la carte et dans le carnet.
+
+## Article 2 — Durée
+
+Le contrat prend effet le 3 février 2026 pour une durée d''un (1) an. Il est ensuite reconduit tacitement par périodes d''un an, sauf dénonciation par l''une des parties avec un préavis de [30] jours.
+
+## Article 3 — Conditions financières
+
+Le partenariat est conclu à titre gratuit : aucune somme n''est due par le Partenaire au Club, et le Club ne perçoit aucune commission sur les ventes réalisées grâce aux offres. [Si un partenariat payant est prévu : PRIX ET MODALITÉS — à compléter.]
+
+- Aucun paiement n''est dû au titre du présent contrat.
+
+## Article 4 — Obligations du Partenaire
+
+Le Partenaire s''engage à :
+
+- honorer les offres publiées pendant toute leur période de validité, pour toute membre présentant un code valide ;
+- rédiger des conditions claires (périmètre, exclusions, nombre d''utilisations) et les tenir à jour, en mettant en pause une offre qu''il ne peut plus honorer ;
+- valider les codes au comptoir dans l''application, une seule fois, et ne pas en faire d''autre usage ;
+- accueillir les membres sans discrimination, dans le respect de la réglementation applicable à son activité (hygiène, sécurité, assurances, autorisations) ;
+- informer le Club de tout changement important (adresse, horaires, fermeture, changement de dirigeant).
+
+## Article 5 — Obligations du Club
+
+Le Club présente les offres du Partenaire à ses membres de façon loyale, met à sa disposition l''espace partenaire et ses statistiques, et le prévient avant toute modification importante du fonctionnement des offres.
+
+## Article 6 — Règles de vie et modération
+
+Les membres de l''équipe du Partenaire qui utilisent l''application respectent les règles de vie du club (respect, confidentialité, absence de démarchage abusif). Le Club peut retirer une offre ou une fiche contraire à ces règles ou à la loi, après en avoir informé le Partenaire, sauf urgence.
+
+## Article 7 — Données personnelles et géolocalisation
+
+Chaque partie est responsable des traitements qu''elle met en œuvre. Lors de la validation d''un code, le Partenaire ne voit que le prénom de la membre et l''offre utilisée ; il ne reçoit ni ses coordonnées ni sa position. Il s''interdit de constituer un fichier des membres ou de les solliciter à partir de ces informations.
+
+La position de l''établissement (adresse professionnelle) est affichée sur la carte du club. La géolocalisation des membres n''est jamais communiquée au Partenaire.
+
+[MAROC] Les parties respectent la loi n° 09-08 et les délibérations de la CNDP.
+[FRANCE] Les parties respectent le RGPD ; si le Partenaire traitait des données pour le compte du Club, un accord de sous-traitance (article 28) serait conclu.
+
+## Article 8 — Statistiques
+
+Le Club fournit au Partenaire, dans son espace, des statistiques mensuelles propres à son établissement (vues de la fiche, clics de contact, codes générés et validés). Ces statistiques sont agrégées et ne permettent pas d''identifier les membres. Le Club peut utiliser des statistiques globales et anonymes de son réseau.
+
+## Article 9 — Droit à l''image et usage des marques
+
+Le Partenaire autorise le Club à utiliser son nom, son logo et les photos de son établissement qu''il fournit, dans l''application et dans la communication du club, pendant la durée du contrat. Le Partenaire peut indiquer « Partenaire du Nomad Club » selon la charte fournie par le Club ; toute autre utilisation de la marque Nomad Club requiert un accord écrit. Les photos de membres prises dans l''établissement ne sont publiées qu''avec le consentement des personnes concernées.
+
+## Article 10 — Parrainage et Espace Business
+
+Le Partenaire peut faire connaître le club à sa clientèle ; il ne perçoit pas de récompense de parrainage, sauf accord écrit. **Le Club ne prélève aucune commission sur les affaires conclues entre le Partenaire et les membres et n''y est pas partie** ; il n''est pas responsable de leur exécution.
+
+## Article 11 — Responsabilité
+
+Le Partenaire est seul responsable des produits et services qu''il fournit aux membres, de leur conformité et de leur prix. Il déclare être assuré pour son activité. Le Club, simple intermédiaire d''information, ne peut être tenu responsable d''un litige entre le Partenaire et une membre, ni des dommages indirects.
+
+## Article 12 — Résiliation
+
+Chaque partie peut résilier le contrat à l''échéance annuelle moyennant le préavis prévu à l''article 2, ou à tout moment en cas de manquement grave de l''autre partie non corrigé dans un délai de [15] jours après une mise en demeure. Les offres en cours sont alors retirées de l''application ; les codes déjà émis sont honorés jusqu''à leur date limite.
+
+## Article 13 — Acceptation électronique et preuve
+
+Le Partenaire accepte le présent contrat en cochant la case « J''ai lu et j''accepte » dans l''application. Le Club conserve, à titre de preuve, la date et l''heure de l''acceptation, l''adresse IP, le navigateur utilisé, la version du modèle et l''empreinte numérique (SHA-256) du document PDF accepté. Les parties reconnaissent à cette acceptation la même valeur qu''une signature manuscrite.
+
+[MAROC] Conformément à la loi n° 53-05 relative à l''échange électronique de données juridiques.
+[FRANCE] Conformément aux articles 1366 et 1367 du Code civil.
+
+Une copie du contrat au format PDF est envoyée par e-mail après l''acceptation et reste disponible à tout moment dans l''espace « Mes contrats ».
+
+## Article 14 — Droit applicable et litiges
+
+Le présent contrat est régi par le droit [DROIT APPLICABLE : Maroc ou France]. Avant toute action, les parties recherchent une solution amiable : toute réclamation est adressée par écrit à [E-MAIL DE CONTACT DU CLUB], qui y répond sous [15] jours.
+
+À défaut d''accord amiable dans un délai de trente (30) jours, le litige est porté devant [TRIBUNAL COMPÉTENT].
+
+Fait électroniquement, le 3 février 2026.', 'ff7a176b6524d0aff5eddb760ef2905f4f4832db7496618865085e45bdb95dcd', null, 'seed', '2026-02-03T11:25:00.000Z', null, 0),
+  ('aa79f3fc-19c5-43bb-ae7b-6aa391acb99c', 'NC-PAR-2026-M2J7DX', 'partner', '0c0a0000-0000-4000-a000-000000000002', 1, '38829ed0-a270-4b67-acf5-f6f582565564', 'a66a9186-d6d3-49b0-a2ec-af8f5c9c4c20', 'partenaire', 0, 'USD', 1, '[]'::jsonb, '2026-05-20', '2027-05-20', '{"club.nom":"Nomad Club","contrat.numero":"NC-PAR-2026-M2J7DX","contrat.date":"20 mai 2026","modele.version":"1","signataire.nom":"Rim Amajjar","signataire.email":"rim@exemple.com","signataire.telephone":"non renseigné","signataire.carte":"attribuée à l''activation","etablissement.nom":"Maison Amaj","etablissement.adresse":"Rue Mohammed el Beqal, Guéliz","etablissement.categorie":"Pâtisserie et petit-déjeuner","formule.nom":"Partenariat offres membres","formule.avantages":"la publication d''offres réservées aux membres, la validation des codes et les statistiques de l''établissement","montant.total":"0 $","montant.mensuel":"0 $","montant.devise":"USD","echeancier.nombre":"une seule fois (comptant)","echeancier.detail":"- Aucun paiement n''est dû au titre du présent contrat.","dates.debut":"20 mai 2026","dates.fin":"20 mai 2027"}'::jsonb, '# Contrat de partenariat — offres aux membres
+
+Contrat n° NC-PAR-2026-M2J7DX · établi le 20 mai 2026 · modèle version 1
+
+## Entre les soussignés
+
+**Le club** : [RAISON SOCIALE], [FORME JURIDIQUE] au capital de [CAPITAL], dont le siège est situé [SIÈGE], immatriculée sous le numéro [ICE / SIREN], représentée par [REPRÉSENTANTE LÉGALE], ci-après « le Club » ou « Nomad Club ».
+
+**Le partenaire** : l''établissement **Maison Amaj** (Pâtisserie et petit-déjeuner), situé Rue Mohammed el Beqal, Guéliz, [FORME JURIDIQUE ET IMMATRICULATION DU PARTENAIRE], représenté par Rim Amajjar (rim@exemple.com), ci-après « le Partenaire ».
+
+## Article 1 — Objet
+
+Le Partenaire propose aux membres du Nomad Club des avantages (réductions, attentions, accès privilégiés) publiés dans l''application du club. Le Club les fait connaître à ses membres, met à disposition du Partenaire un espace dédié (offres, validation des codes, statistiques, fiche de l''établissement) et le fait figurer sur la carte et dans le carnet.
+
+## Article 2 — Durée
+
+Le contrat prend effet le 20 mai 2026 pour une durée d''un (1) an. Il est ensuite reconduit tacitement par périodes d''un an, sauf dénonciation par l''une des parties avec un préavis de [30] jours.
+
+## Article 3 — Conditions financières
+
+Le partenariat est conclu à titre gratuit : aucune somme n''est due par le Partenaire au Club, et le Club ne perçoit aucune commission sur les ventes réalisées grâce aux offres. [Si un partenariat payant est prévu : PRIX ET MODALITÉS — à compléter.]
+
+- Aucun paiement n''est dû au titre du présent contrat.
+
+## Article 4 — Obligations du Partenaire
+
+Le Partenaire s''engage à :
+
+- honorer les offres publiées pendant toute leur période de validité, pour toute membre présentant un code valide ;
+- rédiger des conditions claires (périmètre, exclusions, nombre d''utilisations) et les tenir à jour, en mettant en pause une offre qu''il ne peut plus honorer ;
+- valider les codes au comptoir dans l''application, une seule fois, et ne pas en faire d''autre usage ;
+- accueillir les membres sans discrimination, dans le respect de la réglementation applicable à son activité (hygiène, sécurité, assurances, autorisations) ;
+- informer le Club de tout changement important (adresse, horaires, fermeture, changement de dirigeant).
+
+## Article 5 — Obligations du Club
+
+Le Club présente les offres du Partenaire à ses membres de façon loyale, met à sa disposition l''espace partenaire et ses statistiques, et le prévient avant toute modification importante du fonctionnement des offres.
+
+## Article 6 — Règles de vie et modération
+
+Les membres de l''équipe du Partenaire qui utilisent l''application respectent les règles de vie du club (respect, confidentialité, absence de démarchage abusif). Le Club peut retirer une offre ou une fiche contraire à ces règles ou à la loi, après en avoir informé le Partenaire, sauf urgence.
+
+## Article 7 — Données personnelles et géolocalisation
+
+Chaque partie est responsable des traitements qu''elle met en œuvre. Lors de la validation d''un code, le Partenaire ne voit que le prénom de la membre et l''offre utilisée ; il ne reçoit ni ses coordonnées ni sa position. Il s''interdit de constituer un fichier des membres ou de les solliciter à partir de ces informations.
+
+La position de l''établissement (adresse professionnelle) est affichée sur la carte du club. La géolocalisation des membres n''est jamais communiquée au Partenaire.
+
+[MAROC] Les parties respectent la loi n° 09-08 et les délibérations de la CNDP.
+[FRANCE] Les parties respectent le RGPD ; si le Partenaire traitait des données pour le compte du Club, un accord de sous-traitance (article 28) serait conclu.
+
+## Article 8 — Statistiques
+
+Le Club fournit au Partenaire, dans son espace, des statistiques mensuelles propres à son établissement (vues de la fiche, clics de contact, codes générés et validés). Ces statistiques sont agrégées et ne permettent pas d''identifier les membres. Le Club peut utiliser des statistiques globales et anonymes de son réseau.
+
+## Article 9 — Droit à l''image et usage des marques
+
+Le Partenaire autorise le Club à utiliser son nom, son logo et les photos de son établissement qu''il fournit, dans l''application et dans la communication du club, pendant la durée du contrat. Le Partenaire peut indiquer « Partenaire du Nomad Club » selon la charte fournie par le Club ; toute autre utilisation de la marque Nomad Club requiert un accord écrit. Les photos de membres prises dans l''établissement ne sont publiées qu''avec le consentement des personnes concernées.
+
+## Article 10 — Parrainage et Espace Business
+
+Le Partenaire peut faire connaître le club à sa clientèle ; il ne perçoit pas de récompense de parrainage, sauf accord écrit. **Le Club ne prélève aucune commission sur les affaires conclues entre le Partenaire et les membres et n''y est pas partie** ; il n''est pas responsable de leur exécution.
+
+## Article 11 — Responsabilité
+
+Le Partenaire est seul responsable des produits et services qu''il fournit aux membres, de leur conformité et de leur prix. Il déclare être assuré pour son activité. Le Club, simple intermédiaire d''information, ne peut être tenu responsable d''un litige entre le Partenaire et une membre, ni des dommages indirects.
+
+## Article 12 — Résiliation
+
+Chaque partie peut résilier le contrat à l''échéance annuelle moyennant le préavis prévu à l''article 2, ou à tout moment en cas de manquement grave de l''autre partie non corrigé dans un délai de [15] jours après une mise en demeure. Les offres en cours sont alors retirées de l''application ; les codes déjà émis sont honorés jusqu''à leur date limite.
+
+## Article 13 — Acceptation électronique et preuve
+
+Le Partenaire accepte le présent contrat en cochant la case « J''ai lu et j''accepte » dans l''application. Le Club conserve, à titre de preuve, la date et l''heure de l''acceptation, l''adresse IP, le navigateur utilisé, la version du modèle et l''empreinte numérique (SHA-256) du document PDF accepté. Les parties reconnaissent à cette acceptation la même valeur qu''une signature manuscrite.
+
+[MAROC] Conformément à la loi n° 53-05 relative à l''échange électronique de données juridiques.
+[FRANCE] Conformément aux articles 1366 et 1367 du Code civil.
+
+Une copie du contrat au format PDF est envoyée par e-mail après l''acceptation et reste disponible à tout moment dans l''espace « Mes contrats ».
+
+## Article 14 — Droit applicable et litiges
+
+Le présent contrat est régi par le droit [DROIT APPLICABLE : Maroc ou France]. Avant toute action, les parties recherchent une solution amiable : toute réclamation est adressée par écrit à [E-MAIL DE CONTACT DU CLUB], qui y répond sous [15] jours.
+
+À défaut d''accord amiable dans un délai de trente (30) jours, le litige est porté devant [TRIBUNAL COMPÉTENT].
+
+Fait électroniquement, le 20 mai 2026.', 'd0fcf916d713c94f4188ae61d9e53b728b33c06a69506653000e0afd392f1bef', null, 'seed', '2026-05-20T15:02:00.000Z', null, 0),
+  ('203df41e-a9f3-4699-acac-210203543d7c', 'NC-PRO-2026-C5T8GU', 'pro', '0c0a0000-0000-4000-a000-000000000003', 1, 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', '329fe233-967a-43a7-a814-d9848744c99f', 'visibilite', 49, 'USD', 1, '[{"n":1,"dueOn":"2026-09-01","amount":49,"label":"puis le même jour chaque mois, tant que l''abonnement n''est pas arrêté"}]'::jsonb, '2026-09-01', null, '{"club.nom":"Nomad Club","contrat.numero":"NC-PRO-2026-C5T8GU","contrat.date":"1 septembre 2026","modele.version":"1","signataire.nom":"Loubna Cherkaoui","signataire.email":"loubna@exemple.com","signataire.telephone":"+212 6 13 21 36 45","signataire.carte":"NC 0533","etablissement.nom":"Cabinet Loubna Cherkaoui","etablissement.adresse":"Résidence Les Jardins, avenue Hassan II, Guéliz","etablissement.categorie":"Santé · ostéopathie","formule.nom":"Visibilité","formule.avantages":"tout l’essentiel, photos (jusqu’à 8) et position sur la carte, réduction membres mise en avant","montant.total":"49 $","montant.mensuel":"49 $","montant.devise":"USD","echeancier.nombre":"une seule fois (comptant)","echeancier.detail":"- 49 $ le 1 septembre 2026, puis le même jour chaque mois, tant que l''abonnement n''est pas arrêté.","dates.debut":"1 septembre 2026","dates.fin":"sans terme fixe"}'::jsonb, '# Contrat de référencement — carnet d''adresses du Nomad Club
+
+Contrat n° NC-PRO-2026-C5T8GU · établi le 1 septembre 2026 · modèle version 1
+
+## Entre les soussignés
+
+**Le club** : [RAISON SOCIALE], [FORME JURIDIQUE] au capital de [CAPITAL], dont le siège est situé [SIÈGE], immatriculée sous le numéro [ICE / SIREN], représentée par [REPRÉSENTANTE LÉGALE], ci-après « le Club » ou « Nomad Club ».
+
+**La professionnelle** : **Cabinet Loubna Cherkaoui** (Santé · ostéopathie), située Résidence Les Jardins, avenue Hassan II, Guéliz, [FORME JURIDIQUE ET IMMATRICULATION DE LA PROFESSIONNELLE], représentée par Loubna Cherkaoui (loubna@exemple.com), ci-après « la Professionnelle ».
+
+## Article 1 — Objet
+
+Le Club référence la Professionnelle dans le carnet d''adresses de son application, réservé aux membres, avec la formule **Visibilité** : tout l’essentiel, photos (jusqu’à 8) et position sur la carte, réduction membres mise en avant. La Professionnelle dispose d''un espace pour gérer sa fiche, son abonnement et ses statistiques de visibilité. Le référencement ne suppose pas de proposer une réduction aux membres.
+
+## Article 2 — Durée et renouvellement
+
+L''abonnement prend effet le 1 septembre 2026. Il est conclu pour une durée d''un (1) mois, renouvelée tacitement de mois en mois tant qu''il n''est pas arrêté. La Professionnelle peut l''arrêter à tout moment depuis son espace : l''arrêt prend effet à la fin de la période mensuelle en cours, déjà payée.
+
+## Article 3 — Prix et paiement
+
+Grille tarifaire : [PRIX MENSUEL PRO — grille à confirmer : Essentiel, Visibilité, Vitrine]. Pour la formule choisie, le prix est de **49 $ par mois** (devise : USD), [HT / TTC — à préciser], payable d''avance :
+
+- 49 $ le 1 septembre 2026, puis le même jour chaque mois, tant que l''abonnement n''est pas arrêté.
+
+Un changement de formule s''applique immédiatement et est facturé à l''échéance suivante. Le Club peut faire évoluer ses prix pour l''avenir en prévenant la Professionnelle au moins [30] jours à l''avance ; elle peut alors arrêter son abonnement sans frais.
+
+## Article 4 — Retard de paiement
+
+Si une échéance n''est pas réglée à sa date, la fiche est masquée du carnet jusqu''au paiement. Après quinze (15) jours de retard, l''abonnement est suspendu. Les sommes versées pour une période commencée restent acquises. [PÉNALITÉS DE RETARD ET INDEMNITÉ DE RECOUVREMENT : à préciser selon le droit applicable.]
+
+## Article 5 — Obligations de la Professionnelle
+
+La Professionnelle s''engage à :
+
+- fournir des informations exactes et à jour (activité, coordonnées, horaires, photos dont elle détient les droits) ;
+- détenir les diplômes, autorisations et assurances exigés pour son activité, et respecter les règles de sa profession, notamment en matière de publicité ;
+- ne publier aucune allégation trompeuse ni contenu contraire à la loi ;
+- accueillir les membres avec le même sérieux que sa clientèle, et honorer la réduction qu''elle a éventuellement annoncée.
+
+## Article 6 — Modération des fiches
+
+Le Club peut refuser, modifier ou retirer une fiche (ou un élément de fiche) contraire au présent contrat, aux règles de vie du club ou à la loi, après en avoir informé la Professionnelle, sauf urgence. Les membres de l''équipe de la Professionnelle qui utilisent l''application respectent les règles de vie du club.
+
+## Article 7 — Statistiques
+
+Le Club fournit chaque mois, dans l''espace de la Professionnelle, des statistiques de visibilité propres à sa fiche (vues, clics vers le téléphone, WhatsApp, le site, l''itinéraire). Elles sont agrégées et ne permettent pas d''identifier les membres. Le Club ne garantit aucun volume de visites ni de clientèle.
+
+## Article 8 — Données personnelles et géolocalisation
+
+Chaque partie est responsable des traitements qu''elle met en œuvre. L''adresse professionnelle et la position de l''établissement peuvent être affichées sur la carte du club ; la géolocalisation des membres n''est jamais communiquée à la Professionnelle. Les membres qui la contactent le font directement, par les moyens qu''elle a publiés.
+
+[MAROC] Les parties respectent la loi n° 09-08 et les délibérations de la CNDP.
+[FRANCE] Les parties respectent le RGPD.
+
+## Article 9 — Droit à l''image et usage des marques
+
+La Professionnelle autorise le Club à utiliser son nom, son logo et les photos qu''elle fournit, dans l''application et la communication du club, pendant la durée de l''abonnement. Elle peut indiquer « Référencée par le Nomad Club » selon la charte fournie ; toute autre utilisation de la marque requiert un accord écrit du Club.
+
+## Article 10 — Parrainage et Espace Business
+
+La Professionnelle peut faire connaître le club ; elle ne perçoit pas de récompense de parrainage, sauf accord écrit. **Le Club ne prélève aucune commission sur les prestations vendues aux membres et n''est pas partie aux contrats conclus avec elles** ; il n''est pas responsable de leur exécution ni de leur paiement.
+
+## Article 11 — Responsabilité
+
+Le référencement est un service d''information : il ne constitue ni une recommandation personnalisée ni une garantie des prestations. La Professionnelle est seule responsable de ses prestations envers les membres. La responsabilité du Club, tenu d''une obligation de moyens, est limitée au montant des trois derniers mois d''abonnement payés, sauf faute lourde ou dolosive.
+
+## Article 12 — Résiliation
+
+Outre l''arrêt mensuel prévu à l''article 2, chaque partie peut résilier le contrat en cas de manquement grave de l''autre partie non corrigé dans un délai de [8] jours après une mise en demeure. La fiche est alors retirée du carnet.
+
+## Article 13 — Acceptation électronique et preuve
+
+La Professionnelle accepte le présent contrat en cochant la case « J''ai lu et j''accepte » dans l''application. Le Club conserve, à titre de preuve, la date et l''heure de l''acceptation, l''adresse IP, le navigateur utilisé, la version du modèle et l''empreinte numérique (SHA-256) du document PDF accepté. Les parties reconnaissent à cette acceptation la même valeur qu''une signature manuscrite.
+
+[MAROC] Conformément à la loi n° 53-05 relative à l''échange électronique de données juridiques.
+[FRANCE] Conformément aux articles 1366 et 1367 du Code civil.
+
+Une copie du contrat au format PDF est envoyée par e-mail après l''acceptation et reste disponible à tout moment dans l''espace « Mes contrats ».
+
+## Article 14 — Droit applicable et litiges
+
+Le présent contrat est régi par le droit [DROIT APPLICABLE : Maroc ou France]. Avant toute action, les parties recherchent une solution amiable : toute réclamation est adressée par écrit à [E-MAIL DE CONTACT DU CLUB], qui y répond sous [15] jours.
+
+À défaut d''accord amiable dans un délai de trente (30) jours, le litige est porté devant [TRIBUNAL COMPÉTENT].
+
+Fait électroniquement, le 1 septembre 2026.', '76f05c08a29e252e47592785c597f8b04897b5fe8caef48a0f0f5c89c65f36b2', 'sp-org-cherkaoui-1', 'seed', '2026-09-01T09:35:00.000Z', null, 0)
+on conflict (id) do nothing;
+
+insert into public.contract_acceptances (id, contract_id, profile_id, signer_name, signer_email, accepted_at, ip, user_agent, template_version, pdf_sha256, provider, method, statement) values
+  ('837c1b45-f6e7-4ba9-a029-3f0f1611232c', 'b320b26c-52d5-4e55-a277-df99d4c6547a', '9a6df925-8c06-478a-a7ac-6b27ee0e4abc', 'Inès Laurent', 'ines@exemple.com', '2025-11-18T09:43:12.000Z', '105.158.24.17', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Mobile/15E148 Safari/604.1', 1, '7110702dc6925ca8925f5488181b8a901c4aed8e5095a8e07eef0de8b6974952', 'simple', 'checkbox', 'J''ai lu le contrat n° NC-ADH-2025-K7Q2MA (modèle version 1) et j''en accepte les conditions.'),
+  ('166326d1-ecab-4ef5-af1a-da622324c2bc', 'e7df0fee-3967-4821-a6c8-0fe259135336', '77945d38-183f-4e88-acee-1f78d34be5b4', 'Yasmine Tazi', null, '2025-11-02T17:06:40.000Z', '196.75.110.42', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15', 1, 'fdc2a024f49e12cff51638dc768bdd4357bc1d2970be06fa9603fdb34e8dc4ea', 'simple', 'checkbox', 'J''ai lu le contrat n° NC-ADH-2025-P3W8ZT (modèle version 1) et j''en accepte les conditions.'),
+  ('de5a5201-3a79-41a6-aef5-abd93f7fdc04', 'ed9fcbd3-a6d2-4cab-a50b-736133767ca3', '9338cf84-e1be-4199-a025-43c3366fc7e4', 'Kenza Lahlou', 'kenza@exemple.com', '2026-02-03T11:31:05.000Z', '41.250.36.8', 'Mozilla/5.0 (Linux; Android 15; SM-S921B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36', 1, 'ff7a176b6524d0aff5eddb760ef2905f4f4832db7496618865085e45bdb95dcd', 'simple', 'checkbox', 'J''ai lu le contrat n° NC-PAR-2026-B9H3NE (modèle version 1) et j''en accepte les conditions.'),
+  ('bc307e06-94af-4db5-a376-158571eacc14', 'aa79f3fc-19c5-43bb-ae7b-6aa391acb99c', '38829ed0-a270-4b67-acf5-f6f582565564', 'Rim Amajjar', 'rim@exemple.com', '2026-05-20T15:10:44.000Z', '105.66.140.201', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Mobile/15E148 Safari/604.1', 1, 'd0fcf916d713c94f4188ae61d9e53b728b33c06a69506653000e0afd392f1bef', 'simple', 'checkbox', 'J''ai lu le contrat n° NC-PAR-2026-M2J7DX (modèle version 1) et j''en accepte les conditions.'),
+  ('a03cf543-5550-4058-af07-31a6d5fe165a', '203df41e-a9f3-4699-acac-210203543d7c', 'fbfef494-1c1c-4b1f-acd9-bdb9324bd6d5', 'Loubna Cherkaoui', 'loubna@exemple.com', '2026-09-01T09:38:21.000Z', '196.92.7.150', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15', 1, '76f05c08a29e252e47592785c597f8b04897b5fe8caef48a0f0f5c89c65f36b2', 'simple', 'checkbox', 'J''ai lu le contrat n° NC-PRO-2026-C5T8GU (modèle version 1) et j''en accepte les conditions.')
+on conflict (contract_id) do nothing;
+
+update public.contracts set status = 'accepted', accepted_at = '2025-11-18T09:43:12.000Z' where id = 'b320b26c-52d5-4e55-a277-df99d4c6547a' and status = 'pending';
+update public.contracts set status = 'accepted', accepted_at = '2025-11-02T17:06:40.000Z' where id = 'e7df0fee-3967-4821-a6c8-0fe259135336' and status = 'pending';
+update public.contracts set status = 'accepted', accepted_at = '2026-02-03T11:31:05.000Z' where id = 'ed9fcbd3-a6d2-4cab-a50b-736133767ca3' and status = 'pending';
+update public.contracts set status = 'accepted', accepted_at = '2026-05-20T15:10:44.000Z' where id = 'aa79f3fc-19c5-43bb-ae7b-6aa391acb99c' and status = 'pending';
+update public.contracts set status = 'accepted', accepted_at = '2026-09-01T09:38:21.000Z' where id = '203df41e-a9f3-4699-acac-210203543d7c' and status = 'pending';
+
 select setval('public.card_number_seq', 700, false);
 commit;

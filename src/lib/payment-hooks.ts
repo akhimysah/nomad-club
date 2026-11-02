@@ -25,7 +25,10 @@ export type SubscriptionActivated = {
 
 type Listener = (event: SubscriptionActivated) => Promise<void> | void;
 
-const listeners: Listener[] = [];
+// Partagé par tout le processus (globalThis) : un abonné enregistré au démarrage (src/instrumentation.ts)
+// est vu par les routes et server actions, même si les bundles chargent ce module plusieurs fois.
+const g = globalThis as typeof globalThis & { __ncSubscriptionListeners?: Listener[] };
+const listeners: Listener[] = (g.__ncSubscriptionListeners ??= []);
 
 export function onSubscriptionActivated(fn: Listener): void {
   listeners.push(fn);

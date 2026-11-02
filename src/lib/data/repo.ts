@@ -123,8 +123,9 @@ export type MyOrganization = { organization: Organization; role: OrganizationMem
 export type OrganizationMemberView = OrganizationMember & { profile: Profile | null };
 
 import type { CommunauteRepo } from "../modules/communaute/repo"; // --- Lot 1 ---
+import type { ContratsRepo } from "../modules/contrats/repo"; // --- Vague 2 · Contrats ---
 
-export interface Repo extends CommunauteRepo /* Lot 1 */, PartenairesRepo /* --- Lot 3 --- */, CrmRepo /* Lot 5 */, EngagementRepo /* --- Lot 4 --- */, SecuriteRepo /* --- Lot 6 --- */ {
+export interface Repo extends CommunauteRepo /* Lot 1 */, PartenairesRepo /* --- Lot 3 --- */, CrmRepo /* Lot 5 */, EngagementRepo /* --- Lot 4 --- */, SecuriteRepo /* --- Lot 6 --- */, ContratsRepo /* --- Vague 2 · Contrats --- */ {
   /* profils */
   getProfile(id: string): Promise<Profile | null>;
   /** Annuaire : adhérentes et fondatrices. */

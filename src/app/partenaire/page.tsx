@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FHead } from "@/components/founders/parts";
 import { OrgCard } from "@/components/org/OrgParts";
-import { SoonCards } from "@/components/org/SoonCards";
+import { ContractsCard } from "@/components/contrats/ContractsCard"; // --- Vague 2 · Contrats ---
 import { MonthKpis, NoOrg, OffersList, OrgPicker } from "@/components/partenaires/OrgBlocks";
 import { ValidateCodeForm } from "@/components/partenaires/OrgForms";
 import { Icon } from "@/components/ui/Icon";
@@ -74,7 +74,8 @@ export default async function Page({ searchParams }: Props) {
                   {!recent.length && <div className="empty">Aucun code validé pour l’instant.</div>}
                 </section>
                 <OrgCard entry={entry} href={`/partenaire/etablissement?org=${id}`} />
-                <SoonCards items={[{ icon: "edit", title: "Contrat partenaire", text: "Contrat généré, accepté en ligne et archivé ici en PDF.", lot: "lot 2" }]} />
+                {/* --- Vague 2 · Contrats --- */}
+                <ContractsCard kind="partner" organizationId={id} profileId={viewer.profile.id} href={`/partenaire/contrats?org=${id}`} title="Contrat partenaire" />
               </div>
             </div>
           </>
