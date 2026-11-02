@@ -101,6 +101,23 @@ Une place payée par carte est retenue 30 minutes pendant le paiement ; si le pa
 
 À savoir : en ligne **sans** variables Supabase, le site reste en mode démo et ses données repartent de zéro régulièrement.
 
+### 3.4 E-mails (Resend)
+
+Sans clé, aucun e-mail ne part : les envois sont seulement journalisés (logs du serveur et page Fondatrices > E-mails).
+Pour envoyer pour de vrai (billets, reçus, rappels, invitations…) :
+
+1. Créez un compte sur [resend.com](https://resend.com), puis **Domains > Add domain** (par exemple `mail.votre-domaine.ma`, région Irlande).
+2. Chez l'hébergeur du nom de domaine, ajoutez les enregistrements DNS affichés par Resend :
+   **SPF** (`TXT` `v=spf1 include:amazonses.com ~all` + un `MX` de retour), **DKIM** (`TXT` `resend._domainkey…`)
+   et **DMARC** (`TXT` sur `_dmarc.votre-domaine.ma` : `v=DMARC1; p=none; rua=mailto:dmarc@votre-domaine.ma`, puis `p=quarantine` plus tard).
+   Attendez que Resend affiche « Verified ».
+3. **API Keys > Create** (droit « Sending access ») : copiez la clé dans `RESEND_API_KEY`.
+4. Renseignez `EMAIL_FROM` (ex. `Nomad Club <bonjour@mail.votre-domaine.ma>`), `EMAIL_REPLY_TO` (la boîte de Julia et Nora),
+   `EMAIL_UNSUBSCRIBE_SECRET`, `NEXT_PUBLIC_SITE_URL`, et exécutez la migration `0011_emails.sql`.
+5. Branchez aussi le **lien magique** de Supabase sur Resend (Authentication > SMTP Settings) et collez le modèle d'e-mail en français :
+   tout est détaillé dans [`docs/emails.md`](docs/emails.md).
+6. Relisez chaque modèle dans Fondatrices > E-mails (aperçu, « M'envoyer un exemple ») et testez la délivrabilité sur mail-tester.com.
+
 ---
 
 ## Pour la personne qui développe
