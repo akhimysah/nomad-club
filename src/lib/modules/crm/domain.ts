@@ -295,22 +295,6 @@ export const QUICK_DUES: Array<{ label: string; days: number }> = [
 ];
 export const quickDue = (today: string, days: number) => addDays(today, days);
 
-/* ---------- messages préparés (aucun envoi automatique) ---------- */
-
-export function fillTemplate(text: string, r: Pick<ContactRow, "name" | "contact">): string {
-  const prenom = r.contact.firstName || r.name.split(" ")[0] || "";
-  return text.replace(/\{prenom\}/gi, prenom).replace(/\{nom\}/gi, r.name);
-}
-
-/** Lien WhatsApp (wa.me) avec le message prérempli ; null sans numéro exploitable. */
-export function whatsappLink(phone: string | null, text: string): string | null {
-  let d = (phone ?? "").replace(/\D/g, "");
-  if (d.startsWith("00")) d = d.slice(2);
-  else if (d.startsWith("0") && d.length === 10) d = "212" + d.slice(1); // numéro marocain local
-  if (d.length < 8) return null;
-  return `https://wa.me/${d}?text=${encodeURIComponent(text)}`;
-}
-
 /** Tags existants, triés par fréquence. */
 export function allTags(contacts: Contact[]): string[] {
   const n = new Map<string, number>();
