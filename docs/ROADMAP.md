@@ -19,7 +19,7 @@ Référence : `docs/CAHIER-DES-CHARGES.md`. Architecture de départ : `docs/ARCH
 | Parrainage | Rien | Codes, suivi, récompenses |
 | Espace Business | Rien | Déclaration de deals, points, retombées |
 | Administration | Espace Fondatrices (à traiter, membres, événements, encaissements) | Rôles fins, modération, contenus, partenaires, journal des opérations |
-| CRM | Chiffres et relances dans l'espace Fondatrices | Contacts / prospects, pipeline, segments, actions de suivi, statistiques de conversion et de renouvellement |
+| CRM | Lot 5 : contacts uniques, pipeline, tâches, historique, segments, actions groupées, import / export CSV, statistiques | Retombées réelles des deals (branchement du Lot 4), contrats sur la fiche (Lot 2) |
 | Sécurité | RLS Supabase, 5 rôles cumulables + capacités, journal d'audit (Lot 0) | RGPD, sauvegardes, 2FA admin |
 
 ## Découpage en lots
@@ -58,11 +58,12 @@ Chaque lot est livrable seul, testable en mode démo puis en mode réel.
 - Parrainage : code personnel, suivi des inscriptions, récompenses.
 - Espace Business : déclaration de deals entre membres (confirmés par les deux parties), points, classement, retombées.
 
-### Lot 5 — CRM et pilotage
-- Contacts uniques (prospects, adhérentes, anciennes membres, pros, partenaires), sources, statuts, étiquettes.
-- Pipeline prospects → adhérentes, tâches et relances, historique d'échanges.
-- Segments et actions groupées.
-- Statistiques : conversion, renouvellement, revenus, retombées des deals.
+### Lot 5 — CRM et pilotage (branche `lot-5-crm`)
+- [x] Contacts uniques (prospects, adhérentes, anciennes membres, pros, partenaires, presse), avec ou sans compte : chaque profil de l'appli a sa fiche (déclencheur `crm_sync_profile`), statut recalculé depuis l'adhésion et les rôles pour les comptes. Sources, statuts, étiquettes, responsable (Julia / Nora), consentement marketing horodaté. Doublons détectés (e-mail, téléphone, nom) et fusion atomique (`crm_merge_contacts`). Import CSV (correspondance des colonnes, aperçu, doublons écartés) et export CSV journalisé (`crm.export`).
+- [x] Pipeline prospects → adhérentes : étapes configurables, kanban (glisser-déposer + menu accessible au clavier) et vue liste, valeur estimée, motif de perte obligatoire. Tâches (mes tâches du jour / en retard / à venir, report rapide, assignation à l'autre fondatrice avec notification, rappel in-app `crm_task_due` à l'ouverture du CRM) ; les relances du club (renouvellements, impayés, comptes gratuits) sont reprises sur la page Tâches. Historique d'échanges (appel, WhatsApp, e-mail, rendez-vous, note, événement) sur la fiche, avec adhésion, paiements, réservations et relances.
+- [x] Segments enregistrés (filtres combinables : statut, source, étiquette, responsable, étape, consentement, compte, adhésion qui expire dans N jours, anciennes membres d'une année, venues à un événement sans adhérer, sans échange depuis N jours) et actions groupées : étiquette, assignation, tâche, export, message préparé (texte personnalisé à copier ou lien WhatsApp ; aucun envoi automatique).
+- [x] Statistiques : conversion (globale, par source, par mois, motifs de perte), renouvellement, revenus (par mois et par formule), cohortes, retombées des deals.
+- [~] Retombées des deals : point d'entrée `registerDealOutcomeSource` (`src/lib/modules/crm/business-source.ts`) à appeler par l'Espace Business du Lot 4 après fusion ; exemples affichés en démo, emplacement vide en mode réel. Contrats sur la fiche : emplacement prévu pour le Lot 2.
 
 ### Lot 6 — Sécurité, conformité, évolution
 - RGPD : consentements, export et suppression des données, durée de conservation.
