@@ -18,7 +18,9 @@
     "check:env": "node --no-warnings scripts/check-env.mjs",
     "admin:create": "node --no-warnings scripts/admin-create.mjs",
     "sql:installation": "node scripts/build-installation-sql.mjs",
-    "vps:deploy": "git ls-files > .vps-files && rsync -az --files-from=.vps-files ./ root@srv2104549.hstgr.cloud:/opt/nomad-club/app/ && rm .vps-files && ssh root@srv2104549.hstgr.cloud \"cd /opt/nomad-club/app && npm ci --no-audit --no-fund && NODE_OPTIONS=--max-old-space-size=2560 npm run build && chown -R nomad:nomad . && systemctl restart nomad-club\""
+    "vps:deploy": "git ls-files > .vps-files && rsync -az --files-from=.vps-files ./ root@srv2104549.hstgr.cloud:/opt/nomad-club/app/ && rm .vps-files && ssh root@srv2104549.hstgr.cloud \"cd /opt/nomad-club/app && npm ci --no-audit --no-fund && NODE_OPTIONS=--max-old-space-size=2560 npm run build && chown -R nomad:nomad . && systemctl restart nomad-club\"",
+    "ios:sync": "cap sync ios",
+    "ios:open": "cap open ios"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
@@ -35,6 +37,9 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/ios": "^8.6.0",
     "@electric-sql/pglite": "^0.5.14",
     "@eslint/eslintrc": "^3",
     "@types/leaflet": "^1.9.20",
